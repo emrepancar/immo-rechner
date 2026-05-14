@@ -204,10 +204,12 @@ function Zinsangebote() {
       <div className="zinsangebote-empty">
         <div className="empty-icon-wrap">
           <svg className="empty-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 26L32 8l24 18v30a2 2 0 01-2 2H10a2 2 0 01-2-2V26z" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-            <circle cx="22" cy="22" r="4" stroke="currentColor" strokeWidth="3"/>
-            <circle cx="42" cy="42" r="4" stroke="currentColor" strokeWidth="3"/>
-            <path d="M16 50L48 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+            <path d="M6 23L32 6L58 23H6Z" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+            <rect x="6" y="23" width="52" height="5" rx="1" stroke="currentColor" strokeWidth="3"/>
+            <rect x="12" y="28" width="7" height="20" rx="1" stroke="currentColor" strokeWidth="3"/>
+            <rect x="28.5" y="28" width="7" height="20" rx="1" stroke="currentColor" strokeWidth="3"/>
+            <rect x="45" y="28" width="7" height="20" rx="1" stroke="currentColor" strokeWidth="3"/>
+            <rect x="6" y="48" width="52" height="5" rx="1" stroke="currentColor" strokeWidth="3"/>
           </svg>
         </div>
         <h2>{tz.empty}</h2>
