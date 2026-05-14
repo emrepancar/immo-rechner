@@ -1,10 +1,22 @@
+import { useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import { useTheme } from '../context/ThemeContext'
+import { useProfile } from '../context/ProfileContext'
+import ProfileDialog from './ProfileDialog'
 import './Sidebar.css'
 
 function Sidebar({ activeSection, setActiveSection }) {
   const { language, setLanguage, t } = useLanguage()
   const { toggleTheme, isDark } = useTheme()
+  const { username } = useProfile()
+  const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false)
+
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour < 12) return t.greeting.morning
+    if (hour < 18) return t.greeting.afternoon
+    return t.greeting.evening
+  }
 
   const sections = [
     { id: 'neue-immobilie', label: t.nav.neueImmobilie, icon: '🏠' },
@@ -18,6 +30,11 @@ function Sidebar({ activeSection, setActiveSection }) {
       <div className="sidebar-header">
         <img src="/logo.png" alt="ImmoRechner" className="logo-full" />
       </div>
+      {username && (
+        <div className="greeting-section">
+          <p className="greeting-text">{getGreeting()}, <span className="username">{username}</span>!</p>
+        </div>
+      )}
       <nav className="sidebar-nav">
         {sections.map(section => (
           <button
@@ -30,26 +47,27 @@ function Sidebar({ activeSection, setActiveSection }) {
           </button>
         ))}
       </nav>
-      <div className="theme-toggle-row">
-        <button className="theme-toggle-btn" onClick={toggleTheme}>
-          {isDark ? '☀️' : '🌙'}
-          <span>{isDark ? 'Light mode' : 'Dark mode'}</span>
+      <div className="sidebar-footer">
+        <button
+          className={`nav-item footer-nav-item ${activeSection === 'profile' ? 'active' : ''}`}
+          onClick={() => setIsProfileDialogOpen(true)}
+          title={t.nav.profile || 'Profile'}
+        >
+          <span className="nav-icon">👤</span>
+          <span className="nav-label">{t.nav.profile || 'Profile'}</span>
+        </button>
+
+        <button
+          className={`nav-item footer-nav-item ${activeSection === 'settings' ? 'active' : ''}`}
+          onClick={() => setActiveSection('settings')}
+          title={t.nav.settings || 'Settings'}
+        >
+          <span className="nav-icon">⚙️</span>
+          <span className="nav-label">{t.nav.settings || 'Settings'}</span>
         </button>
       </div>
-      <div className="language-switcher">
-        <button
-          className={`lang-btn ${language === 'de' ? 'active' : ''}`}
-          onClick={() => setLanguage('de')}
-        >
-          🇩🇪 DE
-        </button>
-        <button
-          className={`lang-btn ${language === 'en' ? 'active' : ''}`}
-          onClick={() => setLanguage('en')}
-        >
-          🇬🇧 EN
-        </button>
-      </div>
+
+      <ProfileDialog isOpen={isProfileDialogOpen} onClose={() => setIsProfileDialogOpen(false)} />
     </aside>
   )
 }

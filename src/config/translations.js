@@ -6,6 +6,24 @@ const translations = {
       finanzierung: 'Finanzierung',
       gespeicherteObjekte: 'Gespeicherte Objekte',
       zinsangebote: 'Zinsangebote',
+      settings: 'Einstellungen',
+      profile: 'Profil',
+    },
+
+    // Greeting
+    greeting: {
+      morning: 'Guten Morgen',
+      afternoon: 'Guten Nachmittag',
+      evening: 'Guten Abend',
+    },
+
+    // Profile Dialog
+    profile: {
+      title: 'Profil',
+      usernameLabel: 'Benutzername',
+      usernamePlaceholder: 'Geben Sie Ihren Namen ein',
+      save: 'Speichern',
+      cancel: 'Abbrechen',
     },
     language: {
       label: 'Sprache',
@@ -255,6 +273,26 @@ const translations = {
         serverError: 'Fehler: Server ist nicht erreichbar',
       },
     },
+
+    // Settings
+    settings: {
+      title: 'Einstellungen',
+      unitsSectionLabel: 'EINHEITEN',
+      spaceUnit: 'Flächeneinheit',
+      spaceUnitDescription: 'Wählen Sie Ihre bevorzugte Einheit für Flächenmessungen',
+      currencySectionLabel: 'WÄHRUNG',
+      currency: 'Währung',
+      currencyDescription: 'Wählen Sie Ihre bevorzugte Währung für alle Geldwerte',
+      languageSectionLabel: 'SPRACHE',
+      language: 'Sprache',
+      languageDescription: 'Wählen Sie Ihre bevorzugte Sprache für die App',
+      themeSectionLabel: 'DESIGN',
+      theme: 'Dunkler Modus',
+      themeDescription: 'Wechseln Sie zwischen dunklem und hellem Modus',
+      previewLabel: 'VORSCHAU',
+      areaExample: 'Flächenbeispiel',
+      priceExample: 'Preisbeispiel',
+    },
   },
 
   en: {
@@ -264,6 +302,24 @@ const translations = {
       finanzierung: 'Financing',
       gespeicherteObjekte: 'Saved Properties',
       zinsangebote: 'Interest Offers',
+      settings: 'Settings',
+      profile: 'Profile',
+    },
+
+    // Greeting
+    greeting: {
+      morning: 'Good morning',
+      afternoon: 'Good afternoon',
+      evening: 'Good evening',
+    },
+
+    // Profile Dialog
+    profile: {
+      title: 'Profile',
+      usernameLabel: 'Username',
+      usernamePlaceholder: 'Enter your name',
+      save: 'Save',
+      cancel: 'Cancel',
     },
     language: {
       label: 'Language',
@@ -509,6 +565,26 @@ const translations = {
         deleteError: 'Error deleting offer',
         serverError: 'Error: Server not reachable',
       },
+    },
+
+    // Settings
+    settings: {
+      title: 'Settings',
+      unitsSectionLabel: 'UNITS',
+      spaceUnit: 'Space Unit',
+      spaceUnitDescription: 'Choose your preferred unit for area measurements',
+      currencySectionLabel: 'CURRENCY',
+      currency: 'Currency',
+      currencyDescription: 'Choose your preferred currency for all monetary values',
+      languageSectionLabel: 'LANGUAGE',
+      language: 'Language',
+      languageDescription: 'Choose your preferred language for the app',
+      themeSectionLabel: 'THEME',
+      theme: 'Dark Mode',
+      themeDescription: 'Switch between dark and light mode',
+      previewLabel: 'PREVIEW',
+      areaExample: 'Area example',
+      priceExample: 'Price example',
     },
   },
 }
