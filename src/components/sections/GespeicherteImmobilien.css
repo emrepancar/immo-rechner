@@ -490,3 +490,23 @@
     padding: 16px;
   }
 }
+
+.empty-icon-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.empty-icon {
+  width: 72px;
+  height: 72px;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.gespeicherte-empty h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: var(--text-h);
+}

@@ -18,7 +18,13 @@
       "Bash(grep -E '\\\\.\\(png|svg|ico|jpg|jpeg|webp\\)$')",
       "Bash(npm install *)",
       "Bash(npm run *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(sed -n '148,175p' /Users/emrepancar/claude-apps/real-estate-calculator/src/components/sections/GespeicherteImmobilien.css)",
+      "Bash(sed -n '7,25p' /Users/emrepancar/claude-apps/real-estate-calculator/src/components/sections/Zinsangebote.css)",
+      "Bash(sed -n '292,315p' /Users/emrepancar/claude-apps/real-estate-calculator/src/components/sections/Zinsangebote.css)",
+      "Bash(curl -s http://localhost:5173)"
     ]
   }
 }

@@ -202,7 +202,15 @@ function Zinsangebote() {
   if (properties.length === 0) {
     return (
       <div className="zinsangebote-empty">
-        <p>{tz.empty}</p>
+        <div className="empty-icon-wrap">
+          <svg className="empty-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 26L32 8l24 18v30a2 2 0 01-2 2H10a2 2 0 01-2-2V26z" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+            <circle cx="22" cy="22" r="4" stroke="currentColor" strokeWidth="3"/>
+            <circle cx="42" cy="42" r="4" stroke="currentColor" strokeWidth="3"/>
+            <path d="M16 50L48 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <h2>{tz.empty}</h2>
         <p className="empty-hint">{tz.emptyHint}</p>
       </div>
     )
@@ -382,6 +390,14 @@ function Zinsangebote() {
 
       {offers.length === 0 && selectedProperty && (
         <div className="no-offers-message">
+          <div className="empty-icon-wrap">
+            <svg className="empty-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="8" y="28" width="8" height="28" rx="1" stroke="currentColor" strokeWidth="3"/>
+              <rect x="28" y="18" width="8" height="38" rx="1" stroke="currentColor" strokeWidth="3"/>
+              <rect x="48" y="8" width="8" height="48" rx="1" stroke="currentColor" strokeWidth="3"/>
+              <path d="M6 58h52" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+            </svg>
+          </div>
           <p>{tz.noOffers}</p>
           <p className="hint">{tz.noOffersHint}</p>
         </div>

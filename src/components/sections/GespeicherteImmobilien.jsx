@@ -162,8 +162,13 @@ function GespeicherteImmobilien() {
   if (properties.length === 0) {
     return (
       <div className="gespeicherte-empty">
-        <h2>{tg.title}</h2>
-        <p>{tg.empty}</p>
+        <div className="empty-icon-wrap">
+          <svg className="empty-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 30L32 10l24 20v22a2 2 0 01-2 2H10a2 2 0 01-2-2V30z" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M24 54V36h16v18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <h2>{tg.empty}</h2>
         <p className="empty-hint">{tg.emptyHint}</p>
       </div>
     )
