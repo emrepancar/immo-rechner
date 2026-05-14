@@ -579,3 +579,15 @@
     max-width: 100%;
   }
 }
+
+.input-error {
+  border-color: #ef4444 !important;
+  outline-color: #ef4444 !important;
+}
+
+.field-error {
+  display: block;
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+}

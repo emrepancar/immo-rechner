@@ -13,7 +13,12 @@
       "Bash(lsof -ti:3001)",
       "Bash(xargs ps -p)",
       "Bash(awk '{print $1, $4}')",
-      "Bash(curl -s http://localhost:3001/api/properties)"
+      "Bash(curl -s http://localhost:3001/api/properties)",
+      "Bash(gh auth *)",
+      "Bash(grep -E '\\\\.\\(png|svg|ico|jpg|jpeg|webp\\)$')",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(git add *)"
     ]
   }
 }

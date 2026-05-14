@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import './NeueImmobilie.css'
 import { FALLBACK_DEFAULTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
 import API_BASE from '../../config/api'
+import Notification from '../Notification'
 
 function NeueImmobilie() {
   const { t } = useLanguage()
@@ -20,6 +21,10 @@ function NeueImmobilie() {
   const [miete, setMiete] = useState({ kaltmiete: '', warmmiete: '', hausgeld: '' })
   const [showSaveDialog, setShowSaveDialog] = useState(false)
   const [propertyName, setPropertyName] = useState('')
+  const [nameError, setNameError] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [notification, setNotification] = useState({ message: '', type: '' })
+  const clearNotification = useCallback(() => setNotification({ message: '', type: '' }), [])
 
   const calculatePreisPerQm = () => {
     if (kaufpreis && quadratmeter && quadratmeter > 0) {
@@ -58,7 +63,13 @@ function NeueImmobilie() {
   }, [showSaveDialog])
 
   const handleSaveProperty = async () => {
-    if (propertyName.trim()) {
+    if (!propertyName.trim()) {
+      setNameError(ti.saveDialog.nameRequired)
+      return
+    }
+    setNameError('')
+    setSaving(true)
+    if (true) {
       const gesamtkosten = kaufpreis
         ? (
             parseFloat(kaufpreis) +
@@ -115,13 +126,15 @@ function NeueImmobilie() {
             grundbucheintrag: String(FALLBACK_DEFAULTS.grundbucheintrag),
           })
           setMiete({ kaltmiete: '', warmmiete: '', hausgeld: '' })
-          alert(ti.alerts.saved)
+          setNotification({ message: ti.alerts.saved, type: 'success' })
         } else {
-          alert(ti.alerts.saveError)
+          const data = await response.json().catch(() => ({}))
+          setNotification({ message: data.errors?.[0] || ti.alerts.saveError, type: 'error' })
         }
-      } catch (error) {
-        console.error('Error saving property:', error)
-        alert(ti.alerts.serverError)
+      } catch {
+        setNotification({ message: ti.alerts.serverError, type: 'error' })
+      } finally {
+        setSaving(false)
       }
     }
   }
@@ -130,6 +143,7 @@ function NeueImmobilie() {
 
   return (
     <div className="neue-immobilie">
+      <Notification message={notification.message} type={notification.type} onClose={clearNotification} />
       <div className="immobilie-details-box">
         <div className="box-label">{ti.sectionObjekt}</div>
         <button
@@ -407,9 +421,11 @@ function NeueImmobilie() {
                   type="text"
                   placeholder={ti.saveDialog.namePlaceholder}
                   value={propertyName}
-                  onChange={(e) => setPropertyName(e.target.value)}
+                  onChange={(e) => { setPropertyName(e.target.value); setNameError('') }}
                   autoFocus
+                  className={nameError ? 'input-error' : ''}
                 />
+                {nameError && <span className="field-error">{nameError}</span>}
               </div>
             </div>
             <div className="save-dialog-footer">
@@ -419,9 +435,9 @@ function NeueImmobilie() {
               <button
                 className="save-dialog-save-button"
                 onClick={handleSaveProperty}
-                disabled={!propertyName.trim()}
+                disabled={saving}
               >
-                {t.common.save}
+                {saving ? '...' : t.common.save}
               </button>
             </div>
           </div>

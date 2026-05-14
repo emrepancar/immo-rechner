@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import './GespeicherteImmobilien.css'
 import { FALLBACK_DEFAULTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
 import API_BASE from '../../config/api'
+import Notification from '../Notification'
 
 function GespeicherteImmobilien() {
   const { t } = useLanguage()
@@ -14,6 +15,10 @@ function GespeicherteImmobilien() {
   const [editFormData, setEditFormData] = useState({})
   const [kpiProperty, setKpiProperty] = useState(null)
   const [kpiEigenkapital, setKpiEigenkapital] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [deletingId, setDeletingId] = useState(null)
+  const [notification, setNotification] = useState({ message: '', type: '' })
+  const clearNotification = useCallback(() => setNotification({ message: '', type: '' }), [])
 
   useEffect(() => { loadProperties() }, [])
 
@@ -24,26 +29,28 @@ function GespeicherteImmobilien() {
         const data = await response.json()
         setProperties(data)
       } else {
-        console.error('Failed to load properties')
+        setNotification({ message: tg.alerts.serverError, type: 'error' })
       }
-    } catch (error) {
-      console.error('Error loading properties:', error)
+    } catch {
+      setNotification({ message: tg.alerts.serverError, type: 'error' })
     } finally {
       setLoading(false)
     }
   }
 
   const deleteProperty = async (id) => {
+    setDeletingId(id)
     try {
       const response = await fetch(`${API_BASE}/api/properties/${id}`, { method: 'DELETE' })
       if (response.ok) {
         setProperties(properties.filter(prop => prop.id !== id))
       } else {
-        alert(tg.alerts.deleteError)
+        setNotification({ message: tg.alerts.deleteError, type: 'error' })
       }
-    } catch (error) {
-      console.error('Error deleting property:', error)
-      alert(tg.alerts.serverError)
+    } catch {
+      setNotification({ message: tg.alerts.serverError, type: 'error' })
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -99,6 +106,7 @@ function GespeicherteImmobilien() {
   }
 
   const saveEditedProperty = async () => {
+    setSaving(true)
     try {
       const nebenkosten_total =
         parseFloat(editFormData.kaufpreis || 0) *
@@ -137,13 +145,15 @@ function GespeicherteImmobilien() {
           prop.id === editingProperty.id ? { ...prop, ...updatedData } : prop
         ))
         closeEditMode()
-        alert(tg.alerts.updateSuccess)
+        setNotification({ message: tg.alerts.updateSuccess, type: 'success' })
       } else {
-        alert(tg.alerts.updateError)
+        const data = await response.json().catch(() => ({}))
+        setNotification({ message: data.errors?.[0] || tg.alerts.updateError, type: 'error' })
       }
-    } catch (error) {
-      console.error('Error updating property:', error)
-      alert(tg.alerts.serverError)
+    } catch {
+      setNotification({ message: tg.alerts.serverError, type: 'error' })
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -161,6 +171,7 @@ function GespeicherteImmobilien() {
 
   return (
     <div className="gespeicherte-container">
+      <Notification message={notification.message} type={notification.type} onClose={clearNotification} />
       <h2>{tg.title} ({properties.length})</h2>
       <div className="properties-grid">
         {properties.map(property => (
@@ -170,7 +181,7 @@ function GespeicherteImmobilien() {
               <div className="card-buttons">
                 <button className="kpi-button" onClick={() => openKpiModal(property)} title="KPIs">📊</button>
                 <button className="edit-button" onClick={() => openEditMode(property)} title={t.common.edit}>✎</button>
-                <button className="delete-button" onClick={() => deleteProperty(property.id)} title={t.common.delete}>✕</button>
+                <button className="delete-button" onClick={() => deleteProperty(property.id)} disabled={deletingId === property.id} title={t.common.delete}>{deletingId === property.id ? '…' : '✕'}</button>
               </div>
             </div>
 
@@ -310,8 +321,8 @@ function GespeicherteImmobilien() {
               <button className="edit-dialog-close-button" onClick={closeEditMode}>
                 {t.common.cancel}
               </button>
-              <button className="edit-dialog-save-button" onClick={saveEditedProperty}>
-                {t.common.save}
+              <button className="edit-dialog-save-button" onClick={saveEditedProperty} disabled={saving}>
+                {saving ? '...' : t.common.save}
               </button>
             </div>
           </div>

@@ -4,6 +4,8 @@ import bodyParser from 'body-parser'
 import sqlite3 from 'sqlite3'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
 import { FALLBACK_DEFAULTS } from './src/config/defaults.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -14,9 +16,33 @@ const PORT = process.env.PORT || 3001
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'properties.db')
 const isProduction = process.env.NODE_ENV === 'production'
 
+// Security
+app.use(helmet())
+const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 })
+
 // Middleware
 app.use(cors())
 app.use(bodyParser.json())
+
+// Validation helpers
+function validateProperty(data) {
+  const errors = []
+  if (!data.name || !String(data.name).trim()) errors.push('Name is required')
+  if (data.kaufpreis != null && data.kaufpreis < 0) errors.push('Purchase price cannot be negative')
+  if (data.kaltmiete != null && data.kaltmiete < 0) errors.push('Rent cannot be negative')
+  if (data.rooms != null && data.rooms < 0) errors.push('Rooms cannot be negative')
+  return errors
+}
+
+function validateZinsangebot(data) {
+  const errors = []
+  if (!data.property_id) errors.push('Property ID is required')
+  const z = parseFloat(data.zinssatz)
+  if (!data.zinssatz || isNaN(z) || z <= 0 || z >= 15) errors.push('Interest rate must be between 0 and 15')
+  const zb = parseInt(data.zinsbindung)
+  if (data.zinsbindung && (isNaN(zb) || zb <= 0 || zb > 30)) errors.push('Fixed rate period must be between 1 and 30 years')
+  return errors
+}
 
 // Serve built frontend in production
 if (isProduction) {
@@ -76,6 +102,7 @@ function initializeDatabase() {
 }
 
 // Routes
+app.use('/api', apiLimiter)
 
 // Get all properties
 app.get('/api/properties', (req, res) => {
@@ -104,6 +131,9 @@ app.get('/api/properties/:id', (req, res) => {
 
 // Create property
 app.post('/api/properties', (req, res) => {
+  const errors = validateProperty(req.body)
+  if (errors.length) return res.status(400).json({ errors })
+
   const {
     name,
     address,
@@ -147,6 +177,9 @@ app.post('/api/properties', (req, res) => {
 
 // Update property
 app.put('/api/properties/:id', (req, res) => {
+  const errors = validateProperty(req.body)
+  if (errors.length) return res.status(400).json({ errors })
+
   const { id } = req.params
   const {
     name,
@@ -234,6 +267,9 @@ app.get('/api/zinsangebote/:id', (req, res) => {
 
 // Create zinsangebot
 app.post('/api/zinsangebote', (req, res) => {
+  const errors = validateZinsangebot(req.body)
+  if (errors.length) return res.status(400).json({ errors })
+
   const {
     property_id,
     name,
@@ -263,6 +299,9 @@ app.post('/api/zinsangebote', (req, res) => {
 
 // Update zinsangebot
 app.put('/api/zinsangebote/:id', (req, res) => {
+  const errors = validateZinsangebot(req.body)
+  if (errors.length) return res.status(400).json({ errors })
+
   const { id } = req.params
   const {
     property_id,

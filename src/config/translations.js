@@ -73,6 +73,7 @@ const translations = {
       saveDialog: {
         title: 'Objekt speichern',
         namePlaceholder: 'z.B. Meine Wohnung in Berlin',
+        nameRequired: 'Name ist erforderlich',
       },
       alerts: {
         saved: 'Objekt erfolgreich gespeichert!',
@@ -326,6 +327,7 @@ const translations = {
       saveDialog: {
         title: 'Save Property',
         namePlaceholder: 'e.g. My Apartment in Berlin',
+        nameRequired: 'Name is required',
       },
       alerts: {
         saved: 'Property saved successfully!',

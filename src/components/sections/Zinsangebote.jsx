@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import './Zinsangebote.css'
 import { useLanguage } from '../../context/LanguageContext'
 import API_BASE from '../../config/api'
+import Notification from '../Notification'
 
 function Zinsangebote() {
   const { t } = useLanguage()
@@ -21,6 +22,10 @@ function Zinsangebote() {
     zinsbindung: '',
   })
   const [chartData, setChartData] = useState([])
+  const [saving, setSaving] = useState(false)
+  const [deletingId, setDeletingId] = useState(null)
+  const [notification, setNotification] = useState({ message: '', type: '' })
+  const clearNotification = useCallback(() => setNotification({ message: '', type: '' }), [])
 
   useEffect(() => { loadProperties() }, [])
 
@@ -117,25 +122,26 @@ function Zinsangebote() {
     const zinsbindung = parseFloat(formData.zinsbindung)
 
     if (!formData.zinssatz || isNaN(zinssatz) || zinssatz <= 0 || zinssatz >= 15) {
-      alert(tz.alerts.invalidZinssatz); return false
+      setNotification({ message: tz.alerts.invalidZinssatz, type: 'error' }); return false
     }
     if (!formData.eigenkapital || isNaN(eigenkapital) || eigenkapital < 0) {
-      alert(tz.alerts.invalidEigenkapital); return false
+      setNotification({ message: tz.alerts.invalidEigenkapital, type: 'error' }); return false
     }
     if (formData.eigenkapitalType === 'amount' && eigenkapital > (selectedProperty.kaufpreis || 0)) {
-      alert(tz.alerts.eigenkapitalTooHigh); return false
+      setNotification({ message: tz.alerts.eigenkapitalTooHigh, type: 'error' }); return false
     }
     if (formData.eigenkapitalType === 'percentage' && eigenkapital > 100) {
-      alert(tz.alerts.percentTooHigh); return false
+      setNotification({ message: tz.alerts.percentTooHigh, type: 'error' }); return false
     }
     if (!formData.zinsbindung || isNaN(zinsbindung) || zinsbindung <= 0 || zinsbindung > 30) {
-      alert(tz.alerts.invalidZinsbindung); return false
+      setNotification({ message: tz.alerts.invalidZinsbindung, type: 'error' }); return false
     }
     return true
   }
 
   const saveOffer = async () => {
     if (!validateForm()) return
+    setSaving(true)
 
     const eigenkapitalValue = parseFloat(formData.eigenkapital)
     const offerData = {
@@ -162,29 +168,32 @@ function Zinsangebote() {
       if (response.ok) {
         await loadOffers(selectedProperty.id)
         resetForm()
-        alert(editingOffer ? tz.alerts.updateSuccess : tz.alerts.saveSuccess)
+        setNotification({ message: editingOffer ? tz.alerts.updateSuccess : tz.alerts.saveSuccess, type: 'success' })
       } else {
-        alert(tz.alerts.saveError)
+        const data = await response.json().catch(() => ({}))
+        setNotification({ message: data.errors?.[0] || tz.alerts.saveError, type: 'error' })
       }
-    } catch (error) {
-      console.error('Error saving offer:', error)
-      alert(tz.alerts.serverError)
+    } catch {
+      setNotification({ message: tz.alerts.serverError, type: 'error' })
+    } finally {
+      setSaving(false)
     }
   }
 
   const deleteOffer = async (offerId) => {
-    if (!confirm(tz.alerts.deleteConfirm)) return
+    setDeletingId(offerId)
     try {
       const response = await fetch(`${API_BASE}/api/zinsangebote/${offerId}`, { method: 'DELETE' })
       if (response.ok) {
         await loadOffers(selectedProperty.id)
-        alert(tz.alerts.deleteSuccess)
+        setNotification({ message: tz.alerts.deleteSuccess, type: 'success' })
       } else {
-        alert(tz.alerts.deleteError)
+        setNotification({ message: tz.alerts.deleteError, type: 'error' })
       }
-    } catch (error) {
-      console.error('Error deleting offer:', error)
-      alert(tz.alerts.serverError)
+    } catch {
+      setNotification({ message: tz.alerts.serverError, type: 'error' })
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -201,6 +210,7 @@ function Zinsangebote() {
 
   return (
     <div className="zinsangebote-container">
+      <Notification message={notification.message} type={notification.type} onClose={clearNotification} />
       <div className="property-selector-box">
         <label htmlFor="property-select">{tz.selectProperty}</label>
         <select
@@ -302,8 +312,8 @@ function Zinsangebote() {
         </div>
 
         <div className="form-actions">
-          <button className="save-btn" onClick={saveOffer}>
-            {editingOffer ? tz.updateBtn : tz.saveBtn}
+          <button className="save-btn" onClick={saveOffer} disabled={saving}>
+            {saving ? '...' : (editingOffer ? tz.updateBtn : tz.saveBtn)}
           </button>
           {editingOffer && (
             <button className="cancel-btn" onClick={resetForm}>{t.common.cancel}</button>
@@ -327,7 +337,7 @@ function Zinsangebote() {
                       <h4>{offer.name || `Angebot ${offer.id}`}</h4>
                       <div className="offer-actions">
                         <button className="edit-btn" onClick={() => openEditMode(offer)} title={t.common.edit}>✎</button>
-                        <button className="delete-btn" onClick={() => deleteOffer(offer.id)} title={t.common.delete}>✕</button>
+                        <button className="delete-btn" onClick={() => deleteOffer(offer.id)} disabled={deletingId === offer.id} title={t.common.delete}>{deletingId === offer.id ? '…' : '✕'}</button>
                       </div>
                     </div>
                     <div className="offer-details">
