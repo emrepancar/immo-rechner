@@ -24,7 +24,9 @@
       "Bash(sed -n '148,175p' /Users/emrepancar/claude-apps/real-estate-calculator/src/components/sections/GespeicherteImmobilien.css)",
       "Bash(sed -n '7,25p' /Users/emrepancar/claude-apps/real-estate-calculator/src/components/sections/Zinsangebote.css)",
       "Bash(sed -n '292,315p' /Users/emrepancar/claude-apps/real-estate-calculator/src/components/sections/Zinsangebote.css)",
-      "Bash(curl -s http://localhost:5173)"
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(curl -s http://localhost:5173/)",
+      "Bash(curl -sv http://localhost:5173/)"
     ]
   }
 }

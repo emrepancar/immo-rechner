@@ -4,6 +4,46 @@ import { FALLBACK_DEFAULTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
 import API_BASE from '../../config/api'
 import Notification from '../Notification'
+import SkeletonCard from '../SkeletonCard'
+
+function ComparisonTable({ selected, tg, calculateBruttomietrendite }) {
+  return (
+    <div className="comparison-table-wrap">
+      <h3>{tg.compareTitle}</h3>
+      <div className="comparison-table">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              {selected.map(p => <th key={p.id}>{p.name}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{tg.kaufpreis}</td>
+              {selected.map(p => <td key={p.id}>€ {parseFloat(p.kaufpreis||0).toLocaleString('de-DE')}</td>)}
+            </tr>
+            <tr>
+              <td>{tg.gesamtkosten}</td>
+              {selected.map(p => <td key={p.id}>€ {parseFloat(p.gesamtkosten||0).toLocaleString('de-DE')}</td>)}
+            </tr>
+            <tr>
+              <td>{tg.kaltmiete}</td>
+              {selected.map(p => <td key={p.id}>{p.kaltmiete ? `€ ${parseFloat(p.kaltmiete).toLocaleString('de-DE')}` : '—'}</td>)}
+            </tr>
+            <tr>
+              <td>{tg.bruttomietrendite}</td>
+              {selected.map(p => {
+                const r = calculateBruttomietrendite(p.kaltmiete, p.kaufpreis)
+                return <td key={p.id}>{r ? `${r}%` : '—'}</td>
+              })}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
 
 function GespeicherteImmobilien() {
   const { t } = useLanguage()
@@ -19,6 +59,8 @@ function GespeicherteImmobilien() {
   const [deletingId, setDeletingId] = useState(null)
   const [notification, setNotification] = useState({ message: '', type: '' })
   const clearNotification = useCallback(() => setNotification({ message: '', type: '' }), [])
+  const [compareMode, setCompareMode] = useState(false)
+  const [compareIds, setCompareIds] = useState([])
 
   useEffect(() => { loadProperties() }, [])
 
@@ -157,7 +199,30 @@ function GespeicherteImmobilien() {
     }
   }
 
-  if (loading) return <div className="gespeicherte-loading">{tg.loading}</div>
+  const toggleCompareMode = () => {
+    setCompareMode(prev => !prev)
+    setCompareIds([])
+  }
+  const toggleCompareSelect = (id) => {
+    setCompareIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : prev.length < 3 ? [...prev, id] : prev
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="gespeicherte-container">
+        <div className="gespeicherte-header">
+          <h2>{tg.title}</h2>
+        </div>
+        <div className="properties-grid">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+      </div>
+    )
+  }
 
   if (properties.length === 0) {
     return (
@@ -177,10 +242,33 @@ function GespeicherteImmobilien() {
   return (
     <div className="gespeicherte-container">
       <Notification message={notification.message} type={notification.type} onClose={clearNotification} />
-      <h2>{tg.title} ({properties.length})</h2>
+      <div className="gespeicherte-header">
+        <h2>{tg.title} ({properties.length})</h2>
+        <button className={`compare-toggle-btn ${compareMode ? 'active' : ''}`} onClick={toggleCompareMode}>
+          {compareMode ? tg.compareExit : tg.compareMode}
+        </button>
+      </div>
       <div className="properties-grid">
-        {properties.map(property => (
+        {properties.map(property => {
+          const yieldVal = calculateBruttomietrendite(property.kaltmiete, property.kaufpreis)
+          const yieldNum = yieldVal ? parseFloat(yieldVal) : null
+          let yieldClass = ''
+          let yieldLabel = ''
+          if (yieldNum !== null) {
+            if (yieldNum > 4) { yieldClass = 'green'; yieldLabel = `${yieldVal}% ↑` }
+            else if (yieldNum >= 2) { yieldClass = 'yellow'; yieldLabel = `${yieldVal}%` }
+            else { yieldClass = 'red'; yieldLabel = `${yieldVal}% ↓` }
+          }
+          return (
           <div key={property.id} className="property-card">
+            {compareMode && (
+              <div
+                className={`compare-checkbox ${compareIds.includes(property.id) ? 'checked' : ''}`}
+                onClick={() => toggleCompareSelect(property.id)}
+              >
+                {compareIds.includes(property.id) ? '✓' : ''}
+              </div>
+            )}
             <div className="property-card-header">
               <h3>{property.name}</h3>
               <div className="card-buttons">
@@ -189,6 +277,10 @@ function GespeicherteImmobilien() {
                 <button className="delete-button" onClick={() => deleteProperty(property.id)} disabled={deletingId === property.id} title={t.common.delete}>{deletingId === property.id ? '…' : '✕'}</button>
               </div>
             </div>
+
+            {yieldNum !== null && (
+              <span className={`yield-badge ${yieldClass}`}>{yieldLabel}</span>
+            )}
 
             <div className="property-card-info">
               <div className="info-row">
@@ -219,8 +311,17 @@ function GespeicherteImmobilien() {
               </span>
             </div>
           </div>
-        ))}
+          )
+        })}
       </div>
+
+      {compareMode && compareIds.length >= 2 && (
+        <ComparisonTable
+          selected={properties.filter(p => compareIds.includes(p.id))}
+          tg={tg}
+          calculateBruttomietrendite={calculateBruttomietrendite}
+        />
+      )}
 
       {editingProperty && (
         <div className="edit-dialog-overlay" onClick={closeEditMode}>

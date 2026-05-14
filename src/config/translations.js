@@ -197,6 +197,10 @@ const translations = {
       kpiEigenkapitalLabel: 'Eigenkapital (€)',
       kpiInterpretation: 'Schnelle Rentabilitätskennzahl ohne Finanzierung',
       kpiRoeInterpretation: 'Rendite auf eingesetztes Eigenkapital',
+      compareMode: 'Vergleichen',
+      compareExit: 'Vergleich beenden',
+      compareTitle: 'Objektvergleich',
+      bruttomietrendite: 'Bruttomietrendite',
       alerts: {
         updateSuccess: 'Objekt erfolgreich aktualisiert!',
         updateError: 'Fehler beim Aktualisieren des Objekts',
@@ -448,6 +452,10 @@ const translations = {
       kpiEigenkapitalLabel: 'Equity (€)',
       kpiInterpretation: 'Quick profitability indicator without financing',
       kpiRoeInterpretation: 'Return on your invested capital',
+      compareMode: 'Compare',
+      compareExit: 'Exit Compare',
+      compareTitle: 'Property Comparison',
+      bruttomietrendite: 'Gross Rental Yield',
       alerts: {
         updateSuccess: 'Property updated successfully!',
         updateError: 'Error updating property',

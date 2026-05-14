@@ -1,8 +1,10 @@
 import { useLanguage } from '../context/LanguageContext'
+import { useTheme } from '../context/ThemeContext'
 import './Sidebar.css'
 
 function Sidebar({ activeSection, setActiveSection }) {
   const { language, setLanguage, t } = useLanguage()
+  const { toggleTheme, isDark } = useTheme()
 
   const sections = [
     { id: 'neue-immobilie', label: t.nav.neueImmobilie, icon: '🏠' },
@@ -28,6 +30,12 @@ function Sidebar({ activeSection, setActiveSection }) {
           </button>
         ))}
       </nav>
+      <div className="theme-toggle-row">
+        <button className="theme-toggle-btn" onClick={toggleTheme}>
+          {isDark ? '☀️' : '🌙'}
+          <span>{isDark ? 'Light mode' : 'Dark mode'}</span>
+        </button>
+      </div>
       <div className="language-switcher">
         <button
           className={`lang-btn ${language === 'de' ? 'active' : ''}`}

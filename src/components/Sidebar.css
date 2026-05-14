@@ -93,6 +93,29 @@
   font-weight: 700;
 }
 
+.theme-toggle-row {
+  padding: 8px 20px 16px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.theme-toggle-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255,255,255,0.75);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+.theme-toggle-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
 @media (max-width: 768px) {
   .sidebar {
     width: 200px;

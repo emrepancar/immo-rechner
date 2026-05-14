@@ -4,6 +4,7 @@ import { FALLBACK_DEFAULTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
 import API_BASE from '../../config/api'
 import Notification from '../Notification'
+import { useAnimatedNumber } from '../../hooks/useAnimatedNumber'
 
 function NeueImmobilie() {
   const { t } = useLanguage()
@@ -141,6 +142,18 @@ function NeueImmobilie() {
 
   const preisPro = calculatePreisPerQm()
 
+  const nebenkostenTotalNum = kaufpreis
+    ? parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer) || 0) +
+      parseFloat(calculateNebenkosten(nebenkosten.maklerprovision) || 0) +
+      parseFloat(calculateNebenkosten(nebenkosten.notarkosten) || 0) +
+      parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag) || 0)
+    : 0
+
+  const gesamtkostenNum = kaufpreis ? parseFloat(kaufpreis) + nebenkostenTotalNum : 0
+
+  const animatedNebenkosten = useAnimatedNumber(nebenkostenTotalNum)
+  const animatedGesamtkosten = useAnimatedNumber(gesamtkostenNum)
+
   return (
     <div className="neue-immobilie">
       <Notification message={notification.message} type={notification.type} onClose={clearNotification} />
@@ -262,16 +275,7 @@ function NeueImmobilie() {
               <label>{ti.summeNebenkosten}</label>
               <input
                 type="number"
-                value={
-                  kaufpreis
-                    ? (
-                        parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer) || 0) +
-                        parseFloat(calculateNebenkosten(nebenkosten.maklerprovision) || 0) +
-                        parseFloat(calculateNebenkosten(nebenkosten.notarkosten) || 0) +
-                        parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag) || 0)
-                      ).toFixed(2)
-                    : ''
-                }
+                value={kaufpreis ? animatedNebenkosten.toFixed(2) : ''}
                 readOnly
                 disabled
               />
@@ -292,16 +296,7 @@ function NeueImmobilie() {
               <label>{ti.nebenkostenLabel}</label>
               <input
                 type="number"
-                value={
-                  kaufpreis
-                    ? (
-                        parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer) || 0) +
-                        parseFloat(calculateNebenkosten(nebenkosten.maklerprovision) || 0) +
-                        parseFloat(calculateNebenkosten(nebenkosten.notarkosten) || 0) +
-                        parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag) || 0)
-                      ).toFixed(2)
-                    : ''
-                }
+                value={kaufpreis ? animatedNebenkosten.toFixed(2) : ''}
                 readOnly
                 disabled
               />
@@ -310,17 +305,7 @@ function NeueImmobilie() {
               <label>{ti.gesamtkostenLabel}</label>
               <input
                 type="number"
-                value={
-                  kaufpreis
-                    ? (
-                        parseFloat(kaufpreis) +
-                        parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer) || 0) +
-                        parseFloat(calculateNebenkosten(nebenkosten.maklerprovision) || 0) +
-                        parseFloat(calculateNebenkosten(nebenkosten.notarkosten) || 0) +
-                        parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag) || 0)
-                      ).toFixed(2)
-                    : ''
-                }
+                value={kaufpreis ? animatedGesamtkosten.toFixed(2) : ''}
                 readOnly
                 disabled
               />
