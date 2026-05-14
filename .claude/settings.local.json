@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "mcp__Control_Chrome__open_url",
+      "mcp__Control_Chrome__get_current_tab",
+      "mcp__Claude_in_Chrome__read_page",
+      "mcp__Claude_in_Chrome__computer",
+      "mcp__Control_Chrome__reload_tab",
+      "mcp__Control_Chrome__get_page_content",
+      "Bash(node server.js)",
+      "Bash(curl -s http://localhost:3001/health)",
+      "Bash(lsof -ti:3001)",
+      "Bash(xargs ps -p)",
+      "Bash(awk '{print $1, $4}')",
+      "Bash(curl -s http://localhost:3001/api/properties)"
+    ]
+  }
+}

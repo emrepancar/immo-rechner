@@ -1,0 +1,581 @@
+.neue-immobilie {
+  max-width: 1200px;
+}
+
+.immobilie-details-box {
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  background-color: var(--input-bg);
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.immobilie-details-box {
+  position: relative;
+}
+
+.save-button {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.save-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.save-button:active {
+  transform: translateY(0);
+}
+
+.immobilie-details-form {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-top: 50px;
+}
+
+.immobilie-details-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.immobilie-details-form .form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.immobilie-details-form .form-group input {
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: border-color 0.3s ease;
+}
+
+.immobilie-details-form .form-group input:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+.immobilie-details-form .form-group input::placeholder {
+  color: var(--text-muted);
+}
+
+.address-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.address-input-wrapper input {
+  width: 100%;
+}
+
+.map-button {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  transition: transform 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-button:hover {
+  transform: scale(1.2);
+}
+
+.save-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.save-dialog-content {
+  background-color: var(--bg);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+}
+
+.save-dialog-header {
+  padding: 24px;
+  border-bottom: 2px solid var(--border);
+}
+
+.save-dialog-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.save-dialog-body {
+  padding: 24px;
+}
+
+.save-dialog-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.save-dialog-form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.save-dialog-form-group input {
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  background-color: var(--input-bg);
+  color: var(--text);
+  transition: border-color 0.3s ease;
+}
+
+.save-dialog-form-group input:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+.save-dialog-form-group input::placeholder {
+  color: var(--text-muted);
+}
+
+.save-dialog-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 2px solid var(--border);
+  justify-content: flex-end;
+}
+
+.save-dialog-close-button,
+.save-dialog-save-button {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.save-dialog-close-button {
+  background-color: var(--border);
+  color: var(--text-h);
+}
+
+.save-dialog-close-button:hover {
+  background-color: #d0d0d0;
+}
+
+.save-dialog-save-button {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  color: white;
+}
+
+.save-dialog-save-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.save-dialog-save-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.property-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.property-box,
+.nebenkosten-box {
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  background-color: var(--input-bg);
+  position: relative;
+}
+
+.box-label {
+  position: absolute;
+  top: -12px;
+  left: 16px;
+  background-color: var(--bg);
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-h);
+}
+
+.property-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.nebenkosten-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group input {
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+.form-group input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-group input:disabled {
+  background-color: var(--border);
+  color: var(--text-h);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.nebenkosten-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.nebenkosten-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nebenkosten-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nebenkosten-group input {
+  padding: 10px 12px;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: border-color 0.3s ease;
+}
+
+.nebenkosten-group input:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.1);
+}
+
+.nebenkosten-result {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nebenkosten-result label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nebenkosten-result input {
+  padding: 10px 12px;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background-color: var(--border);
+  color: var(--text-h);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.nebenkosten-total {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 2px solid var(--border);
+}
+
+.nebenkosten-total label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nebenkosten-total input {
+  padding: 12px 16px;
+  border: 2px solid #06b6d4;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  background-color: rgba(6, 182, 212, 0.05);
+  color: #06b6d4;
+  cursor: not-allowed;
+}
+
+.total-costs-box {
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  background-color: var(--input-bg);
+  position: relative;
+  margin-top: 30px;
+}
+
+.total-costs-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.total-costs-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.total-cost-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.total-cost-item label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.total-cost-item input {
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  background-color: var(--border);
+  color: var(--text-h);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.total-cost-item.total-highlight input {
+  border-color: #06b6d4;
+  background-color: rgba(6, 182, 212, 0.05);
+  color: #06b6d4;
+  font-weight: 600;
+  opacity: 1;
+}
+
+.miete-box {
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  background-color: var(--input-bg);
+  position: relative;
+  margin-top: 30px;
+}
+
+.miete-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.miete-row {
+  display: grid;
+  gap: 24px;
+}
+
+.miete-row:first-child {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.miete-row:last-child {
+  grid-template-columns: 1fr;
+  max-width: calc(33.333% - 16px);
+}
+
+.miete-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.miete-form .form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.miete-form .form-group input {
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: border-color 0.3s ease;
+}
+
+.miete-form .form-group input:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+.miete-form .form-group input:disabled {
+  background-color: var(--border);
+  color: var(--text-h);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.miete-form .form-group input::placeholder {
+  color: var(--text-muted);
+}
+
+@media (max-width: 1024px) {
+  .immobilie-details-form {
+    grid-template-columns: 1fr;
+  }
+
+  .property-container {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .total-costs-row {
+    grid-template-columns: 1fr;
+  }
+
+  .miete-row:first-child {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .miete-row:last-child {
+    max-width: 100%;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .immobilie-details-box,
+  .property-box,
+  .nebenkosten-box,
+  .total-costs-box,
+  .miete-box {
+    padding: 20px;
+  }
+
+  .nebenkosten-row {
+    grid-template-columns: 1fr;
+  }
+
+  .nebenkosten-result {
+    display: none;
+  }
+
+  .miete-row:first-child {
+    grid-template-columns: 1fr;
+  }
+
+  .miete-row:last-child {
+    max-width: 100%;
+  }
+}

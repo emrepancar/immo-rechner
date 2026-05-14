@@ -1,0 +1,317 @@
+.finanzierung {
+  max-width: 1200px;
+  padding: 0;
+}
+
+.finanzierung-box {
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  background-color: var(--input-bg);
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.box-label {
+  position: absolute;
+  top: -12px;
+  left: 16px;
+  background-color: var(--bg);
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-h);
+}
+
+.box-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.box-label-row .box-label {
+  position: static;
+  background: transparent;
+  padding: 0;
+}
+
+.pdf-export-button {
+  padding: 8px 16px;
+  background: #4a7ba7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.pdf-export-button:hover {
+  background: #3a6a94;
+}
+
+.finanzierung-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group input {
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+.form-group input:disabled {
+  background-color: var(--border);
+  color: var(--text-h);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.form-group-select {
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.form-group-select:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+.tilgungsvariante-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tilgungsvariante-option {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+  cursor: pointer;
+  user-select: none;
+}
+
+.radio-label input[type="radio"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  accent-color: #06b6d4;
+}
+
+.tilgungsvariante-option .form-group {
+  margin-left: 26px;
+  padding: 12px;
+  background-color: rgba(6, 182, 212, 0.05);
+  border-left: 2px solid #06b6d4;
+  border-radius: 4px;
+}
+
+.tilgungsvariante-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.calculate-button {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.calculate-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(6, 182, 212, 0.4);
+}
+
+.calculate-button:active {
+  transform: translateY(0);
+}
+
+.tilgungsplan-table-container {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+.tilgungsplan-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tilgungsplan-table thead {
+  background-color: rgba(6, 182, 212, 0.1);
+  border-bottom: 2px solid #06b6d4;
+}
+
+.tilgungsplan-table th {
+  padding: 12px;
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 12px;
+}
+
+.tilgungsplan-table th:first-child {
+  text-align: left;
+}
+
+.tilgungsplan-table td {
+  padding: 12px;
+  text-align: right;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.tilgungsplan-table td:first-child {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.tilgungsplan-table tbody tr:hover {
+  background-color: rgba(6, 182, 212, 0.05);
+}
+
+.tilgungsplan-table tbody tr:last-child {
+  border-bottom: 2px solid #06b6d4;
+  background-color: rgba(6, 182, 212, 0.08);
+  font-weight: 600;
+}
+
+.monthly-value {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+@media (max-width: 1024px) {
+  .tilgungsplan-table {
+    font-size: 12px;
+  }
+
+  .tilgungsplan-table th,
+  .tilgungsplan-table td {
+    padding: 8px;
+  }
+}
+
+.finanzierung-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.finanzierung-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.finanzierung-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.finanzierung-group input {
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: border-color 0.3s ease;
+}
+
+.finanzierung-group input:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+.finanzierung-info-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+@media (max-width: 1024px) {
+  .finanzierung-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .finanzierung-box {
+    padding: 20px;
+  }
+
+  .finanzierung-row {
+    grid-template-columns: 1fr;
+  }
+}

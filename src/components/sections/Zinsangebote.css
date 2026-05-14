@@ -1,0 +1,341 @@
+.zinsangebote-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.zinsangebote-loading,
+.zinsangebote-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+
+.empty-hint {
+  color: #999;
+  font-size: 14px;
+}
+
+/* Property Selector */
+.property-selector-box {
+  background: var(--input-bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 30px;
+}
+
+.property-selector-box label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.property-select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.property-info {
+  padding: 10px;
+  background: white;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Form */
+.zinsangebot-form-box {
+  background: var(--input-bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 30px;
+}
+
+.zinsangebot-form-box h3 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4a7ba7;
+  box-shadow: 0 0 4px rgba(74, 123, 167, 0.2);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* Eigenkapital Toggle */
+.eigenkapital-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.toggle-btn {
+  padding: 8px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+  border-color: #4a7ba7;
+  color: #4a7ba7;
+}
+
+.toggle-btn.active {
+  background: #4a7ba7;
+  color: white;
+  border-color: #4a7ba7;
+}
+
+/* Form Actions */
+.form-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.save-btn,
+.cancel-btn,
+.edit-btn,
+.delete-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.save-btn {
+  background: #4a7ba7;
+  color: white;
+  grid-column: span 2;
+}
+
+.save-btn:hover {
+  background: #3a6a94;
+}
+
+.cancel-btn {
+  background: #ddd;
+  color: #333;
+}
+
+.cancel-btn:hover {
+  background: #ccc;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  color: white;
+}
+
+.edit-btn {
+  background: #4a7ba7;
+}
+
+.edit-btn:hover {
+  background: #3a6a94;
+}
+
+.delete-btn {
+  background: #e74c3c;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+}
+
+/* Offers List */
+.zinsangebote-list-box {
+  background: var(--input-bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 30px;
+}
+
+.zinsangebote-list-box h3 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.offer-card {
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+  transition: all 0.2s ease;
+}
+
+.offer-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: #4a7ba7;
+}
+
+.offer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.offer-header h4 {
+  color: #333;
+  margin: 0;
+  font-size: 15px;
+}
+
+.offer-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.offer-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 13px;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-row .label {
+  color: #666;
+  font-weight: 500;
+}
+
+.detail-row .value {
+  color: #333;
+  font-weight: 600;
+}
+
+/* Comparison Chart */
+.comparison-chart-box {
+  background: var(--input-bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 30px;
+}
+
+.comparison-chart-box h3 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+/* No Offers Message */
+.no-offers-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  background: #f8f8f8;
+  border: 1px dashed #ddd;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.no-offers-message p {
+  margin: 8px 0;
+}
+
+.no-offers-message .hint {
+  font-size: 13px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .zinsangebote-container {
+    padding: 10px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .save-btn {
+    grid-column: span 1;
+  }
+
+  .offers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .comparison-chart-box {
+    overflow-x: auto;
+  }
+
+  .zinsangebot-form-box,
+  .zinsangebote-list-box,
+  .comparison-chart-box {
+    padding: 15px;
+  }
+}
