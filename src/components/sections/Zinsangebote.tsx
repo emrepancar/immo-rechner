@@ -25,9 +25,12 @@ function Zinsangebote() {
   const [formData, setFormData] = useState({
     name: '',
     zinssatz: '',
-    eigenkapitalType: 'amount',
+    effektiverJahreszins: '',
     eigenkapital: '',
     zinsbindung: '',
+    darlehenssumme: '',
+    monatlicheRate: '',
+    gesamtbetrag: '',
   })
   const [chartData, setChartData] = useState<ChartEntry[]>([])
   const [saving, setSaving] = useState(false)
@@ -70,7 +73,7 @@ function Zinsangebote() {
   const generateChartData = () => {
     const data = offers.map(offer => {
       const kaufpreis = selectedProperty?.kaufpreis || 0
-      let eigenkapital = offer.eigenkapital_amount || (kaufpreis * (offer.eigenkapital_percentage || 0) / 100)
+      const eigenkapital = offer.eigenkapital_amount || 0
       const finanzierungssumme = kaufpreis - eigenkapital
       const zinssatz = offer.zinssatz / 100 / 12
       const laufzeit = (offer.zinsbindung || 1) * 12
@@ -101,20 +104,21 @@ function Zinsangebote() {
   }
 
   const resetForm = () => {
-    setFormData({ name: '', zinssatz: '', eigenkapitalType: 'amount', eigenkapital: '', zinsbindung: '' })
+    setFormData({ name: '', zinssatz: '', effektiverJahreszins: '', eigenkapital: '', zinsbindung: '', darlehenssumme: '', monatlicheRate: '', gesamtbetrag: '' })
     setEditingOffer(null)
   }
 
   const openEditMode = (offer: RateOffer) => {
     setEditingOffer(offer)
-    const eigenkapitalType = offer.eigenkapital_amount ? 'amount' : 'percentage'
-    const eigenkapital = eigenkapitalType === 'amount' ? offer.eigenkapital_amount : offer.eigenkapital_percentage
     setFormData({
       name: offer.name || '',
       zinssatz: String(offer.zinssatz),
-      eigenkapitalType,
-      eigenkapital: eigenkapital != null ? String(eigenkapital) : '',
+      effektiverJahreszins: offer.effektiver_jahreszins != null ? String(offer.effektiver_jahreszins) : '',
+      eigenkapital: offer.eigenkapital_amount != null ? String(offer.eigenkapital_amount) : '',
       zinsbindung: offer.zinsbindung ? String(offer.zinsbindung) : '',
+      darlehenssumme: offer.darlehenssumme != null ? String(offer.darlehenssumme) : '',
+      monatlicheRate: offer.monatliche_rate != null ? String(offer.monatliche_rate) : '',
+      gesamtbetrag: offer.gesamtbetrag != null ? String(offer.gesamtbetrag) : '',
     })
   }
 
@@ -129,11 +133,8 @@ function Zinsangebote() {
     if (!formData.eigenkapital || isNaN(eigenkapital) || eigenkapital < 0) {
       setNotification({ message: tz.alerts.invalidEigenkapital, type: 'error' }); return false
     }
-    if (formData.eigenkapitalType === 'amount' && eigenkapital > (selectedProperty?.kaufpreis || 0)) {
+    if (eigenkapital > (selectedProperty?.kaufpreis || 0)) {
       setNotification({ message: tz.alerts.eigenkapitalTooHigh, type: 'error' }); return false
-    }
-    if (formData.eigenkapitalType === 'percentage' && eigenkapital > 100) {
-      setNotification({ message: tz.alerts.percentTooHigh, type: 'error' }); return false
     }
     if (!formData.zinsbindung || isNaN(zinsbindung) || zinsbindung <= 0 || zinsbindung > 30) {
       setNotification({ message: tz.alerts.invalidZinsbindung, type: 'error' }); return false
@@ -145,14 +146,17 @@ function Zinsangebote() {
     if (!validateForm()) return
     setSaving(true)
 
-    const eigenkapitalValue = parseFloat(formData.eigenkapital)
     const offerData = {
       property_id: selectedProperty!.id,
       name: formData.name || `Angebot ${new Date().getTime()}`,
       zinssatz: parseFloat(formData.zinssatz),
-      eigenkapital_amount: formData.eigenkapitalType === 'amount' ? eigenkapitalValue : null,
-      eigenkapital_percentage: formData.eigenkapitalType === 'percentage' ? eigenkapitalValue : null,
+      effektiver_jahreszins: formData.effektiverJahreszins ? parseFloat(formData.effektiverJahreszins) : null,
+      eigenkapital_amount: parseFloat(formData.eigenkapital),
+      eigenkapital_percentage: null,
       zinsbindung: parseInt(formData.zinsbindung),
+      darlehenssumme: formData.darlehenssumme ? parseFloat(formData.darlehenssumme) : null,
+      monatliche_rate: formData.monatlicheRate ? parseFloat(formData.monatlicheRate) : null,
+      gesamtbetrag: formData.gesamtbetrag ? parseFloat(formData.gesamtbetrag) : null,
     }
 
     try {
@@ -258,6 +262,64 @@ function Zinsangebote() {
             />
           </div>
           <div className="form-group">
+            <label htmlFor="effektiver-jahreszins">{tz.effektiverJahreszins}</label>
+            <input
+              id="effektiver-jahreszins"
+              type="number"
+              placeholder="4.27"
+              value={formData.effektiverJahreszins}
+              onChange={(e) => handleFormChange('effektiverJahreszins', e.target.value)}
+              step="0.01"
+              min="0"
+              max="15"
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="darlehenssumme">{tz.darlehenssumme}</label>
+            <input
+              id="darlehenssumme"
+              type="number"
+              placeholder="250000"
+              value={formData.darlehenssumme}
+              onChange={(e) => handleFormChange('darlehenssumme', e.target.value)}
+              step="1000"
+              min="0"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="monatliche-rate">{tz.monatlicheRate}</label>
+            <input
+              id="monatliche-rate"
+              type="number"
+              placeholder="1200"
+              value={formData.monatlicheRate}
+              onChange={(e) => handleFormChange('monatlicheRate', e.target.value)}
+              step="10"
+              min="0"
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="gesamtbetrag">{tz.gesamtbetrag}</label>
+            <input
+              id="gesamtbetrag"
+              type="number"
+              placeholder="350000"
+              value={formData.gesamtbetrag}
+              onChange={(e) => handleFormChange('gesamtbetrag', e.target.value)}
+              step="1000"
+              min="0"
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
             <label htmlFor="zinsbindung">{tz.zinsbindung}</label>
             <input
               id="zinsbindung"
@@ -273,41 +335,16 @@ function Zinsangebote() {
         </div>
 
         <div className="form-group">
-          <label>{tz.eigenkapital}</label>
-          <div className="eigenkapital-toggle">
-            <button
-              className={`toggle-btn ${formData.eigenkapitalType === 'amount' ? 'active' : ''}`}
-              onClick={() => handleFormChange('eigenkapitalType', 'amount')}
-            >
-              {tz.betragToggle}
-            </button>
-            <button
-              className={`toggle-btn ${formData.eigenkapitalType === 'percentage' ? 'active' : ''}`}
-              onClick={() => handleFormChange('eigenkapitalType', 'percentage')}
-            >
-              {tz.percentToggle}
-            </button>
-          </div>
-          {formData.eigenkapitalType === 'amount' ? (
-            <input
-              type="number"
-              placeholder="50000"
-              value={formData.eigenkapital}
-              onChange={(e) => handleFormChange('eigenkapital', e.target.value)}
-              step="1000"
-              min="0"
-            />
-          ) : (
-            <input
-              type="number"
-              placeholder="20"
-              value={formData.eigenkapital}
-              onChange={(e) => handleFormChange('eigenkapital', e.target.value)}
-              step="1"
-              min="0"
-              max="100"
-            />
-          )}
+          <label htmlFor="eigenkapital">{tz.eigenkapital} (€)</label>
+          <input
+            id="eigenkapital"
+            type="number"
+            placeholder="50000"
+            value={formData.eigenkapital}
+            onChange={(e) => handleFormChange('eigenkapital', e.target.value)}
+            step="1000"
+            min="0"
+          />
         </div>
 
         <div className="form-actions">
@@ -326,9 +363,9 @@ function Zinsangebote() {
             <h3>{tz.offersTitle} ({offers.length})</h3>
             <div className="offers-grid">
               {offers.map(offer => {
-                const eigenkapitalDisplay = offer.eigenkapital_amount
+                const eigenkapitalDisplay = offer.eigenkapital_amount != null
                   ? `€ ${offer.eigenkapital_amount.toLocaleString('de-DE')}`
-                  : `${offer.eigenkapital_percentage}%`
+                  : '—'
 
                 return (
                   <div key={offer.id} className="offer-card">
@@ -344,6 +381,30 @@ function Zinsangebote() {
                         <span className="label">{tz.zinssatzLabel}:</span>
                         <span className="value">{offer.zinssatz}%</span>
                       </div>
+                      {offer.effektiver_jahreszins != null && (
+                        <div className="detail-row">
+                          <span className="label">{tz.effektiverJahreszinsLabel}:</span>
+                          <span className="value">{offer.effektiver_jahreszins}%</span>
+                        </div>
+                      )}
+                      {offer.darlehenssumme != null && (
+                        <div className="detail-row">
+                          <span className="label">{tz.darlehenssummeLabel}:</span>
+                          <span className="value">€ {offer.darlehenssumme.toLocaleString('de-DE')}</span>
+                        </div>
+                      )}
+                      {offer.monatliche_rate != null && (
+                        <div className="detail-row">
+                          <span className="label">{tz.monatlicheRateLabel}:</span>
+                          <span className="value">€ {offer.monatliche_rate.toLocaleString('de-DE')}</span>
+                        </div>
+                      )}
+                      {offer.gesamtbetrag != null && (
+                        <div className="detail-row">
+                          <span className="label">{tz.gesamtbetragLabel}:</span>
+                          <span className="value">€ {offer.gesamtbetrag.toLocaleString('de-DE')}</span>
+                        </div>
+                      )}
                       <div className="detail-row">
                         <span className="label">{tz.eigenkapitalLabel}:</span>
                         <span className="value">{eigenkapitalDisplay}</span>

@@ -80,10 +80,20 @@ function initializeDatabase() {
       kaltmiete REAL,
       warmmiete REAL,
       hausgeld REAL,
+      inserat_url TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `)
+
+  // Migration: add inserat_url to existing databases
+  db.run(`ALTER TABLE properties ADD COLUMN inserat_url TEXT`, () => {})
+
+  // Migrations: add new zinsangebote fields
+  db.run(`ALTER TABLE zinsangebote ADD COLUMN effektiver_jahreszins REAL`, () => {})
+  db.run(`ALTER TABLE zinsangebote ADD COLUMN darlehenssumme REAL`, () => {})
+  db.run(`ALTER TABLE zinsangebote ADD COLUMN monatliche_rate REAL`, () => {})
+  db.run(`ALTER TABLE zinsangebote ADD COLUMN gesamtbetrag REAL`, () => {})
 
   db.run(`
     CREATE TABLE IF NOT EXISTS zinsangebote (
@@ -91,9 +101,13 @@ function initializeDatabase() {
       property_id INTEGER NOT NULL,
       name TEXT,
       zinssatz REAL NOT NULL,
+      effektiver_jahreszins REAL,
       eigenkapital_amount REAL,
       eigenkapital_percentage REAL,
       zinsbindung INTEGER,
+      darlehenssumme REAL,
+      monatliche_rate REAL,
+      gesamtbetrag REAL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE
@@ -274,16 +288,24 @@ app.post('/api/zinsangebote', (req, res) => {
     property_id,
     name,
     zinssatz,
+    effektiver_jahreszins,
     eigenkapital_amount,
     eigenkapital_percentage,
     zinsbindung,
+    darlehenssumme,
+    monatliche_rate,
+    gesamtbetrag,
   } = req.body
 
   db.run(
     `INSERT INTO zinsangebote (
-      property_id, name, zinssatz, eigenkapital_amount, eigenkapital_percentage, zinsbindung
-    ) VALUES (?, ?, ?, ?, ?, ?)`,
-    [property_id, name, zinssatz, eigenkapital_amount, eigenkapital_percentage, zinsbindung],
+      property_id, name, zinssatz, effektiver_jahreszins,
+      eigenkapital_amount, eigenkapital_percentage, zinsbindung,
+      darlehenssumme, monatliche_rate, gesamtbetrag
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [property_id, name, zinssatz, effektiver_jahreszins ?? null,
+     eigenkapital_amount, eigenkapital_percentage, zinsbindung,
+     darlehenssumme ?? null, monatliche_rate ?? null, gesamtbetrag ?? null],
     function (err) {
       if (err) {
         res.status(500).json({ error: err.message })
@@ -307,17 +329,24 @@ app.put('/api/zinsangebote/:id', (req, res) => {
     property_id,
     name,
     zinssatz,
+    effektiver_jahreszins,
     eigenkapital_amount,
     eigenkapital_percentage,
     zinsbindung,
+    darlehenssumme,
+    monatliche_rate,
+    gesamtbetrag,
   } = req.body
 
   db.run(
     `UPDATE zinsangebote SET
-      property_id = ?, name = ?, zinssatz = ?, eigenkapital_amount = ?,
-      eigenkapital_percentage = ?, zinsbindung = ?, updated_at = CURRENT_TIMESTAMP
+      property_id = ?, name = ?, zinssatz = ?, effektiver_jahreszins = ?,
+      eigenkapital_amount = ?, eigenkapital_percentage = ?, zinsbindung = ?,
+      darlehenssumme = ?, monatliche_rate = ?, gesamtbetrag = ?, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?`,
-    [property_id, name, zinssatz, eigenkapital_amount, eigenkapital_percentage, zinsbindung, id],
+    [property_id, name, zinssatz, effektiver_jahreszins ?? null,
+     eigenkapital_amount, eigenkapital_percentage, zinsbindung,
+     darlehenssumme ?? null, monatliche_rate ?? null, gesamtbetrag ?? null, id],
     function (err) {
       if (err) {
         res.status(500).json({ error: err.message })

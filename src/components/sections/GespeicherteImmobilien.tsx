@@ -9,6 +9,22 @@ import type { Property } from '../../types'
 
 type GespeicherteT = ReturnType<typeof useLanguage>['t']['gespeicherte']
 
+function cardNameFontSize(name: string): string {
+  const len = name.length
+  if (len <= 20) return '22px'
+  if (len <= 32) return '17px'
+  if (len <= 48) return '14px'
+  return '12px'
+}
+
+function cardAddressFontSize(address: string): string {
+  const len = address.length
+  if (len <= 25) return '14px'
+  if (len <= 40) return '12px'
+  if (len <= 55) return '10px'
+  return '9px'
+}
+
 interface ComparisonTableProps {
   selected: Property[]
   tg: GespeicherteT
@@ -261,7 +277,7 @@ function GespeicherteImmobilien() {
               </div>
             )}
             <div className="property-card-header">
-              <h3>{property.name}</h3>
+              <h3 style={{ fontSize: cardNameFontSize(property.name) }}>{property.name}</h3>
               <div className="card-buttons">
                 <button className="kpi-button" onClick={() => openKpiModal(property)} title="KPIs">📊</button>
                 <button className="edit-button" onClick={() => openEditMode(property)} title={t.common.edit}>✎</button>
@@ -274,9 +290,24 @@ function GespeicherteImmobilien() {
             )}
 
             <div className="property-card-info">
-              <div className="info-row">
+              <div className="info-row address-row">
                 <span className="label">{tg.address}:</span>
-                <span className="value">{property.address || 'N/A'}</span>
+                <span className="address-value-group">
+                  {property.address && (
+                    <a
+                      href={`https://www.google.com/maps/search/${encodeURIComponent(property.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="card-map-link"
+                      title="In Google Maps öffnen"
+                    >📍</a>
+                  )}
+                  <span
+                    className="value"
+                    style={{ fontSize: cardAddressFontSize(property.address || '') }}
+                    title={property.address || undefined}
+                  >{property.address || 'N/A'}</span>
+                </span>
               </div>
               <div className="info-row">
                 <span className="label">{tg.rooms}:</span>
@@ -297,6 +328,17 @@ function GespeicherteImmobilien() {
             </div>
 
             <div className="property-card-footer">
+              {property.inserat_url && (
+                <a
+                  href={property.inserat_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inserat-link"
+                  title={tg.inseratUrl}
+                >
+                  🔗 {tg.inseratUrl}
+                </a>
+              )}
               <span className="saved-date">
                 {tg.savedDate}: {property.created_at ? new Date(property.created_at).toLocaleDateString('de-DE') : ''}
               </span>
