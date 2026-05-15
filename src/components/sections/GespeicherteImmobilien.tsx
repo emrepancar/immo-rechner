@@ -9,6 +9,14 @@ import type { Property } from '../../types'
 
 type GespeicherteT = ReturnType<typeof useLanguage>['t']['gespeicherte']
 
+function cardNameFontSize(name: string): string {
+  const len = name.length
+  if (len <= 20) return '18px'
+  if (len <= 32) return '15px'
+  if (len <= 48) return '13px'
+  return '11px'
+}
+
 interface ComparisonTableProps {
   selected: Property[]
   tg: GespeicherteT
@@ -261,7 +269,7 @@ function GespeicherteImmobilien() {
               </div>
             )}
             <div className="property-card-header">
-              <h3>{property.name}</h3>
+              <h3 style={{ fontSize: cardNameFontSize(property.name) }}>{property.name}</h3>
               <div className="card-buttons">
                 <button className="kpi-button" onClick={() => openKpiModal(property)} title="KPIs">📊</button>
                 <button className="edit-button" onClick={() => openEditMode(property)} title={t.common.edit}>✎</button>
