@@ -292,7 +292,22 @@ function GespeicherteImmobilien() {
             <div className="property-card-info">
               <div className="info-row address-row">
                 <span className="label">{tg.address}:</span>
-                <span className="value" style={{ fontSize: cardAddressFontSize(property.address || '') }}>{property.address || 'N/A'}</span>
+                <span className="address-value-group">
+                  {property.address && (
+                    <a
+                      href={`https://www.google.com/maps/search/${encodeURIComponent(property.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="card-map-link"
+                      title="In Google Maps öffnen"
+                    >📍</a>
+                  )}
+                  <span
+                    className="value"
+                    style={{ fontSize: cardAddressFontSize(property.address || '') }}
+                    title={property.address || undefined}
+                  >{property.address || 'N/A'}</span>
+                </span>
               </div>
               <div className="info-row">
                 <span className="label">{tg.rooms}:</span>

@@ -152,12 +152,31 @@
   align-items: center;
 }
 
-.info-row.address-row .value {
-  max-width: 70%;
-  text-align: right;
+.address-value-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 72%;
+  overflow: hidden;
+}
+
+.address-value-group .value {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: right;
+}
+
+.card-map-link {
+  flex-shrink: 0;
+  font-size: 13px;
+  text-decoration: none;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.card-map-link:hover {
+  opacity: 1;
 }
 
 .info-row.highlight {
