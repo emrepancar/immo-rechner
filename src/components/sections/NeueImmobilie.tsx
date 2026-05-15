@@ -13,7 +13,7 @@ function NeueImmobilie() {
   const { settings } = useSettings()
   const { addToast } = useToast()
 
-  const [immobilie, setImmobilie] = useState({ name: '', address: '', rooms: '' })
+  const [immobilie, setImmobilie] = useState({ name: '', address: '', rooms: '', inseratUrl: '' })
   const [kaufpreis, setKaufpreis] = useState('')
   const [quadratmeter, setQuadratmeter] = useState('')
   const [nebenkosten, setNebenkosten] = useState<Record<string, string>>({
@@ -94,6 +94,7 @@ function NeueImmobilie() {
       const propertyData = {
         name: propertyName,
         address: immobilie.address,
+        inserat_url: immobilie.inseratUrl || null,
         rooms: parseFloat(immobilie.rooms) || null,
         kaufpreis: parseFloat(kaufpreis) || 0,
         quadratmeter: parseFloat(quadratmeter) || null,
@@ -112,7 +113,7 @@ function NeueImmobilie() {
         await propertiesApi.create(propertyData)
         setPropertyName('')
         setShowSaveDialog(false)
-        setImmobilie({ name: '', address: '', rooms: '' })
+        setImmobilie({ name: '', address: '', rooms: '', inseratUrl: '' })
         setKaufpreis('')
         setQuadratmeter('')
         setNebenkosten({
@@ -177,6 +178,30 @@ function NeueImmobilie() {
                   title="Open in Google Maps"
                 >
                   📍
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="inserat-url">{ti.inseratUrl}</label>
+            <div className="address-input-wrapper">
+              <input
+                id="inserat-url"
+                type="url"
+                placeholder={ti.inseratUrlPlaceholder}
+                value={immobilie.inseratUrl}
+                onChange={(e) => handleImmobilieChange('inseratUrl', e.target.value)}
+              />
+              {immobilie.inseratUrl && (
+                <a
+                  href={immobilie.inseratUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="map-button"
+                  title="Open listing"
+                >
+                  🔗
                 </a>
               )}
             </div>

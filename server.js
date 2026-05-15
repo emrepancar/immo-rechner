@@ -80,10 +80,14 @@ function initializeDatabase() {
       kaltmiete REAL,
       warmmiete REAL,
       hausgeld REAL,
+      inserat_url TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `)
+
+  // Migration: add inserat_url to existing databases
+  db.run(`ALTER TABLE properties ADD COLUMN inserat_url TEXT`, () => {})
 
   db.run(`
     CREATE TABLE IF NOT EXISTS zinsangebote (

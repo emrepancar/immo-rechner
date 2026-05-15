@@ -297,6 +297,17 @@ function GespeicherteImmobilien() {
             </div>
 
             <div className="property-card-footer">
+              {property.inserat_url && (
+                <a
+                  href={property.inserat_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inserat-link"
+                  title={tg.inseratUrl}
+                >
+                  🔗 {tg.inseratUrl}
+                </a>
+              )}
               <span className="saved-date">
                 {tg.savedDate}: {property.created_at ? new Date(property.created_at).toLocaleDateString('de-DE') : ''}
               </span>

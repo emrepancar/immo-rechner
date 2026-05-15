@@ -14,6 +14,7 @@ export interface Property {
   kaltmiete: number | null
   warmmiete: number | null
   hausgeld: number | null
+  inserat_url: string | null
   created_at?: string
 }
 

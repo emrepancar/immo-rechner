@@ -169,6 +169,20 @@
 .property-card-footer {
   padding-top: 12px;
   border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inserat-link {
+  font-size: 12px;
+  color: #06b6d4;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.inserat-link:hover {
+  text-decoration: underline;
 }
 
 .saved-date {
