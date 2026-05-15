@@ -50,7 +50,7 @@ function Settings() {
       </div>
 
       <div className="settings-box">
-        <div className="box-label">Language</div>
+        <div className="box-label">{t.settings?.language}</div>
 
         <div className="settings-group">
           <select
@@ -69,17 +69,17 @@ function Settings() {
       </div>
 
       <div className="settings-box">
-        <div className="box-label">Theme</div>
+        <div className="box-label">{t.settings?.themeLabel}</div>
 
         <div className="settings-group">
           <button className="theme-toggle-button" onClick={() => setPendingTheme(!pendingTheme)}>
-            {pendingTheme ? '☀️ Light' : '🌙 Dark'}
+            {pendingTheme ? `☀️ ${t.settings?.themeLight}` : `🌙 ${t.settings?.themeDark}`}
           </button>
         </div>
       </div>
 
       <div className="settings-box">
-        <div className="box-label">Units</div>
+        <div className="box-label">{t.settings?.unitsLabel}</div>
 
         <div className="settings-group">
           <select
@@ -96,7 +96,7 @@ function Settings() {
       </div>
 
       <div className="settings-box">
-        <div className="box-label">Currency</div>
+        <div className="box-label">{t.settings?.currency}</div>
 
         <div className="settings-group">
           <select
@@ -117,15 +117,15 @@ function Settings() {
       <div className="settings-preview">
         <h3>{t.settings?.previewLabel || 'Preview'}</h3>
         <div className="preview-item">
-          <span>Fläche:</span>
+          <span>{t.settings?.previewFlaeche}:</span>
           <strong>150 {settings.spaceUnit}</strong>
         </div>
         <div className="preview-item">
-          <span>Kaufpreis:</span>
+          <span>{t.settings?.previewKaufpreis}:</span>
           <strong>{settings.currency} 500,000</strong>
         </div>
         <div className="preview-item">
-          <span>Preis pro Fläche:</span>
+          <span>{t.settings?.previewPreisPro}:</span>
           <strong>{settings.currency} 3,333/{settings.spaceUnit}</strong>
         </div>
       </div>
