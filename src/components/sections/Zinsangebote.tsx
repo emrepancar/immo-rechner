@@ -381,30 +381,22 @@ function Zinsangebote() {
                         <span className="label">{tz.zinssatzLabel}:</span>
                         <span className="value">{offer.zinssatz}%</span>
                       </div>
-                      {offer.effektiver_jahreszins != null && (
-                        <div className="detail-row">
-                          <span className="label">{tz.effektiverJahreszinsLabel}:</span>
-                          <span className="value">{offer.effektiver_jahreszins}%</span>
-                        </div>
-                      )}
-                      {offer.darlehenssumme != null && (
-                        <div className="detail-row">
-                          <span className="label">{tz.darlehenssummeLabel}:</span>
-                          <span className="value">€ {offer.darlehenssumme.toLocaleString('de-DE')}</span>
-                        </div>
-                      )}
-                      {offer.monatliche_rate != null && (
-                        <div className="detail-row">
-                          <span className="label">{tz.monatlicheRateLabel}:</span>
-                          <span className="value">€ {offer.monatliche_rate.toLocaleString('de-DE')}</span>
-                        </div>
-                      )}
-                      {offer.gesamtbetrag != null && (
-                        <div className="detail-row">
-                          <span className="label">{tz.gesamtbetragLabel}:</span>
-                          <span className="value">€ {offer.gesamtbetrag.toLocaleString('de-DE')}</span>
-                        </div>
-                      )}
+                      <div className="detail-row">
+                        <span className="label">{tz.effektiverJahreszinsLabel}:</span>
+                        <span className="value">{offer.effektiver_jahreszins != null ? `${offer.effektiver_jahreszins}%` : '—'}</span>
+                      </div>
+                      <div className="detail-row">
+                        <span className="label">{tz.darlehenssummeLabel}:</span>
+                        <span className="value">{offer.darlehenssumme != null ? `€ ${offer.darlehenssumme.toLocaleString('de-DE')}` : '—'}</span>
+                      </div>
+                      <div className="detail-row">
+                        <span className="label">{tz.monatlicheRateLabel}:</span>
+                        <span className="value">{offer.monatliche_rate != null ? `€ ${offer.monatliche_rate.toLocaleString('de-DE')}` : '—'}</span>
+                      </div>
+                      <div className="detail-row">
+                        <span className="label">{tz.gesamtbetragLabel}:</span>
+                        <span className="value">{offer.gesamtbetrag != null ? `€ ${offer.gesamtbetrag.toLocaleString('de-DE')}` : '—'}</span>
+                      </div>
                       <div className="detail-row">
                         <span className="label">{tz.eigenkapitalLabel}:</span>
                         <span className="value">{eigenkapitalDisplay}</span>
