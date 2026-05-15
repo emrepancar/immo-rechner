@@ -1,34 +1,10 @@
-import { useState } from 'react'
 import { useLanguage } from '../../context/LanguageContext'
 import { useSettings } from '../../context/SettingsContext'
-import { useTheme } from '../../context/ThemeContext'
 import './Settings.css'
 
 function Settings() {
-  const { t, language, setLanguage } = useLanguage()
+  const { t } = useLanguage()
   const { settings, updateSettings, saveSettings, discardSettings, hasUnsavedChanges } = useSettings()
-  const { toggleTheme, isDark } = useTheme()
-
-  const [pendingLanguage, setPendingLanguage] = useState(language)
-  const [pendingTheme, setPendingTheme] = useState(isDark)
-
-  const anyUnsavedChanges = hasUnsavedChanges || pendingLanguage !== language || pendingTheme !== isDark
-
-  const handleSaveSettings = () => {
-    if (pendingLanguage !== language) {
-      setLanguage(pendingLanguage)
-    }
-    if (pendingTheme !== isDark) {
-      toggleTheme()
-    }
-    saveSettings()
-  }
-
-  const handleDiscardSettings = () => {
-    setPendingLanguage(language)
-    setPendingTheme(isDark)
-    discardSettings()
-  }
 
   const spaceUnits = ['m²', 'ft²']
   const currencies = [
@@ -46,23 +22,20 @@ function Settings() {
     <div className="settings-container">
       <div className="settings-header">
         <h1>{t.settings?.title || 'Settings'}</h1>
-        {anyUnsavedChanges && <span className="unsaved-indicator">●</span>}
+        {hasUnsavedChanges && <span className="unsaved-indicator">●</span>}
       </div>
 
       <div className="settings-box">
         <div className="box-label">{t.settings?.language}</div>
-
         <div className="settings-group">
           <select
             id="language"
-            value={pendingLanguage}
-            onChange={(e) => setPendingLanguage(e.target.value)}
+            value={settings.language}
+            onChange={(e) => updateSettings('language', e.target.value)}
             className="settings-select"
           >
             {languages.map(lang => (
-              <option key={lang.code} value={lang.code}>
-                {lang.label}
-              </option>
+              <option key={lang.code} value={lang.code}>{lang.label}</option>
             ))}
           </select>
         </div>
@@ -70,17 +43,20 @@ function Settings() {
 
       <div className="settings-box">
         <div className="box-label">{t.settings?.themeLabel}</div>
-
         <div className="settings-group">
-          <button className="theme-toggle-button" onClick={() => setPendingTheme(!pendingTheme)}>
-            {pendingTheme ? `☀️ ${t.settings?.themeLight}` : `🌙 ${t.settings?.themeDark}`}
+          <button
+            className="theme-toggle-button"
+            onClick={() => updateSettings('isDark', !settings.isDark)}
+          >
+            {settings.isDark
+              ? `☀️ ${t.settings?.themeLight}`
+              : `🌙 ${t.settings?.themeDark}`}
           </button>
         </div>
       </div>
 
       <div className="settings-box">
         <div className="box-label">{t.settings?.unitsLabel}</div>
-
         <div className="settings-group">
           <select
             id="space-unit"
@@ -97,7 +73,6 @@ function Settings() {
 
       <div className="settings-box">
         <div className="box-label">{t.settings?.currency}</div>
-
         <div className="settings-group">
           <select
             id="currency"
@@ -130,18 +105,18 @@ function Settings() {
         </div>
       </div>
 
-      <div className={`settings-action-bar ${anyUnsavedChanges ? 'active' : 'inactive'}`}>
+      <div className={`settings-action-bar ${hasUnsavedChanges ? 'active' : 'inactive'}`}>
         <button
           className="settings-discard-btn"
-          onClick={handleDiscardSettings}
-          disabled={!anyUnsavedChanges}
+          onClick={discardSettings}
+          disabled={!hasUnsavedChanges}
         >
           {t.common?.cancel || 'Discard'}
         </button>
         <button
           className="settings-save-btn"
-          onClick={handleSaveSettings}
-          disabled={!anyUnsavedChanges}
+          onClick={saveSettings}
+          disabled={!hasUnsavedChanges}
         >
           ✓ {t.common?.save || 'Save'}
         </button>

@@ -1,18 +1,26 @@
-import { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import './Zinsangebote.css'
 import { useLanguage } from '../../context/LanguageContext'
-import API_BASE from '../../config/api'
+import { propertiesApi, ratesApi } from '../../api'
 import Notification from '../Notification'
+import type { Property, RateOffer } from '../../types'
+
+interface ChartEntry {
+  name: string
+  monatlicheRate: number
+  gesamtZinsen: number
+  finanzierungssumme: number
+}
 
 function Zinsangebote() {
   const { t } = useLanguage()
   const tz = t.zinsangebote
 
-  const [properties, setProperties] = useState([])
-  const [selectedProperty, setSelectedProperty] = useState(null)
-  const [offers, setOffers] = useState([])
-  const [editingOffer, setEditingOffer] = useState(null)
+  const [properties, setProperties] = useState<Property[]>([])
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
+  const [offers, setOffers] = useState<RateOffer[]>([])
+  const [editingOffer, setEditingOffer] = useState<RateOffer | null>(null)
   const [loading, setLoading] = useState(true)
   const [formData, setFormData] = useState({
     name: '',
@@ -21,10 +29,10 @@ function Zinsangebote() {
     eigenkapital: '',
     zinsbindung: '',
   })
-  const [chartData, setChartData] = useState([])
+  const [chartData, setChartData] = useState<ChartEntry[]>([])
   const [saving, setSaving] = useState(false)
-  const [deletingId, setDeletingId] = useState(null)
-  const [notification, setNotification] = useState({ message: '', type: '' })
+  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' | '' }>({ message: '', type: '' })
   const clearNotification = useCallback(() => setNotification({ message: '', type: '' }), [])
 
   useEffect(() => { loadProperties() }, [])
@@ -40,37 +48,31 @@ function Zinsangebote() {
 
   const loadProperties = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/properties`)
-      if (response.ok) {
-        const data = await response.json()
-        setProperties(data)
-        if (data.length > 0) setSelectedProperty(data[0])
-      }
-    } catch (error) {
-      console.error('Error loading properties:', error)
+      const data = await propertiesApi.getAll()
+      setProperties(data)
+      if (data.length > 0) setSelectedProperty(data[0])
+    } catch (err) {
+      console.error('Error loading properties:', err)
     } finally {
       setLoading(false)
     }
   }
 
-  const loadOffers = async (propertyId) => {
+  const loadOffers = async (propertyId: number) => {
     try {
-      const response = await fetch(`${API_BASE}/api/zinsangebote?property_id=${propertyId}`)
-      if (response.ok) {
-        const data = await response.json()
-        setOffers(data)
-      }
-    } catch (error) {
-      console.error('Error loading offers:', error)
+      const data = await ratesApi.getByProperty(propertyId)
+      setOffers(data)
+    } catch (err) {
+      console.error('Error loading offers:', err)
     }
   }
 
   const generateChartData = () => {
     const data = offers.map(offer => {
-      const kaufpreis = selectedProperty.kaufpreis || 0
+      const kaufpreis = selectedProperty?.kaufpreis || 0
       let eigenkapital = offer.eigenkapital_amount || (kaufpreis * (offer.eigenkapital_percentage || 0) / 100)
       const finanzierungssumme = kaufpreis - eigenkapital
-      const zinssatz = parseFloat(offer.zinssatz) / 100 / 12
+      const zinssatz = offer.zinssatz / 100 / 12
       const laufzeit = (offer.zinsbindung || 1) * 12
       const monthlyPayment = finanzierungssumme > 0
         ? finanzierungssumme * (zinssatz * Math.pow(1 + zinssatz, laufzeit)) / (Math.pow(1 + zinssatz, laufzeit) - 1)
@@ -87,14 +89,14 @@ function Zinsangebote() {
     setChartData(data)
   }
 
-  const handlePropertyChange = (e) => {
+  const handlePropertyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const propertyId = parseInt(e.target.value)
-    const property = properties.find(p => p.id === propertyId)
+    const property = properties.find(p => p.id === propertyId) ?? null
     setSelectedProperty(property)
     resetForm()
   }
 
-  const handleFormChange = (key, value) => {
+  const handleFormChange = (key: string, value: string) => {
     setFormData(prev => ({ ...prev, [key]: value }))
   }
 
@@ -103,16 +105,16 @@ function Zinsangebote() {
     setEditingOffer(null)
   }
 
-  const openEditMode = (offer) => {
+  const openEditMode = (offer: RateOffer) => {
     setEditingOffer(offer)
     const eigenkapitalType = offer.eigenkapital_amount ? 'amount' : 'percentage'
     const eigenkapital = eigenkapitalType === 'amount' ? offer.eigenkapital_amount : offer.eigenkapital_percentage
     setFormData({
       name: offer.name || '',
-      zinssatz: offer.zinssatz,
+      zinssatz: String(offer.zinssatz),
       eigenkapitalType,
-      eigenkapital: eigenkapital || '',
-      zinsbindung: offer.zinsbindung || '',
+      eigenkapital: eigenkapital != null ? String(eigenkapital) : '',
+      zinsbindung: offer.zinsbindung ? String(offer.zinsbindung) : '',
     })
   }
 
@@ -127,7 +129,7 @@ function Zinsangebote() {
     if (!formData.eigenkapital || isNaN(eigenkapital) || eigenkapital < 0) {
       setNotification({ message: tz.alerts.invalidEigenkapital, type: 'error' }); return false
     }
-    if (formData.eigenkapitalType === 'amount' && eigenkapital > (selectedProperty.kaufpreis || 0)) {
+    if (formData.eigenkapitalType === 'amount' && eigenkapital > (selectedProperty?.kaufpreis || 0)) {
       setNotification({ message: tz.alerts.eigenkapitalTooHigh, type: 'error' }); return false
     }
     if (formData.eigenkapitalType === 'percentage' && eigenkapital > 100) {
@@ -145,7 +147,7 @@ function Zinsangebote() {
 
     const eigenkapitalValue = parseFloat(formData.eigenkapital)
     const offerData = {
-      property_id: selectedProperty.id,
+      property_id: selectedProperty!.id,
       name: formData.name || `Angebot ${new Date().getTime()}`,
       zinssatz: parseFloat(formData.zinssatz),
       eigenkapital_amount: formData.eigenkapitalType === 'amount' ? eigenkapitalValue : null,
@@ -154,44 +156,31 @@ function Zinsangebote() {
     }
 
     try {
-      const url = editingOffer
-        ? `${API_BASE}/api/zinsangebote/${editingOffer.id}`
-        : `${API_BASE}/api/zinsangebote`
-      const method = editingOffer ? 'PUT' : 'POST'
-
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(offerData),
-      })
-
-      if (response.ok) {
-        await loadOffers(selectedProperty.id)
-        resetForm()
-        setNotification({ message: editingOffer ? tz.alerts.updateSuccess : tz.alerts.saveSuccess, type: 'success' })
+      if (editingOffer) {
+        await ratesApi.update(editingOffer.id, offerData)
+        setNotification({ message: tz.alerts.updateSuccess, type: 'success' })
       } else {
-        const data = await response.json().catch(() => ({}))
-        setNotification({ message: data.errors?.[0] || tz.alerts.saveError, type: 'error' })
+        await ratesApi.create(offerData)
+        setNotification({ message: tz.alerts.saveSuccess, type: 'success' })
       }
-    } catch {
-      setNotification({ message: tz.alerts.serverError, type: 'error' })
+      await loadOffers(selectedProperty!.id)
+      resetForm()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : tz.alerts.saveError
+      setNotification({ message, type: 'error' })
     } finally {
       setSaving(false)
     }
   }
 
-  const deleteOffer = async (offerId) => {
+  const deleteOffer = async (offerId: number) => {
     setDeletingId(offerId)
     try {
-      const response = await fetch(`${API_BASE}/api/zinsangebote/${offerId}`, { method: 'DELETE' })
-      if (response.ok) {
-        await loadOffers(selectedProperty.id)
-        setNotification({ message: tz.alerts.deleteSuccess, type: 'success' })
-      } else {
-        setNotification({ message: tz.alerts.deleteError, type: 'error' })
-      }
+      await ratesApi.remove(offerId)
+      await loadOffers(selectedProperty!.id)
+      setNotification({ message: tz.alerts.deleteSuccess, type: 'success' })
     } catch {
-      setNotification({ message: tz.alerts.serverError, type: 'error' })
+      setNotification({ message: tz.alerts.deleteError, type: 'error' })
     } finally {
       setDeletingId(null)
     }
@@ -379,7 +368,7 @@ function Zinsangebote() {
                   <XAxis dataKey="name" />
                   <YAxis yAxisId="left" label={{ value: tz.chartAxisLeft, angle: -90, position: 'insideLeft' }} />
                   <YAxis yAxisId="right" orientation="right" label={{ value: tz.chartAxisRight, angle: 90, position: 'insideRight' }} />
-                  <Tooltip formatter={(value) => value.toLocaleString('de-DE')} />
+                  <Tooltip formatter={(value) => (value as number).toLocaleString('de-DE')} />
                   <Legend />
                   <Bar yAxisId="left" dataKey="monatlicheRate" fill="#4a7ba7" name={tz.chartMonatlich} />
                   <Bar yAxisId="right" dataKey="gesamtZinsen" fill="#e67e22" name={tz.chartZinsen} />

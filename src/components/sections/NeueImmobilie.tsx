@@ -1,11 +1,10 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import './NeueImmobilie.css'
 import { FALLBACK_DEFAULTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
 import { useSettings } from '../../context/SettingsContext'
 import { useToast } from '../../context/ToastContext'
-import API_BASE from '../../config/api'
-import Notification from '../Notification'
+import { propertiesApi, ApiError } from '../../api'
 import { useAnimatedNumber } from '../../hooks/useAnimatedNumber'
 
 function NeueImmobilie() {
@@ -17,7 +16,7 @@ function NeueImmobilie() {
   const [immobilie, setImmobilie] = useState({ name: '', address: '', rooms: '' })
   const [kaufpreis, setKaufpreis] = useState('')
   const [quadratmeter, setQuadratmeter] = useState('')
-  const [nebenkosten, setNebenkosten] = useState({
+  const [nebenkosten, setNebenkosten] = useState<Record<string, string>>({
     grunderwerbsteuer: String(FALLBACK_DEFAULTS.grunderwerbsteuer),
     maklerprovision: String(FALLBACK_DEFAULTS.maklerprovision),
     notarkosten: String(FALLBACK_DEFAULTS.notarkosten),
@@ -28,37 +27,35 @@ function NeueImmobilie() {
   const [propertyName, setPropertyName] = useState('')
   const [nameError, setNameError] = useState('')
   const [saving, setSaving] = useState(false)
-  const [notification, setNotification] = useState({ message: '', type: '' })
-  const clearNotification = useCallback(() => setNotification({ message: '', type: '' }), [])
 
   const calculatePreisPerQm = () => {
-    if (kaufpreis && quadratmeter && quadratmeter > 0) {
+    if (kaufpreis && quadratmeter && parseFloat(quadratmeter) > 0) {
       return (parseFloat(kaufpreis) / parseFloat(quadratmeter)).toFixed(2)
     }
     return ''
   }
 
-  const calculateNebenkosten = (percentage) => {
+  const calculateNebenkosten = (percentage: string): string => {
     if (kaufpreis && percentage) {
       return (parseFloat(kaufpreis) * parseFloat(percentage) / 100).toFixed(2)
     }
-    return ''
+    return '0'
   }
 
-  const handleNebenaustenChange = (key, value) => {
+  const handleNebenaustenChange = (key: string, value: string) => {
     setNebenkosten(prev => ({ ...prev, [key]: value }))
   }
 
-  const handleMieteChange = (key, value) => {
+  const handleMieteChange = (key: string, value: string) => {
     setMiete(prev => ({ ...prev, [key]: value }))
   }
 
-  const handleImmobilieChange = (key, value) => {
+  const handleImmobilieChange = (key: string, value: string) => {
     setImmobilie(prev => ({ ...prev, [key]: value }))
   }
 
   useEffect(() => {
-    const handleEscKey = (event) => {
+    const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setShowSaveDialog(false)
     }
     if (showSaveDialog) {
@@ -78,19 +75,19 @@ function NeueImmobilie() {
       const gesamtkosten = kaufpreis
         ? (
             parseFloat(kaufpreis) +
-            parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer) || 0) +
-            parseFloat(calculateNebenkosten(nebenkosten.maklerprovision) || 0) +
-            parseFloat(calculateNebenkosten(nebenkosten.notarkosten) || 0) +
-            parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag) || 0)
+            parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer)) +
+            parseFloat(calculateNebenkosten(nebenkosten.maklerprovision)) +
+            parseFloat(calculateNebenkosten(nebenkosten.notarkosten)) +
+            parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag))
           ).toFixed(2)
         : '0'
 
       const nebenkostenTotal = kaufpreis
         ? (
-            parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer) || 0) +
-            parseFloat(calculateNebenkosten(nebenkosten.maklerprovision) || 0) +
-            parseFloat(calculateNebenkosten(nebenkosten.notarkosten) || 0) +
-            parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag) || 0)
+            parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer)) +
+            parseFloat(calculateNebenkosten(nebenkosten.maklerprovision)) +
+            parseFloat(calculateNebenkosten(nebenkosten.notarkosten)) +
+            parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag))
           ).toFixed(2)
         : '0'
 
@@ -112,32 +109,23 @@ function NeueImmobilie() {
       }
 
       try {
-        const response = await fetch(`${API_BASE}/api/properties`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(propertyData),
+        await propertiesApi.create(propertyData)
+        setPropertyName('')
+        setShowSaveDialog(false)
+        setImmobilie({ name: '', address: '', rooms: '' })
+        setKaufpreis('')
+        setQuadratmeter('')
+        setNebenkosten({
+          grunderwerbsteuer: String(FALLBACK_DEFAULTS.grunderwerbsteuer),
+          maklerprovision: String(FALLBACK_DEFAULTS.maklerprovision),
+          notarkosten: String(FALLBACK_DEFAULTS.notarkosten),
+          grundbucheintrag: String(FALLBACK_DEFAULTS.grundbucheintrag),
         })
-
-        if (response.ok) {
-          setPropertyName('')
-          setShowSaveDialog(false)
-          setImmobilie({ name: '', address: '', rooms: '' })
-          setKaufpreis('')
-          setQuadratmeter('')
-          setNebenkosten({
-            grunderwerbsteuer: String(FALLBACK_DEFAULTS.grunderwerbsteuer),
-            maklerprovision: String(FALLBACK_DEFAULTS.maklerprovision),
-            notarkosten: String(FALLBACK_DEFAULTS.notarkosten),
-            grundbucheintrag: String(FALLBACK_DEFAULTS.grundbucheintrag),
-          })
-          setMiete({ kaltmiete: '', warmmiete: '', hausgeld: '' })
-          addToast(ti.alerts.saved, 'success')
-        } else {
-          const data = await response.json().catch(() => ({}))
-          addToast(data.errors?.[0] || ti.alerts.saveError, 'error')
-        }
-      } catch {
-        addToast(ti.alerts.serverError, 'error')
+        setMiete({ kaltmiete: '', warmmiete: '', hausgeld: '' })
+        addToast(ti.alerts.saved, 'success')
+      } catch (err) {
+        const message = err instanceof ApiError ? err.message : ti.alerts.serverError
+        addToast(message || ti.alerts.saveError, 'error')
       } finally {
         setSaving(false)
       }
@@ -147,10 +135,10 @@ function NeueImmobilie() {
   const preisPro = calculatePreisPerQm()
 
   const nebenkostenTotalNum = kaufpreis
-    ? parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer) || 0) +
-      parseFloat(calculateNebenkosten(nebenkosten.maklerprovision) || 0) +
-      parseFloat(calculateNebenkosten(nebenkosten.notarkosten) || 0) +
-      parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag) || 0)
+    ? parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer)) +
+      parseFloat(calculateNebenkosten(nebenkosten.maklerprovision)) +
+      parseFloat(calculateNebenkosten(nebenkosten.notarkosten)) +
+      parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag))
     : 0
 
   const gesamtkostenNum = kaufpreis ? parseFloat(kaufpreis) + nebenkostenTotalNum : 0

@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
-import { useTheme } from '../context/ThemeContext'
 import { useProfile } from '../context/ProfileContext'
 import ProfileDialog from './ProfileDialog'
 import './Sidebar.css'
 
-function Sidebar({ activeSection, setActiveSection }) {
-  const { language, setLanguage, t } = useLanguage()
-  const { toggleTheme, isDark } = useTheme()
+interface SidebarProps {
+  activeSection: string
+  setActiveSection: (section: string) => void
+}
+
+function Sidebar({ activeSection, setActiveSection }: SidebarProps) {
+  const { t } = useLanguage()
   const { username } = useProfile()
   const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false)
 

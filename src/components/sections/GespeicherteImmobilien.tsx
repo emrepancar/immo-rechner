@@ -2,11 +2,20 @@ import { useState, useEffect, useCallback } from 'react'
 import './GespeicherteImmobilien.css'
 import { FALLBACK_DEFAULTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
-import API_BASE from '../../config/api'
+import { propertiesApi } from '../../api'
 import Notification from '../Notification'
 import SkeletonCard from '../SkeletonCard'
+import type { Property } from '../../types'
 
-function ComparisonTable({ selected, tg, calculateBruttomietrendite }) {
+type GespeicherteT = ReturnType<typeof useLanguage>['t']['gespeicherte']
+
+interface ComparisonTableProps {
+  selected: Property[]
+  tg: GespeicherteT
+  calculateBruttomietrendite: (kaltmiete: number | null, kaufpreis: number) => string | null
+}
+
+function ComparisonTable({ selected, tg, calculateBruttomietrendite }: ComparisonTableProps) {
   return (
     <div className="comparison-table-wrap">
       <h3>{tg.compareTitle}</h3>
@@ -21,15 +30,15 @@ function ComparisonTable({ selected, tg, calculateBruttomietrendite }) {
           <tbody>
             <tr>
               <td>{tg.kaufpreis}</td>
-              {selected.map(p => <td key={p.id}>€ {parseFloat(p.kaufpreis||0).toLocaleString('de-DE')}</td>)}
+              {selected.map(p => <td key={p.id}>€ {(p.kaufpreis||0).toLocaleString('de-DE')}</td>)}
             </tr>
             <tr>
               <td>{tg.gesamtkosten}</td>
-              {selected.map(p => <td key={p.id}>€ {parseFloat(p.gesamtkosten||0).toLocaleString('de-DE')}</td>)}
+              {selected.map(p => <td key={p.id}>€ {(p.gesamtkosten||0).toLocaleString('de-DE')}</td>)}
             </tr>
             <tr>
               <td>{tg.kaltmiete}</td>
-              {selected.map(p => <td key={p.id}>{p.kaltmiete ? `€ ${parseFloat(p.kaltmiete).toLocaleString('de-DE')}` : '—'}</td>)}
+              {selected.map(p => <td key={p.id}>{p.kaltmiete ? `€ ${p.kaltmiete.toLocaleString('de-DE')}` : '—'}</td>)}
             </tr>
             <tr>
               <td>{tg.bruttomietrendite}</td>
@@ -49,30 +58,25 @@ function GespeicherteImmobilien() {
   const { t } = useLanguage()
   const tg = t.gespeicherte
 
-  const [properties, setProperties] = useState([])
+  const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
-  const [editingProperty, setEditingProperty] = useState(null)
-  const [editFormData, setEditFormData] = useState({})
-  const [kpiProperty, setKpiProperty] = useState(null)
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null)
+  const [editFormData, setEditFormData] = useState<Record<string, string | number | null>>({})
+  const [kpiProperty, setKpiProperty] = useState<Property | null>(null)
   const [kpiEigenkapital, setKpiEigenkapital] = useState('')
   const [saving, setSaving] = useState(false)
-  const [deletingId, setDeletingId] = useState(null)
-  const [notification, setNotification] = useState({ message: '', type: '' })
+  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' | '' }>({ message: '', type: '' })
   const clearNotification = useCallback(() => setNotification({ message: '', type: '' }), [])
   const [compareMode, setCompareMode] = useState(false)
-  const [compareIds, setCompareIds] = useState([])
+  const [compareIds, setCompareIds] = useState<number[]>([])
 
   useEffect(() => { loadProperties() }, [])
 
   const loadProperties = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/properties`)
-      if (response.ok) {
-        const data = await response.json()
-        setProperties(data)
-      } else {
-        setNotification({ message: tg.alerts.serverError, type: 'error' })
-      }
+      const data = await propertiesApi.getAll()
+      setProperties(data)
     } catch {
       setNotification({ message: tg.alerts.serverError, type: 'error' })
     } finally {
@@ -80,37 +84,33 @@ function GespeicherteImmobilien() {
     }
   }
 
-  const deleteProperty = async (id) => {
+  const deleteProperty = async (id: number) => {
     setDeletingId(id)
     try {
-      const response = await fetch(`${API_BASE}/api/properties/${id}`, { method: 'DELETE' })
-      if (response.ok) {
-        setProperties(properties.filter(prop => prop.id !== id))
-      } else {
-        setNotification({ message: tg.alerts.deleteError, type: 'error' })
-      }
+      await propertiesApi.remove(id)
+      setProperties(properties.filter(prop => prop.id !== id))
     } catch {
-      setNotification({ message: tg.alerts.serverError, type: 'error' })
+      setNotification({ message: tg.alerts.deleteError, type: 'error' })
     } finally {
       setDeletingId(null)
     }
   }
 
-  const openEditMode = (property) => {
+  const openEditMode = (property: Property) => {
     setEditingProperty(property)
     setEditFormData({
-      name: property.name || '',
-      address: property.address || '',
-      rooms: property.rooms || '',
-      kaufpreis: property.kaufpreis || '',
-      quadratmeter: property.quadratmeter || '',
-      grunderwerbsteuer: property.grunderwerbsteuer || FALLBACK_DEFAULTS.grunderwerbsteuer,
-      maklerprovision: property.maklerprovision || FALLBACK_DEFAULTS.maklerprovision,
-      notarkosten: property.notarkosten || FALLBACK_DEFAULTS.notarkosten,
-      grundbucheintrag: property.grundbucheintrag || FALLBACK_DEFAULTS.grundbucheintrag,
-      kaltmiete: property.kaltmiete || '',
-      warmmiete: property.warmmiete || '',
-      hausgeld: property.hausgeld || '',
+      name: property.name ?? '',
+      address: property.address ?? '',
+      rooms: property.rooms ?? '',
+      kaufpreis: property.kaufpreis ?? 0,
+      quadratmeter: property.quadratmeter ?? '',
+      grunderwerbsteuer: property.grunderwerbsteuer ?? FALLBACK_DEFAULTS.grunderwerbsteuer,
+      maklerprovision: property.maklerprovision ?? FALLBACK_DEFAULTS.maklerprovision,
+      notarkosten: property.notarkosten ?? FALLBACK_DEFAULTS.notarkosten,
+      grundbucheintrag: property.grundbucheintrag ?? FALLBACK_DEFAULTS.grundbucheintrag,
+      kaltmiete: property.kaltmiete ?? '',
+      warmmiete: property.warmmiete ?? '',
+      hausgeld: property.hausgeld ?? '',
     })
   }
 
@@ -119,21 +119,18 @@ function GespeicherteImmobilien() {
     setEditFormData({})
   }
 
-  const calculateBruttomietrendite = (kaltmiete, kaufpreis) => {
+  const calculateBruttomietrendite = (kaltmiete: number | null, kaufpreis: number): string | null => {
     if (!kaltmiete || !kaufpreis || kaufpreis === 0) return null
-    const jahreskaltmiete = kaltmiete * 12
-    return ((jahreskaltmiete / kaufpreis) * 100).toFixed(2)
+    return ((kaltmiete * 12 / kaufpreis) * 100).toFixed(2)
   }
 
-  const calculateEigenkapitalrendite = (kaltmiete, kaufpreis, eigenkapital, monthly_costs = 0) => {
+  const calculateEigenkapitalrendite = (kaltmiete: number | null, eigenkapital: number, monthly_costs = 0): string | null => {
     if (!eigenkapital || eigenkapital === 0) return null
-    const jahreskaltmiete = kaltmiete * 12
-    const jahrescosten = monthly_costs * 12
-    const cashflow = jahreskaltmiete - jahrescosten
+    const cashflow = (kaltmiete ?? 0) * 12 - monthly_costs * 12
     return ((cashflow / eigenkapital) * 100).toFixed(2)
   }
 
-  const openKpiModal = (property) => {
+  const openKpiModal = (property: Property) => {
     setKpiProperty(property)
     setKpiEigenkapital('')
   }
@@ -143,57 +140,51 @@ function GespeicherteImmobilien() {
     setKpiEigenkapital('')
   }
 
-  const handleEditFormChange = (key, value) => {
+  const handleEditFormChange = (key: string, value: string | number | null) => {
     setEditFormData(prev => ({ ...prev, [key]: value }))
   }
 
   const saveEditedProperty = async () => {
     setSaving(true)
     try {
+      const toNum = (v: string | number | null | undefined) => parseFloat(String(v ?? 0)) || 0
+      const kp = toNum(editFormData.kaufpreis)
       const nebenkosten_total =
-        parseFloat(editFormData.kaufpreis || 0) *
-        (parseFloat(editFormData.grunderwerbsteuer || 0) +
-         parseFloat(editFormData.maklerprovision || 0) +
-         parseFloat(editFormData.notarkosten || 0) +
-         parseFloat(editFormData.grundbucheintrag || 0)) / 100
+        kp *
+        (toNum(editFormData.grunderwerbsteuer) +
+         toNum(editFormData.maklerprovision) +
+         toNum(editFormData.notarkosten) +
+         toNum(editFormData.grundbucheintrag)) / 100
 
-      const gesamtkosten = parseFloat(editFormData.kaufpreis || 0) + nebenkosten_total
+      const gesamtkosten = kp + nebenkosten_total
 
-      const updatedData = {
-        name: editFormData.name,
-        address: editFormData.address,
-        rooms: parseFloat(editFormData.rooms) || null,
-        kaufpreis: parseFloat(editFormData.kaufpreis) || 0,
-        quadratmeter: parseFloat(editFormData.quadratmeter) || null,
-        grunderwerbsteuer: parseFloat(editFormData.grunderwerbsteuer) || 0,
-        maklerprovision: parseFloat(editFormData.maklerprovision) || 0,
-        notarkosten: parseFloat(editFormData.notarkosten) || 0,
-        grundbucheintrag: parseFloat(editFormData.grundbucheintrag) || 0,
+      const updatedData: Partial<Property> = {
+        name: String(editFormData.name ?? ''),
+        address: editFormData.address != null ? String(editFormData.address) : null,
+        rooms: toNum(editFormData.rooms) || null,
+        kaufpreis: kp,
+        quadratmeter: toNum(editFormData.quadratmeter) || null,
+        grunderwerbsteuer: toNum(editFormData.grunderwerbsteuer),
+        maklerprovision: toNum(editFormData.maklerprovision),
+        notarkosten: toNum(editFormData.notarkosten),
+        grundbucheintrag: toNum(editFormData.grundbucheintrag),
         nebenkosten_total: parseFloat(nebenkosten_total.toFixed(2)),
         gesamtkosten: parseFloat(gesamtkosten.toFixed(2)),
-        kaltmiete: parseFloat(editFormData.kaltmiete) || null,
-        warmmiete: parseFloat(editFormData.warmmiete) || null,
-        hausgeld: parseFloat(editFormData.hausgeld) || null,
+        kaltmiete: toNum(editFormData.kaltmiete) || null,
+        warmmiete: toNum(editFormData.warmmiete) || null,
+        hausgeld: toNum(editFormData.hausgeld) || null,
       }
 
-      const response = await fetch(`${API_BASE}/api/properties/${editingProperty.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedData),
-      })
-
-      if (response.ok) {
-        setProperties(properties.map(prop =>
-          prop.id === editingProperty.id ? { ...prop, ...updatedData } : prop
-        ))
-        closeEditMode()
-        setNotification({ message: tg.alerts.updateSuccess, type: 'success' })
-      } else {
-        const data = await response.json().catch(() => ({}))
-        setNotification({ message: data.errors?.[0] || tg.alerts.updateError, type: 'error' })
-      }
-    } catch {
-      setNotification({ message: tg.alerts.serverError, type: 'error' })
+      if (!editingProperty) return
+      await propertiesApi.update(editingProperty.id, updatedData)
+      setProperties(properties.map(prop =>
+        prop.id === editingProperty!.id ? { ...prop, ...updatedData } : prop
+      ))
+      closeEditMode()
+      setNotification({ message: tg.alerts.updateSuccess, type: 'success' })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : tg.alerts.updateError
+      setNotification({ message, type: 'error' })
     } finally {
       setSaving(false)
     }
@@ -203,7 +194,7 @@ function GespeicherteImmobilien() {
     setCompareMode(prev => !prev)
     setCompareIds([])
   }
-  const toggleCompareSelect = (id) => {
+  const toggleCompareSelect = (id: number) => {
     setCompareIds(prev =>
       prev.includes(id) ? prev.filter(x => x !== id) : prev.length < 3 ? [...prev, id] : prev
     )
@@ -293,7 +284,7 @@ function GespeicherteImmobilien() {
               </div>
               <div className="info-row">
                 <span className="label">{tg.kaufpreis}:</span>
-                <span className="value">€ {parseFloat(property.kaufpreis || 0).toLocaleString('de-DE')}</span>
+                <span className="value">€ {(property.kaufpreis || 0).toLocaleString('de-DE')}</span>
               </div>
               <div className="info-row">
                 <span className="label">{tg.quadratmeter}:</span>
@@ -301,13 +292,13 @@ function GespeicherteImmobilien() {
               </div>
               <div className="info-row highlight">
                 <span className="label">{tg.gesamtkosten}:</span>
-                <span className="value">€ {parseFloat(property.gesamtkosten || 0).toLocaleString('de-DE')}</span>
+                <span className="value">€ {(property.gesamtkosten || 0).toLocaleString('de-DE')}</span>
               </div>
             </div>
 
             <div className="property-card-footer">
               <span className="saved-date">
-                {tg.savedDate}: {new Date(property.created_at).toLocaleDateString('de-DE')}
+                {tg.savedDate}: {property.created_at ? new Date(property.created_at).toLocaleDateString('de-DE') : ''}
               </span>
             </div>
           </div>
@@ -448,11 +439,11 @@ function GespeicherteImmobilien() {
                 <div className="kpi-calculation">
                   <div className="calc-row">
                     <span>Jahreskaltmiete:</span>
-                    <span>€ {(kpiProperty.kaltmiete * 12).toLocaleString('de-DE')}</span>
+                    <span>€ {((kpiProperty.kaltmiete ?? 0) * 12).toLocaleString('de-DE')}</span>
                   </div>
                   <div className="calc-row">
                     <span>÷ Kaufpreis:</span>
-                    <span>€ {parseFloat(kpiProperty.kaufpreis).toLocaleString('de-DE')}</span>
+                    <span>€ {kpiProperty.kaufpreis.toLocaleString('de-DE')}</span>
                   </div>
                 </div>
                 <div className="kpi-result">
@@ -479,7 +470,7 @@ function GespeicherteImmobilien() {
                     <div className="kpi-calculation">
                       <div className="calc-row">
                         <span>Jahres-Cashflow:</span>
-                        <span>€ {(kpiProperty.kaltmiete * 12 - (kpiProperty.hausgeld || 0) * 12).toLocaleString('de-DE')}</span>
+                        <span>€ {((kpiProperty.kaltmiete ?? 0) * 12 - (kpiProperty.hausgeld || 0) * 12).toLocaleString('de-DE')}</span>
                       </div>
                       <div className="calc-row">
                         <span>÷ Eigenkapital:</span>
@@ -488,7 +479,7 @@ function GespeicherteImmobilien() {
                     </div>
                     <div className="kpi-result">
                       <div className="kpi-value">
-                        {calculateEigenkapitalrendite(kpiProperty.kaltmiete, kpiProperty.kaufpreis, kpiEigenkapital, kpiProperty.hausgeld || 0)}%
+                        {calculateEigenkapitalrendite(kpiProperty.kaltmiete, parseFloat(kpiEigenkapital) || 0, kpiProperty.hausgeld || 0)}%
                       </div>
                       <div className="kpi-interpretation">{t.gespeicherte.kpiRoeInterpretation}</div>
                     </div>

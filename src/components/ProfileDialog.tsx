@@ -1,9 +1,15 @@
 import { useState } from 'react'
+import React from 'react'
 import { useProfile } from '../context/ProfileContext'
 import { useLanguage } from '../context/LanguageContext'
 import './ProfileDialog.css'
 
-function ProfileDialog({ isOpen, onClose }) {
+interface ProfileDialogProps {
+  isOpen: boolean
+  onClose: () => void
+}
+
+function ProfileDialog({ isOpen, onClose }: ProfileDialogProps) {
   const { username, updateUsername } = useProfile()
   const { t } = useLanguage()
   const [inputValue, setInputValue] = useState(username)
@@ -15,7 +21,7 @@ function ProfileDialog({ isOpen, onClose }) {
     }
   }
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSave()
     } else if (e.key === 'Escape') {
