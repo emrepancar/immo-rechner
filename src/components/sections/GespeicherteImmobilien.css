@@ -1,5 +1,20 @@
+/* Direction A Color Palette */
+:root {
+  --a-bg: #F4F6FA;
+  --a-panel: #FFFFFF;
+  --a-accent: #2E5BFF;
+  --a-ink: #0E1B33;
+  --a-ink2: #3A4A66;
+  --a-ink3: #6B7A93;
+  --a-line: #E4E8EF;
+  --a-line2: #EDF0F5;
+}
+
 .gespeicherte-container {
   max-width: 1200px;
+  background-color: var(--a-bg);
+  border-radius: 16px;
+  padding: 32px;
 }
 
 .gespeicherte-header {
@@ -9,32 +24,85 @@
   margin-bottom: 30px;
 }
 
-.gespeicherte-header h2 {
-  font-size: 28px;
-  margin: 0;
-  color: var(--text-h);
+.tab-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tab-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--a-line);
+  background: #fff;
+  color: var(--a-ink2);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.tab-pill:hover {
+  border-color: var(--a-accent);
+  color: var(--a-ink);
+}
+
+.tab-pill.active {
+  background: var(--a-ink);
+  border-color: var(--a-ink);
+  color: #fff;
+}
+
+.tab-pill.active .tab-star-icon {
+  color: #f87171;
+}
+
+.tab-count {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.65;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.tab-star-icon {
+  color: #ef4444;
+}
+
+.favorites-empty {
+  margin-top: 60px;
+  color: var(--a-ink3);
+}
+
+.favorites-empty .empty-icon-wrap svg {
+  color: #ef4444;
+  opacity: 0.5;
 }
 
 .compare-toggle-btn {
   padding: 8px 18px;
-  border: 2px solid var(--border);
+  border: 1px solid var(--a-line);
   border-radius: 8px;
-  background: transparent;
-  color: var(--text);
+  background: var(--a-panel);
+  color: var(--a-ink2);
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
   transition: all 0.2s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .compare-toggle-btn:hover {
-  border-color: #06b6d4;
-  color: #06b6d4;
+  border-color: var(--a-accent);
+  background-color: rgba(46, 91, 255, 0.04);
 }
 
 .compare-toggle-btn.active {
-  background: #06b6d4;
-  border-color: #06b6d4;
+  background: var(--a-accent);
+  border-color: var(--a-accent);
   color: white;
 }
 
@@ -45,19 +113,20 @@
 }
 
 .property-card {
-  border: 2px solid var(--border);
+  border: 1px solid var(--a-line);
   border-radius: 12px;
   padding: 20px;
-  background-color: var(--input-bg);
+  background-color: var(--a-panel);
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
   position: relative;
+  box-shadow: 0 1px 2px rgba(14, 27, 51, 0.08);
 }
 
 .property-card:hover {
-  border-color: #06b6d4;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  border-color: var(--a-accent);
+  box-shadow: 0 4px 12px rgba(46, 91, 255, 0.12);
 }
 
 .property-card-header {
@@ -70,22 +139,49 @@
 
 .property-card-header h3 {
   margin: 0;
-  font-size: 22px;
-  color: var(--text-h);
+  font-size: 18px;
+  color: var(--a-ink);
   flex: 1;
   height: 54px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  line-height: 1.2;
+  line-height: 1.3;
   word-break: break-word;
+  font-weight: 600;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .card-buttons {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
+  align-items: center;
+}
+
+.favorite-button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--a-ink3);
+  transition: color 0.15s, background 0.15s;
+  padding: 0;
+}
+
+.favorite-button:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.favorite-button.active {
+  color: #ef4444;
 }
 
 .edit-button {
@@ -144,7 +240,7 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--a-line2);
 }
 
 .info-row.address-row {
@@ -180,7 +276,7 @@
 }
 
 .info-row.highlight {
-  border-bottom: 2px solid #06b6d4;
+  border-bottom: 2px solid var(--a-accent);
   padding-bottom: 10px;
   margin: 4px 0 0 0;
 }
@@ -188,20 +284,22 @@
 .info-row .label {
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--a-ink3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .info-row .value {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-h);
+  color: var(--a-ink);
   text-align: right;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
 }
 
 .info-row.highlight .value {
-  color: #06b6d4;
+  color: var(--a-accent);
 }
 
 .property-card-footer {
@@ -597,12 +695,13 @@
 /* Feature 1: Yield badges */
 .yield-badge {
   display: inline-block;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 700;
   margin-bottom: 12px;
   letter-spacing: 0.3px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .yield-badge.green {

@@ -15,6 +15,7 @@ export interface Property {
   warmmiete: number | null
   hausgeld: number | null
   inserat_url: string | null
+  is_favorite?: number
   created_at?: string
 }
 
@@ -38,6 +39,7 @@ export interface AppSettings {
   currency: string
   language: string
   isDark: boolean
+  numberFormat?: string
 }
 
 export interface CalculationResult {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import NumberInput from '../NumberInput'
 import './Zinsangebote.css'
 import { useLanguage } from '../../context/LanguageContext'
 import { propertiesApi, ratesApi } from '../../api'
@@ -250,12 +251,11 @@ function Zinsangebote() {
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="zinssatz">{tz.zinssatz}</label>
-            <input
+            <NumberInput
               id="zinssatz"
-              type="number"
-              placeholder="3.5"
               value={formData.zinssatz}
               onChange={(e) => handleFormChange('zinssatz', e.target.value)}
+              placeholder="3.5"
               step="0.01"
               min="0"
               max="15"
@@ -263,12 +263,11 @@ function Zinsangebote() {
           </div>
           <div className="form-group">
             <label htmlFor="effektiver-jahreszins">{tz.effektiverJahreszins}</label>
-            <input
+            <NumberInput
               id="effektiver-jahreszins"
-              type="number"
-              placeholder="4.27"
               value={formData.effektiverJahreszins}
               onChange={(e) => handleFormChange('effektiverJahreszins', e.target.value)}
+              placeholder="4.27"
               step="0.01"
               min="0"
               max="15"
@@ -279,24 +278,22 @@ function Zinsangebote() {
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="darlehenssumme">{tz.darlehenssumme}</label>
-            <input
+            <NumberInput
               id="darlehenssumme"
-              type="number"
-              placeholder="250000"
               value={formData.darlehenssumme}
               onChange={(e) => handleFormChange('darlehenssumme', e.target.value)}
+              placeholder="250000"
               step="1000"
               min="0"
             />
           </div>
           <div className="form-group">
             <label htmlFor="monatliche-rate">{tz.monatlicheRate}</label>
-            <input
+            <NumberInput
               id="monatliche-rate"
-              type="number"
-              placeholder="1200"
               value={formData.monatlicheRate}
               onChange={(e) => handleFormChange('monatlicheRate', e.target.value)}
+              placeholder="1200"
               step="10"
               min="0"
             />
@@ -306,12 +303,11 @@ function Zinsangebote() {
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="gesamtbetrag">{tz.gesamtbetrag}</label>
-            <input
+            <NumberInput
               id="gesamtbetrag"
-              type="number"
-              placeholder="350000"
               value={formData.gesamtbetrag}
               onChange={(e) => handleFormChange('gesamtbetrag', e.target.value)}
+              placeholder="350000"
               step="1000"
               min="0"
             />
@@ -336,12 +332,11 @@ function Zinsangebote() {
 
         <div className="form-group">
           <label htmlFor="eigenkapital">{tz.eigenkapital} (€)</label>
-          <input
+          <NumberInput
             id="eigenkapital"
-            type="number"
-            placeholder="50000"
             value={formData.eigenkapital}
             onChange={(e) => handleFormChange('eigenkapital', e.target.value)}
+            placeholder="50000"
             step="1000"
             min="0"
           />

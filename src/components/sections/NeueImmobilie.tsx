@@ -1,3 +1,4 @@
+import MapBox from '../MapBox'
 import { useState, useEffect } from 'react'
 import './NeueImmobilie.css'
 import { FALLBACK_DEFAULTS } from '../../config/defaults'
@@ -149,15 +150,17 @@ function NeueImmobilie() {
 
   return (
     <div className="neue-immobilie">
-      <div className="immobilie-details-box">
-        <div className="box-label">{ti.sectionObjekt}</div>
+      <div className="objekt-section">
         <button
-          className="save-button"
+          className="save-button objekt-save-btn"
           onClick={() => { setPropertyName(immobilie.name); setShowSaveDialog(true) }}
           title={t.common.save}
         >
           💾 {t.common.save}
         </button>
+      <div className="objekt-row">
+      <div className="immobilie-details-box">
+        <div className="box-label">{ti.sectionObjekt}</div>
         <div className="immobilie-details-form">
           <div className="form-group">
             <label htmlFor="address">{ti.address}</label>
@@ -221,6 +224,11 @@ function NeueImmobilie() {
           </div>
         </div>
       </div>
+        <div className="objekt-map">
+          <MapBox address={immobilie.address} />
+        </div>
+      </div>{/* objekt-row */}
+      </div>{/* objekt-section */}
 
       <div className="property-container">
         <div className="property-box">
@@ -298,16 +306,14 @@ function NeueImmobilie() {
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="total-costs-box">
-        <div className="box-label">{ti.sectionGesamtkosten}</div>
-        <div className="total-costs-form">
-          <div className="total-costs-row">
+        <div className="total-costs-box">
+          <div className="box-label">{ti.sectionGesamtkosten}</div>
+          <div className="total-costs-vertical">
             <div className="total-cost-item">
               <label>{ti.kaufpreisLabel} ({settings.currency})</label>
               <input type="number" value={kaufpreis} readOnly disabled />
             </div>
+            <div className="total-cost-sep">+</div>
             <div className="total-cost-item">
               <label>{ti.nebenkostenLabel} ({settings.currency})</label>
               <input
@@ -317,6 +323,7 @@ function NeueImmobilie() {
                 disabled
               />
             </div>
+            <div className="total-cost-sep total-cost-equals">=</div>
             <div className="total-cost-item total-highlight">
               <label>{ti.gesamtkostenLabel} ({settings.currency})</label>
               <input

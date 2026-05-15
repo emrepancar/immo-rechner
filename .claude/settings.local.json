@@ -35,7 +35,23 @@
       "mcp__Claude_in_Chrome__form_input",
       "Bash(grep -E \"\\\\.\\(js|json\\)$\")",
       "Bash(npx tsc *)",
-      "Bash(npm test *)"
+      "Bash(npm test *)",
+      "Bash(ls /Users/emrepancar/claude-apps/real-estate-calculator/src/config/defaults* 2>/dev/null && echo \"exists in main\")",
+      "Bash(cat /Users/emrepancar/claude-apps/real-estate-calculator/package.json | grep -A5 '\"scripts\"')",
+      "Bash(npx tsx *)",
+      "Bash(curl -s \"http://localhost:3001/api/zinsangebote?property_id=1\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s \"http://localhost:3001/api/properties\")",
+      "Bash(DB_PATH=/Users/emrepancar/claude-apps/real-estate-calculator/properties.db npx tsx /Users/emrepancar/claude-apps/real-estate-calculator/.claude/worktrees/busy-brahmagupta-ef31fc/server.js)",
+      "Bash(find /Users/emrepancar/claude-apps -name \"*.db\" 2>/dev/null)",
+      "Bash(curl -s \"http://localhost:3001/api/zinsangebote?property_id=8\")",
+      "Bash(curl -s -X POST http://localhost:3001/api/zinsangebote -H 'Content-Type: application/json' -d '{\"property_id\":8,\"name\":\"Testbank AG\",\"zinssatz\":3.85,\"effektiver_jahreszins\":4.02,\"eigenkapital_amount\":80000,\"eigenkapital_percentage\":null,\"zinsbindung\":10,\"darlehenssumme\":320000,\"monatliche_rate\":1480,\"gesamtbetrag\":497600}')",
+      "Bash(npm pkg *)",
+      "Bash(gh pr create --repo emrepancar/immo-rechner --title 'Fix Docker setup broken by TypeScript migration' --body ' *)",
+      "Bash(python3 -c \"import sys,json; props=json.load\\(sys.stdin\\); [print\\(p['id'], p['name']\\) for p in props]\")",
+      "Bash(curl -s \"http://localhost:3001/api/zinsangebote?property_id=11\")",
+      "Bash(sed -n '254,260p' src/components/sections/NeueImmobilie.tsx)",
+      "Bash(sed -n '330,365p' src/components/sections/NeueImmobilie.tsx)"
     ]
   }
 }

@@ -1,5 +1,6 @@
 import { useLanguage } from '../../context/LanguageContext'
 import { useSettings } from '../../context/SettingsContext'
+import { NUMBER_FORMAT_OPTIONS } from '../../utils/numberFormat'
 import './Settings.css'
 
 function Settings() {
@@ -84,6 +85,22 @@ function Settings() {
               <option key={curr.symbol} value={curr.symbol}>
                 {curr.symbol} - {curr.name}
               </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="settings-box">
+        <div className="box-label">{t.settings?.numberFormatLabel || 'Zahlenformat'}</div>
+        <div className="settings-group">
+          <select
+            id="number-format"
+            value={settings.numberFormat || 'de'}
+            onChange={(e) => updateSettings('numberFormat', e.target.value)}
+            className="settings-select"
+          >
+            {NUMBER_FORMAT_OPTIONS.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
         </div>

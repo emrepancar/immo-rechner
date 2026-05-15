@@ -6,4 +6,5 @@ export const propertiesApi = {
   create:  (data: Omit<Property, 'id'>)   => client.post<Property>('/api/properties', data),
   update:  (id: number, data: Partial<Property>) => client.put<Property>(`/api/properties/${id}`, data),
   remove:  (id: number)                   => client.delete<null>(`/api/properties/${id}`),
+  toggleFavorite: (id: number, value: boolean) => client.patch(`/api/properties/${id}/favorite`, { is_favorite: value ? 1 : 0 }),
 }

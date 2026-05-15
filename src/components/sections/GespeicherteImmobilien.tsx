@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
+import { Heart } from '@phosphor-icons/react'
+import NumberInput from '../NumberInput'
 import './GespeicherteImmobilien.css'
 import { FALLBACK_DEFAULTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
@@ -86,6 +88,7 @@ function GespeicherteImmobilien() {
   const clearNotification = useCallback(() => setNotification({ message: '', type: '' }), [])
   const [compareMode, setCompareMode] = useState(false)
   const [compareIds, setCompareIds] = useState<number[]>([])
+  const [activeTab, setActiveTab] = useState<'alle' | 'favoriten'>('alle')
 
   useEffect(() => { loadProperties() }, [])
 
@@ -206,6 +209,16 @@ function GespeicherteImmobilien() {
     }
   }
 
+  const toggleFavorite = async (property: Property) => {
+    const newVal = !property.is_favorite
+    setProperties(prev => prev.map(p => p.id === property.id ? { ...p, is_favorite: newVal ? 1 : 0 } : p))
+    try {
+      await propertiesApi.toggleFavorite(property.id, newVal)
+    } catch {
+      setProperties(prev => prev.map(p => p.id === property.id ? { ...p, is_favorite: property.is_favorite } : p))
+    }
+  }
+
   const toggleCompareMode = () => {
     setCompareMode(prev => !prev)
     setCompareIds([])
@@ -246,17 +259,46 @@ function GespeicherteImmobilien() {
     )
   }
 
+  const visibleProperties = activeTab === 'favoriten'
+    ? properties.filter(p => p.is_favorite)
+    : properties
+
   return (
     <div className="gespeicherte-container">
       <Notification message={notification.message} type={notification.type} onClose={clearNotification} />
       <div className="gespeicherte-header">
-        <h2>{tg.title} ({properties.length})</h2>
+        <div className="tab-bar">
+          <button
+            className={`tab-pill ${activeTab === 'alle' ? 'active' : ''}`}
+            onClick={() => setActiveTab('alle')}
+          >
+            Alle <span className="tab-count">{properties.length}</span>
+          </button>
+          <button
+            className={`tab-pill ${activeTab === 'favoriten' ? 'active' : ''}`}
+            onClick={() => setActiveTab('favoriten')}
+          >
+            <Heart size={13} weight="fill" className="tab-star-icon" />
+            Favoriten <span className="tab-count">{properties.filter(p => p.is_favorite).length}</span>
+          </button>
+        </div>
         <button className={`compare-toggle-btn ${compareMode ? 'active' : ''}`} onClick={toggleCompareMode}>
           {compareMode ? tg.compareExit : tg.compareMode}
         </button>
       </div>
+
+      {activeTab === 'favoriten' && visibleProperties.length === 0 && (
+        <div className="gespeicherte-empty favorites-empty">
+          <div className="empty-icon-wrap">
+            <Heart size={48} weight="duotone" />
+          </div>
+          <h2>Noch keine Favoriten</h2>
+          <p className="empty-hint">Markiere Objekte mit dem Stern-Symbol, um sie hier zu sehen.</p>
+        </div>
+      )}
+
       <div className="properties-grid">
-        {properties.map(property => {
+        {visibleProperties.map(property => {
           const yieldVal = calculateBruttomietrendite(property.kaltmiete, property.kaufpreis)
           const yieldNum = yieldVal ? parseFloat(yieldVal) : null
           let yieldClass = ''
@@ -279,6 +321,13 @@ function GespeicherteImmobilien() {
             <div className="property-card-header">
               <h3 style={{ fontSize: cardNameFontSize(property.name) }}>{property.name}</h3>
               <div className="card-buttons">
+                <button
+                  className={`favorite-button ${property.is_favorite ? 'active' : ''}`}
+                  onClick={() => toggleFavorite(property)}
+                  title={property.is_favorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}
+                >
+                  <Heart size={15} weight={property.is_favorite ? "fill" : "regular"} />
+                </button>
                 <button className="kpi-button" onClick={() => openKpiModal(property)} title="KPIs">📊</button>
                 <button className="edit-button" onClick={() => openEditMode(property)} title={t.common.edit}>✎</button>
                 <button className="delete-button" onClick={() => deleteProperty(property.id)} disabled={deletingId === property.id} title={t.common.delete}>{deletingId === property.id ? '…' : '✕'}</button>
@@ -395,20 +444,18 @@ function GespeicherteImmobilien() {
                 <h3>{tg.sectionKosten}</h3>
                 <div className="form-group">
                   <label htmlFor="edit-kaufpreis">{tg.kaufpreisField}</label>
-                  <input
+                  <NumberInput
                     id="edit-kaufpreis"
-                    type="number"
-                    value={editFormData.kaufpreis || ''}
+                    value={editFormData.kaufpreis ?? ''}
                     onChange={(e) => handleEditFormChange('kaufpreis', e.target.value)}
                     step="1000"
                   />
                 </div>
                 <div className="form-group">
                   <label htmlFor="edit-quadratmeter">{tg.quadratmeterField}</label>
-                  <input
+                  <NumberInput
                     id="edit-quadratmeter"
-                    type="number"
-                    value={editFormData.quadratmeter || ''}
+                    value={editFormData.quadratmeter ?? ''}
                     onChange={(e) => handleEditFormChange('quadratmeter', e.target.value)}
                     step="0.1"
                   />
@@ -425,10 +472,9 @@ function GespeicherteImmobilien() {
                 ].map(({ id, key, label }) => (
                   <div className="form-group" key={key}>
                     <label htmlFor={id}>{label}</label>
-                    <input
+                    <NumberInput
                       id={id}
-                      type="number"
-                      value={editFormData[key] || ''}
+                      value={editFormData[key] ?? ''}
                       onChange={(e) => handleEditFormChange(key, e.target.value)}
                       step="0.01"
                     />
@@ -445,10 +491,9 @@ function GespeicherteImmobilien() {
                 ].map(({ id, key, label }) => (
                   <div className="form-group" key={key}>
                     <label htmlFor={id}>{label}</label>
-                    <input
+                    <NumberInput
                       id={id}
-                      type="number"
-                      value={editFormData[key] || ''}
+                      value={editFormData[key] ?? ''}
                       onChange={(e) => handleEditFormChange(key, e.target.value)}
                       step="10"
                     />
