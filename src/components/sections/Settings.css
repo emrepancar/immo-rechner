@@ -2,10 +2,124 @@
   max-width: 800px;
 }
 
-.settings-container h1 {
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.settings-header h1 {
   font-size: 28px;
-  margin: 0 0 30px 0;
+  margin: 0;
   color: var(--text-h);
+}
+
+.unsaved-indicator {
+  color: #ef4444;
+  font-size: 24px;
+  line-height: 1;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.settings-action-bar {
+  position: fixed;
+  bottom: 24px;
+  left: auto;
+  right: 336px;
+  width: auto;
+  display: flex;
+  gap: 12px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.settings-action-bar.inactive {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.settings-save-btn,
+.settings-discard-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.settings-save-btn {
+  background: #10b981;
+  color: white;
+}
+
+.settings-save-btn:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.settings-save-btn:disabled {
+  background: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.settings-discard-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.settings-discard-btn:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.settings-discard-btn:disabled {
+  background: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+html[data-theme="dark"] .settings-action-bar {
+  background: var(--input-bg);
+  border-color: var(--border);
+}
+
+html[data-theme="dark"] .settings-save-btn {
+  background: #10b981;
+  color: white;
+}
+
+html[data-theme="dark"] .settings-save-btn:hover:not(:disabled) {
+  background: #059669;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+}
+
+html[data-theme="dark"] .settings-discard-btn {
+  background: #ef4444;
+  color: white;
+}
+
+html[data-theme="dark"] .settings-discard-btn:hover:not(:disabled) {
+  background: #dc2626;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
 }
 
 .settings-box {

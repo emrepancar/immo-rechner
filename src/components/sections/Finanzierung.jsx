@@ -4,11 +4,15 @@ import autoTable from 'jspdf-autotable'
 import './Finanzierung.css'
 import { MIETERHOHUNG_INCREMENTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
+import { useSettings } from '../../context/SettingsContext'
+import { useToast } from '../../context/ToastContext'
 import API_BASE from '../../config/api'
 
 function Finanzierung() {
   const { t, language } = useLanguage()
   const tf = t.finanzierung
+  const { settings } = useSettings()
+  const { addToast } = useToast()
 
   const [properties, setProperties] = useState([])
   const [selectedProperty, setSelectedProperty] = useState('')
@@ -298,15 +302,15 @@ function Finanzierung() {
             </select>
           </div>
           <div className="form-group">
-            <label>{tf.kaufpreis}</label>
+            <label>{tf.kaufpreis} ({settings.currency})</label>
             <input type="number" value={kaufpreis} disabled placeholder="0" />
           </div>
           <div className="form-group">
-            <label>{tf.nebenkosten}</label>
+            <label>{tf.nebenkosten} ({settings.currency})</label>
             <input type="number" value={nebenkosten} disabled placeholder="0" />
           </div>
           <div className="form-group">
-            <label>{tf.gesamtkosten}</label>
+            <label>{tf.gesamtkosten} ({settings.currency})</label>
             <input type="number" value={gesamtkosten} disabled placeholder="0" />
           </div>
         </div>
@@ -317,11 +321,11 @@ function Finanzierung() {
         <div className="finanzierung-form">
           <div className="finanzierung-row">
             <div className="finanzierung-group">
-              <label>{tf.eigenkapital}</label>
+              <label>{tf.eigenkapital} ({settings.currency})</label>
               <input type="number" value={eigenkapital} onChange={(e) => handleEigenkapitalChange(e.target.value)} placeholder="0" />
             </div>
             <div className="finanzierung-group">
-              <label>{tf.eigenkapitalProzent}</label>
+              <label>{tf.eigenkapitalProzent} (%)</label>
               <input type="number" value={eigenkapitalProzent.toFixed(2)} onChange={(e) => handleProzentChange(e.target.value)} placeholder="0" step="0.01" />
             </div>
           </div>
@@ -332,7 +336,7 @@ function Finanzierung() {
         <div className="box-label">{tf.boxEigenmittel}</div>
         <div className="finanzierung-form">
           <div className="form-group">
-            <label>{tf.eigenmittel}</label>
+            <label>{tf.eigenmittel} ({settings.currency})</label>
             <input type="number" value={(nebenkosten + eigenkapital).toFixed(2)} disabled placeholder="0" />
           </div>
         </div>
@@ -342,7 +346,7 @@ function Finanzierung() {
         <div className="box-label">{tf.boxFinanzierungssumme}</div>
         <div className="finanzierung-form">
           <div className="form-group">
-            <label>{tf.finanzierungssumme}</label>
+            <label>{tf.finanzierungssumme} ({settings.currency})</label>
             <input type="number" value={finanzierungssumme} disabled placeholder="0" />
           </div>
         </div>

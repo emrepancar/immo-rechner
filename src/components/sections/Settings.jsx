@@ -5,10 +5,10 @@ import './Settings.css'
 
 function Settings() {
   const { t, language, setLanguage } = useLanguage()
-  const { settings, updateSettings } = useSettings()
+  const { settings, updateSettings, saveSettings, discardSettings, hasUnsavedChanges } = useSettings()
   const { toggleTheme, isDark } = useTheme()
 
-  const spaceUnits = ['m²', 'ft²', 'qm']
+  const spaceUnits = ['m²', 'ft²']
   const currencies = [
     { symbol: '€', name: 'EUR' },
     { symbol: '$', name: 'USD' },
@@ -22,10 +22,13 @@ function Settings() {
 
   return (
     <div className="settings-container">
-      <h1>{t.settings?.title || 'Settings'}</h1>
+      <div className="settings-header">
+        <h1>{t.settings?.title || 'Settings'}</h1>
+        {hasUnsavedChanges && <span className="unsaved-indicator">●</span>}
+      </div>
 
       <div className="settings-box">
-        <div className="box-label">{t.settings?.languageSectionLabel || 'Language'}</div>
+        <div className="box-label">Language</div>
 
         <div className="settings-group">
           <select
@@ -40,27 +43,21 @@ function Settings() {
               </option>
             ))}
           </select>
-          <span className="setting-description">
-            {t.settings?.languageDescription || 'Choose your preferred language for the app'}
-          </span>
         </div>
       </div>
 
       <div className="settings-box">
-        <div className="box-label">{t.settings?.themeSectionLabel || 'Theme'}</div>
+        <div className="box-label">Theme</div>
 
         <div className="settings-group">
           <button className="theme-toggle-button" onClick={toggleTheme}>
-            {isDark ? '☀️ Light Mode' : '🌙 Dark Mode'}
+            {isDark ? '☀️ Light' : '🌙 Dark'}
           </button>
-          <span className="setting-description">
-            {t.settings?.themeDescription || 'Switch between dark and light mode'}
-          </span>
         </div>
       </div>
 
       <div className="settings-box">
-        <div className="box-label">{t.settings?.unitsSectionLabel || 'Units'}</div>
+        <div className="box-label">Units</div>
 
         <div className="settings-group">
           <select
@@ -73,14 +70,11 @@ function Settings() {
               <option key={unit} value={unit}>{unit}</option>
             ))}
           </select>
-          <span className="setting-description">
-            {t.settings?.spaceUnitDescription || 'Choose your preferred unit for area measurements'}
-          </span>
         </div>
       </div>
 
       <div className="settings-box">
-        <div className="box-label">{t.settings?.currencySectionLabel || 'Currency'}</div>
+        <div className="box-label">Currency</div>
 
         <div className="settings-group">
           <select
@@ -95,22 +89,40 @@ function Settings() {
               </option>
             ))}
           </select>
-          <span className="setting-description">
-            {t.settings?.currencyDescription || 'Choose your preferred currency for all monetary values'}
-          </span>
         </div>
       </div>
 
       <div className="settings-preview">
         <h3>{t.settings?.previewLabel || 'Preview'}</h3>
         <div className="preview-item">
-          <span>{t.settings?.areaExample || 'Area example'}:</span>
+          <span>Fläche:</span>
           <strong>150 {settings.spaceUnit}</strong>
         </div>
         <div className="preview-item">
-          <span>{t.settings?.priceExample || 'Price example'}:</span>
+          <span>Kaufpreis:</span>
           <strong>{settings.currency} 500,000</strong>
         </div>
+        <div className="preview-item">
+          <span>Preis pro Fläche:</span>
+          <strong>{settings.currency} 3,333/{settings.spaceUnit}</strong>
+        </div>
+      </div>
+
+      <div className={`settings-action-bar ${hasUnsavedChanges ? 'active' : 'inactive'}`}>
+        <button
+          className="settings-discard-btn"
+          onClick={discardSettings}
+          disabled={!hasUnsavedChanges}
+        >
+          {t.common?.cancel || 'Discard'}
+        </button>
+        <button
+          className="settings-save-btn"
+          onClick={saveSettings}
+          disabled={!hasUnsavedChanges}
+        >
+          ✓ {t.common?.save || 'Save'}
+        </button>
       </div>
     </div>
   )
