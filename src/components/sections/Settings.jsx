@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useLanguage } from '../../context/LanguageContext'
 import { useSettings } from '../../context/SettingsContext'
 import { useTheme } from '../../context/ThemeContext'
@@ -7,6 +8,27 @@ function Settings() {
   const { t, language, setLanguage } = useLanguage()
   const { settings, updateSettings, saveSettings, discardSettings, hasUnsavedChanges } = useSettings()
   const { toggleTheme, isDark } = useTheme()
+
+  const [pendingLanguage, setPendingLanguage] = useState(language)
+  const [pendingTheme, setPendingTheme] = useState(isDark)
+
+  const anyUnsavedChanges = hasUnsavedChanges || pendingLanguage !== language || pendingTheme !== isDark
+
+  const handleSaveSettings = () => {
+    if (pendingLanguage !== language) {
+      setLanguage(pendingLanguage)
+    }
+    if (pendingTheme !== isDark) {
+      toggleTheme()
+    }
+    saveSettings()
+  }
+
+  const handleDiscardSettings = () => {
+    setPendingLanguage(language)
+    setPendingTheme(isDark)
+    discardSettings()
+  }
 
   const spaceUnits = ['m²', 'ft²']
   const currencies = [
@@ -24,7 +46,7 @@ function Settings() {
     <div className="settings-container">
       <div className="settings-header">
         <h1>{t.settings?.title || 'Settings'}</h1>
-        {hasUnsavedChanges && <span className="unsaved-indicator">●</span>}
+        {anyUnsavedChanges && <span className="unsaved-indicator">●</span>}
       </div>
 
       <div className="settings-box">
@@ -33,8 +55,8 @@ function Settings() {
         <div className="settings-group">
           <select
             id="language"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
+            value={pendingLanguage}
+            onChange={(e) => setPendingLanguage(e.target.value)}
             className="settings-select"
           >
             {languages.map(lang => (
@@ -50,8 +72,8 @@ function Settings() {
         <div className="box-label">Theme</div>
 
         <div className="settings-group">
-          <button className="theme-toggle-button" onClick={toggleTheme}>
-            {isDark ? '☀️ Light' : '🌙 Dark'}
+          <button className="theme-toggle-button" onClick={() => setPendingTheme(!pendingTheme)}>
+            {pendingTheme ? '☀️ Light' : '🌙 Dark'}
           </button>
         </div>
       </div>
@@ -108,18 +130,18 @@ function Settings() {
         </div>
       </div>
 
-      <div className={`settings-action-bar ${hasUnsavedChanges ? 'active' : 'inactive'}`}>
+      <div className={`settings-action-bar ${anyUnsavedChanges ? 'active' : 'inactive'}`}>
         <button
           className="settings-discard-btn"
-          onClick={discardSettings}
-          disabled={!hasUnsavedChanges}
+          onClick={handleDiscardSettings}
+          disabled={!anyUnsavedChanges}
         >
           {t.common?.cancel || 'Discard'}
         </button>
         <button
           className="settings-save-btn"
-          onClick={saveSettings}
-          disabled={!hasUnsavedChanges}
+          onClick={handleSaveSettings}
+          disabled={!anyUnsavedChanges}
         >
           ✓ {t.common?.save || 'Save'}
         </button>
