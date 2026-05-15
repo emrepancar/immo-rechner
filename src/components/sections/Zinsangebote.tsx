@@ -25,9 +25,12 @@ function Zinsangebote() {
   const [formData, setFormData] = useState({
     name: '',
     zinssatz: '',
+    effektiverJahreszins: '',
     eigenkapitalType: 'amount',
     eigenkapital: '',
     zinsbindung: '',
+    darlehenssumme: '',
+    monatlicheRate: '',
   })
   const [chartData, setChartData] = useState<ChartEntry[]>([])
   const [saving, setSaving] = useState(false)
@@ -101,7 +104,7 @@ function Zinsangebote() {
   }
 
   const resetForm = () => {
-    setFormData({ name: '', zinssatz: '', eigenkapitalType: 'amount', eigenkapital: '', zinsbindung: '' })
+    setFormData({ name: '', zinssatz: '', effektiverJahreszins: '', eigenkapitalType: 'amount', eigenkapital: '', zinsbindung: '', darlehenssumme: '', monatlicheRate: '' })
     setEditingOffer(null)
   }
 
@@ -112,9 +115,12 @@ function Zinsangebote() {
     setFormData({
       name: offer.name || '',
       zinssatz: String(offer.zinssatz),
+      effektiverJahreszins: offer.effektiver_jahreszins != null ? String(offer.effektiver_jahreszins) : '',
       eigenkapitalType,
       eigenkapital: eigenkapital != null ? String(eigenkapital) : '',
       zinsbindung: offer.zinsbindung ? String(offer.zinsbindung) : '',
+      darlehenssumme: offer.darlehenssumme != null ? String(offer.darlehenssumme) : '',
+      monatlicheRate: offer.monatliche_rate != null ? String(offer.monatliche_rate) : '',
     })
   }
 
@@ -150,9 +156,12 @@ function Zinsangebote() {
       property_id: selectedProperty!.id,
       name: formData.name || `Angebot ${new Date().getTime()}`,
       zinssatz: parseFloat(formData.zinssatz),
+      effektiver_jahreszins: formData.effektiverJahreszins ? parseFloat(formData.effektiverJahreszins) : null,
       eigenkapital_amount: formData.eigenkapitalType === 'amount' ? eigenkapitalValue : null,
       eigenkapital_percentage: formData.eigenkapitalType === 'percentage' ? eigenkapitalValue : null,
       zinsbindung: parseInt(formData.zinsbindung),
+      darlehenssumme: formData.darlehenssumme ? parseFloat(formData.darlehenssumme) : null,
+      monatliche_rate: formData.monatlicheRate ? parseFloat(formData.monatlicheRate) : null,
     }
 
     try {
@@ -258,6 +267,49 @@ function Zinsangebote() {
             />
           </div>
           <div className="form-group">
+            <label htmlFor="effektiver-jahreszins">{tz.effektiverJahreszins}</label>
+            <input
+              id="effektiver-jahreszins"
+              type="number"
+              placeholder="4.27"
+              value={formData.effektiverJahreszins}
+              onChange={(e) => handleFormChange('effektiverJahreszins', e.target.value)}
+              step="0.01"
+              min="0"
+              max="15"
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="darlehenssumme">{tz.darlehenssumme}</label>
+            <input
+              id="darlehenssumme"
+              type="number"
+              placeholder="250000"
+              value={formData.darlehenssumme}
+              onChange={(e) => handleFormChange('darlehenssumme', e.target.value)}
+              step="1000"
+              min="0"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="monatliche-rate">{tz.monatlicheRate}</label>
+            <input
+              id="monatliche-rate"
+              type="number"
+              placeholder="1200"
+              value={formData.monatlicheRate}
+              onChange={(e) => handleFormChange('monatlicheRate', e.target.value)}
+              step="10"
+              min="0"
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
             <label htmlFor="zinsbindung">{tz.zinsbindung}</label>
             <input
               id="zinsbindung"
@@ -344,6 +396,24 @@ function Zinsangebote() {
                         <span className="label">{tz.zinssatzLabel}:</span>
                         <span className="value">{offer.zinssatz}%</span>
                       </div>
+                      {offer.effektiver_jahreszins != null && (
+                        <div className="detail-row">
+                          <span className="label">{tz.effektiverJahreszinsLabel}:</span>
+                          <span className="value">{offer.effektiver_jahreszins}%</span>
+                        </div>
+                      )}
+                      {offer.darlehenssumme != null && (
+                        <div className="detail-row">
+                          <span className="label">{tz.darlehenssummeLabel}:</span>
+                          <span className="value">€ {offer.darlehenssumme.toLocaleString('de-DE')}</span>
+                        </div>
+                      )}
+                      {offer.monatliche_rate != null && (
+                        <div className="detail-row">
+                          <span className="label">{tz.monatlicheRateLabel}:</span>
+                          <span className="value">€ {offer.monatliche_rate.toLocaleString('de-DE')}</span>
+                        </div>
+                      )}
                       <div className="detail-row">
                         <span className="label">{tz.eigenkapitalLabel}:</span>
                         <span className="value">{eigenkapitalDisplay}</span>

@@ -23,9 +23,12 @@ export interface RateOffer {
   property_id: number
   name: string | null
   zinssatz: number
+  effektiver_jahreszins: number | null
   eigenkapital_amount: number | null
   eigenkapital_percentage: number | null
   zinsbindung: number
+  darlehenssumme: number | null
+  monatliche_rate: number | null
   created_at?: string
 }
 

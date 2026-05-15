@@ -184,6 +184,19 @@ function NeueImmobilie() {
           </div>
 
           <div className="form-group">
+            <label htmlFor="rooms">{ti.rooms}</label>
+            <input
+              id="rooms"
+              type="number"
+              placeholder={ti.roomsPlaceholder}
+              value={immobilie.rooms}
+              onChange={(e) => handleImmobilieChange('rooms', e.target.value)}
+              min="0"
+              step="0.5"
+            />
+          </div>
+
+          <div className="form-group">
             <label htmlFor="inserat-url">{ti.inseratUrl}</label>
             <div className="address-input-wrapper">
               <input
@@ -205,19 +218,6 @@ function NeueImmobilie() {
                 </a>
               )}
             </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="rooms">{ti.rooms}</label>
-            <input
-              id="rooms"
-              type="number"
-              placeholder={ti.roomsPlaceholder}
-              value={immobilie.rooms}
-              onChange={(e) => handleImmobilieChange('rooms', e.target.value)}
-              min="0"
-              step="0.5"
-            />
           </div>
         </div>
       </div>
