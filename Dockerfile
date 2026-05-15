@@ -20,7 +20,8 @@ RUN npm ci --omit=dev
 
 # Copy server source and built frontend
 COPY server.js ./
-COPY src/config/defaults.js ./src/config/defaults.js
+COPY tsconfig.json ./
+COPY src/config/defaults.ts ./src/config/defaults.ts
 COPY --from=builder /app/dist ./dist
 
 # Data directory for the SQLite database volume
@@ -35,4 +36,4 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget -qO- http://localhost:3001/health || exit 1
 
-CMD ["node", "server.js"]
+CMD ["node_modules/.bin/tsx", "server.js"]
