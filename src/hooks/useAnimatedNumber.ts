@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
 
-export function useAnimatedNumber(target, duration = 400) {
+export function useAnimatedNumber(target: number, duration = 400): number {
   const [value, setValue] = useState(target)
   const prevRef = useRef(target)
-  const rafRef = useRef(null)
+  const rafRef = useRef<number>(0)
 
   useEffect(() => {
     const from = prevRef.current
     const to = typeof target === 'number' ? target : 0
     if (from === to) return
     const startTime = performance.now()
-    const animate = (now) => {
+    const animate = (now: number) => {
       const t = Math.min((now - startTime) / duration, 1)
       const eased = 1 - Math.pow(1 - t, 3)
       setValue(from + (to - from) * eased)

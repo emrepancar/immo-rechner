@@ -1,9 +1,6 @@
 import { useState } from 'react'
-import { LanguageProvider } from './context/LanguageContext'
-import { ThemeProvider } from './context/ThemeContext'
-import { SettingsProvider, useSettings } from './context/SettingsContext'
-import { ProfileProvider } from './context/ProfileContext'
-import { ToastProvider } from './context/ToastContext'
+import { AppProviders } from './providers'
+import { useSettings } from './context/SettingsContext'
 import Sidebar from './components/Sidebar'
 import Toast from './components/Toast'
 import NeueImmobilie from './components/sections/NeueImmobilie'
@@ -16,10 +13,10 @@ import './App.css'
 function AppContent() {
   const [activeSection, setActiveSection] = useState('neue-immobilie')
   const { hasUnsavedChanges, discardSettings } = useSettings()
-  const [nextSection, setNextSection] = useState(null)
+  const [nextSection, setNextSection] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState(false)
 
-  const handleNavigation = (section) => {
+  const handleNavigation = (section: string) => {
     if (activeSection === 'settings' && hasUnsavedChanges) {
       setNextSection(section)
       setShowConfirm(true)
@@ -30,7 +27,7 @@ function AppContent() {
 
   const handleConfirmDiscard = () => {
     discardSettings()
-    setActiveSection(nextSection)
+    if (nextSection) setActiveSection(nextSection)
     setShowConfirm(false)
   }
 
@@ -65,17 +62,9 @@ function AppContent() {
 
 function App() {
   return (
-    <ThemeProvider>
-      <LanguageProvider>
-        <SettingsProvider>
-          <ProfileProvider>
-            <ToastProvider>
-              <AppContent />
-            </ToastProvider>
-          </ProfileProvider>
-        </SettingsProvider>
-      </LanguageProvider>
-    </ThemeProvider>
+    <AppProviders>
+      <AppContent />
+    </AppProviders>
   )
 }
 

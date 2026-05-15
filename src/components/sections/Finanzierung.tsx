@@ -1,22 +1,21 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import './Finanzierung.css'
 import { MIETERHOHUNG_INCREMENTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
 import { useSettings } from '../../context/SettingsContext'
-import { useToast } from '../../context/ToastContext'
-import API_BASE from '../../config/api'
+import { propertiesApi } from '../../api'
+import type { Property, CalculationResult, TilgungsRow } from '../../types'
 
 function Finanzierung() {
   const { t, language } = useLanguage()
   const tf = t.finanzierung
   const { settings } = useSettings()
-  const { addToast } = useToast()
 
-  const [properties, setProperties] = useState([])
+  const [properties, setProperties] = useState<Property[]>([])
   const [selectedProperty, setSelectedProperty] = useState('')
-  const [selectedPropertyData, setSelectedPropertyData] = useState(null)
+  const [selectedPropertyData, setSelectedPropertyData] = useState<Property | null>(null)
   const [kaufpreis, setKaufpreis] = useState(0)
   const [nebenkosten, setNebenkosten] = useState(0)
   const [gesamtkosten, setGesamtkosten] = useState(0)
@@ -28,9 +27,9 @@ function Finanzierung() {
   const [tilgungsvariante, setTilgungsvariante] = useState('volltilgung')
   const [monatsrate, setMonatsrate] = useState('')
   const [tilgungssatz, setTilgungssatz] = useState('')
-  const [calculationResult, setCalculationResult] = useState(null)
-  const [tilgungsplan, setTilgungsplan] = useState(null)
-  const [restschuld, setRestschuld] = useState(null)
+  const [calculationResult, setCalculationResult] = useState<CalculationResult | null>(null)
+  const [tilgungsplan, setTilgungsplan] = useState<TilgungsRow[] | null>(null)
+  const [restschuld, setRestschuld] = useState<number | null>(null)
   const [kaltmiete, setKaltmiete] = useState(0)
   const [mieterhohungType, setMieterhohungType] = useState('none')
   const [mieterhohungBetrag, setMieterhohungBetrag] = useState('')
@@ -41,17 +40,14 @@ function Finanzierung() {
 
   const loadProperties = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/properties`)
-      if (response.ok) {
-        const data = await response.json()
-        setProperties(data)
-      }
-    } catch (error) {
-      console.error('Error loading properties:', error)
+      const data = await propertiesApi.getAll()
+      setProperties(data)
+    } catch (err) {
+      console.error('Error loading properties:', err)
     }
   }
 
-  const handlePropertySelect = (e) => {
+  const handlePropertySelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const propertyId = e.target.value
     setSelectedProperty(propertyId)
     if (propertyId) {
@@ -73,14 +69,14 @@ function Finanzierung() {
     }
   }
 
-  const handleEigenkapitalChange = (value) => {
+  const handleEigenkapitalChange = (value: string) => {
     const amount = parseFloat(value) || 0
     setEigenkapital(amount)
     if (kaufpreis > 0) setEigenkapitalProzent((amount / kaufpreis) * 100)
     setFinanzierungssumme(Math.max(0, kaufpreis - amount))
   }
 
-  const handleProzentChange = (value) => {
+  const handleProzentChange = (value: string) => {
     const prozent = parseFloat(value) || 0
     setEigenkapitalProzent(prozent)
     const amount = (kaufpreis * prozent) / 100
@@ -88,7 +84,7 @@ function Finanzierung() {
     setFinanzierungssumme(Math.max(0, kaufpreis - amount))
   }
 
-  const getEffectiveKaltmiete = (year) => {
+  const getEffectiveKaltmiete = (year: number): number => {
     if (mieterhohungType === 'none' || kaltmiete === 0) return kaltmiete
     if (mieterhohungType === 'percentage') {
       const prozent = parseFloat(mieterhohungProzent) || 0
@@ -96,7 +92,7 @@ function Finanzierung() {
     }
     if (mieterhohungType === 'fixed') {
       const betrag = parseFloat(mieterhohungBetrag) || 0
-      const jahre = parseInt(mieterhohungJahre) || 2
+      const jahre = parseInt(String(mieterhohungJahre)) || 2
       return kaltmiete + (betrag * Math.floor((year - 1) / jahre))
     }
     return kaltmiete
@@ -141,7 +137,7 @@ function Finanzierung() {
     return { monthlyPayment: initialMonthlyPayment.toFixed(2), totalInterest: totalInterest.toFixed(2), totalPaid: (finanzierungssumme + totalInterest).toFixed(2), laufzeit: (numberOfMonths / 12).toFixed(1), numberOfMonths }
   }
 
-  const createTilgungsplan = (result) => {
+  const createTilgungsplan = (result: CalculationResult): TilgungsRow[] => {
     const monthlyRate = parseFloat(sollzinssatz) / 100 / 12
     const monthlyPayment = parseFloat(result.monthlyPayment)
     let remainingDebt = finanzierungssumme, month = 0
@@ -201,7 +197,7 @@ function Finanzierung() {
     const tp = tf.pdf
     const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
     const locale = language === 'de' ? 'de-DE' : 'en-US'
-    const currency = (val) => parseFloat(val).toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    const currency = (val: string | number) => parseFloat(String(val)).toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     const today = new Date().toLocaleDateString(locale)
 
     // Title
@@ -387,7 +383,7 @@ function Finanzierung() {
                 <>
                   <div className="form-group">
                     <label htmlFor="mieterhohung-jahre">{tf.mieterhohungJahre}</label>
-                    <select id="mieterhohung-jahre" value={mieterhohungJahre} onChange={(e) => setMieterhohungJahre(e.target.value)} className="form-group-select">
+                    <select id="mieterhohung-jahre" value={mieterhohungJahre} onChange={(e) => setMieterhohungJahre(Number(e.target.value))} className="form-group-select">
                       {MIETERHOHUNG_INCREMENTS.map(jahr => (
                         <option key={jahr} value={jahr}>{jahr} {jahr === 1 ? t.common.year : t.common.years}</option>
                       ))}

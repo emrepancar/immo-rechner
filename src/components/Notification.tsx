@@ -1,7 +1,13 @@
 import { useEffect } from 'react'
 import './Notification.css'
 
-function Notification({ message, type, onClose }) {
+interface NotificationProps {
+  message: string
+  type: 'success' | 'error' | 'info' | ''
+  onClose: () => void
+}
+
+function Notification({ message, type, onClose }: NotificationProps) {
   useEffect(() => {
     if (!message) return
     const timer = setTimeout(onClose, 4000)
