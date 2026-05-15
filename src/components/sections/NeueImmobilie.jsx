@@ -214,7 +214,7 @@ function NeueImmobilie() {
           <div className="box-label">{ti.sectionGrundkosten}</div>
           <div className="property-form">
             <div className="form-group">
-              <label htmlFor="kaufpreis">Kaufpreis ({settings.currency})</label>
+              <label htmlFor="kaufpreis">{ti.kaufpreis} ({settings.currency})</label>
               <input
                 id="kaufpreis"
                 type="number"
@@ -227,7 +227,7 @@ function NeueImmobilie() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="quadratmeter">Fläche ({settings.spaceUnit})</label>
+              <label htmlFor="quadratmeter">{ti.flaeche} ({settings.spaceUnit})</label>
               <input
                 id="quadratmeter"
                 type="number"
@@ -240,7 +240,7 @@ function NeueImmobilie() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="preis-pro">Preis pro Fläche ({settings.currency}/{settings.spaceUnit})</label>
+              <label htmlFor="preis-pro">{ti.preisProFlaeche} ({settings.currency}/{settings.spaceUnit})</label>
               <input id="preis-pro" type="number" value={preisPro} readOnly disabled />
             </div>
           </div>
@@ -268,14 +268,14 @@ function NeueImmobilie() {
                   />
                 </div>
                 <div className="nebenkosten-result">
-                  <label>Betrag ({settings.currency})</label>
+                  <label>{ti.betrag} ({settings.currency})</label>
                   <input type="number" value={calculateNebenkosten(nebenkosten[key])} readOnly disabled />
                 </div>
               </div>
             ))}
 
             <div className="nebenkosten-total">
-              <label>Summe Nebenkosten ({settings.currency})</label>
+              <label>{ti.summeNebenkosten} ({settings.currency})</label>
               <input
                 type="number"
                 value={kaufpreis ? animatedNebenkosten.toFixed(2) : ''}
@@ -292,11 +292,11 @@ function NeueImmobilie() {
         <div className="total-costs-form">
           <div className="total-costs-row">
             <div className="total-cost-item">
-              <label>Kaufpreis ({settings.currency})</label>
+              <label>{ti.kaufpreisLabel} ({settings.currency})</label>
               <input type="number" value={kaufpreis} readOnly disabled />
             </div>
             <div className="total-cost-item">
-              <label>+ Nebenkosten ({settings.currency})</label>
+              <label>{ti.nebenkostenLabel} ({settings.currency})</label>
               <input
                 type="number"
                 value={kaufpreis ? animatedNebenkosten.toFixed(2) : ''}
@@ -305,7 +305,7 @@ function NeueImmobilie() {
               />
             </div>
             <div className="total-cost-item total-highlight">
-              <label>= Gesamtkosten ({settings.currency})</label>
+              <label>{ti.gesamtkostenLabel} ({settings.currency})</label>
               <input
                 type="number"
                 value={kaufpreis ? animatedGesamtkosten.toFixed(2) : ''}
@@ -322,7 +322,7 @@ function NeueImmobilie() {
         <div className="miete-form">
           <div className="miete-row">
             <div className="form-group">
-              <label htmlFor="kaltmiete">Kaltmiete ({settings.currency})</label>
+              <label htmlFor="kaltmiete">{ti.kaltmiete} ({settings.currency})</label>
               <input
                 id="kaltmiete"
                 type="number"
@@ -334,7 +334,7 @@ function NeueImmobilie() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="warmmiete">Warmmiete ({settings.currency})</label>
+              <label htmlFor="warmmiete">{ti.warmmiete} ({settings.currency})</label>
               <input
                 id="warmmiete"
                 type="number"
@@ -346,7 +346,7 @@ function NeueImmobilie() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="betriebskosten">Betriebskosten ({settings.currency})</label>
+              <label htmlFor="betriebskosten">{ti.betriebskosten} ({settings.currency})</label>
               <input
                 id="betriebskosten"
                 type="number"
@@ -363,7 +363,7 @@ function NeueImmobilie() {
 
           <div className="miete-row">
             <div className="form-group">
-              <label htmlFor="hausgeld">Hausgeld ({settings.currency})</label>
+              <label htmlFor="hausgeld">{ti.hausgeld} ({settings.currency})</label>
               <input
                 id="hausgeld"
                 type="number"
@@ -375,7 +375,7 @@ function NeueImmobilie() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="eigentuemeranteil">Eigentümeranteil ({settings.currency})</label>
+              <label htmlFor="eigentuemeranteil">{ti.eigentuemeranteil} ({settings.currency})</label>
               <input
                 id="eigentuemeranteil"
                 type="number"
