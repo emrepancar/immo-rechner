@@ -17,6 +17,14 @@ function cardNameFontSize(name: string): string {
   return '11px'
 }
 
+function cardAddressFontSize(address: string): string {
+  const len = address.length
+  if (len <= 25) return '14px'
+  if (len <= 40) return '12px'
+  if (len <= 55) return '10px'
+  return '9px'
+}
+
 interface ComparisonTableProps {
   selected: Property[]
   tg: GespeicherteT
@@ -282,9 +290,9 @@ function GespeicherteImmobilien() {
             )}
 
             <div className="property-card-info">
-              <div className="info-row">
+              <div className="info-row address-row">
                 <span className="label">{tg.address}:</span>
-                <span className="value">{property.address || 'N/A'}</span>
+                <span className="value" style={{ fontSize: cardAddressFontSize(property.address || '') }}>{property.address || 'N/A'}</span>
               </div>
               <div className="info-row">
                 <span className="label">{tg.rooms}:</span>
