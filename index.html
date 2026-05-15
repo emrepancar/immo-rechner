@@ -7,6 +7,14 @@
     <title>ImmoRechner</title>
   </head>
   <body>
+    <script>
+      (function() {
+        const theme = localStorage.getItem('theme') || 'light';
+        if (theme !== 'system') {
+          document.documentElement.dataset.theme = theme;
+        }
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
