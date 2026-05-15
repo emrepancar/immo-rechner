@@ -6,6 +6,7 @@ import type { AppSettings } from '../types'
 interface PersistedSettings {
   spaceUnit: string
   currency: string
+  numberFormat: string
 }
 
 interface SettingsContextValue {
@@ -24,9 +25,9 @@ const STORAGE_KEY = 'immorechner-settings'
 function loadPersistedSettings(): PersistedSettings {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
-    return saved ? JSON.parse(saved) : { spaceUnit: 'm²', currency: '€' }
+    return saved ? { spaceUnit: 'm²', currency: '€', numberFormat: 'de', ...JSON.parse(saved) } : { spaceUnit: 'm²', currency: '€', numberFormat: 'de' }
   } catch {
-    return { spaceUnit: 'm²', currency: '€' }
+    return { spaceUnit: 'm²', currency: '€', numberFormat: 'de' }
   }
 }
 
@@ -44,6 +45,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const hasUnsavedChanges =
     pending.currency !== saved.currency ||
     pending.spaceUnit !== saved.spaceUnit ||
+    pending.numberFormat !== saved.numberFormat ||
     pending.language !== language ||
     pending.isDark !== isDark
 
@@ -52,7 +54,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const saveSettings = useCallback(() => {
-    const next: PersistedSettings = { spaceUnit: pending.spaceUnit, currency: pending.currency }
+    const next: PersistedSettings = { spaceUnit: pending.spaceUnit, currency: pending.currency, numberFormat: pending.numberFormat || 'de' }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
     setSaved(next)
     if (pending.language !== language) setLanguage(pending.language as 'de' | 'en')

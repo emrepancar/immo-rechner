@@ -1,8 +1,15 @@
 .app {
   display: flex;
+  flex-direction: column;
   height: 100vh;
   background-color: var(--bg);
   color: var(--text);
+}
+
+.app-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
 }
 
 .content {

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AppProviders } from './providers'
 import { useSettings } from './context/SettingsContext'
+import TopBar from './components/TopBar'
 import Sidebar from './components/Sidebar'
 import Toast from './components/Toast'
 import NeueImmobilie from './components/sections/NeueImmobilie'
@@ -34,14 +35,17 @@ function AppContent() {
   return (
     <>
       <div className="app">
-        <Sidebar activeSection={activeSection} setActiveSection={handleNavigation} />
-        <main className="content">
-          {activeSection === 'neue-immobilie' && <NeueImmobilie />}
-          {activeSection === 'finanzierung' && <Finanzierung />}
-          {activeSection === 'gespeicherte-immobilien' && <GespeicherteImmobilien />}
-          {activeSection === 'zinsangebote' && <Zinsangebote />}
-          {activeSection === 'settings' && <Settings />}
-        </main>
+        <TopBar activeSection={activeSection} setActiveSection={handleNavigation} />
+        <div className="app-body">
+          <Sidebar activeSection={activeSection} setActiveSection={handleNavigation} />
+          <main className="content">
+            {activeSection === 'neue-immobilie' && <NeueImmobilie />}
+            {activeSection === 'finanzierung' && <Finanzierung />}
+            {activeSection === 'gespeicherte-immobilien' && <GespeicherteImmobilien />}
+            {activeSection === 'zinsangebote' && <Zinsangebote />}
+            {activeSection === 'settings' && <Settings />}
+          </main>
+        </div>
       </div>
       {showConfirm && (
         <div className="confirm-dialog-overlay" onClick={() => setShowConfirm(false)}>

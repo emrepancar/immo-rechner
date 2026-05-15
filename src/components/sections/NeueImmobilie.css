@@ -1,5 +1,50 @@
 .neue-immobilie {
-  max-width: 1200px;
+  width: 100%;
+}
+
+.objekt-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 30px;
+}
+
+.objekt-map {
+  min-height: 0;
+  display: flex;
+}
+
+.objekt-map .map-box {
+  flex: 1;
+  min-height: 0;
+}
+
+.objekt-row .immobilie-details-box {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .objekt-row {
+    grid-template-columns: 1fr;
+  }
+  .objekt-map { height: 300px; }
+}
+
+.objekt-section {
+  position: relative;
+  padding-top: 44px;
+  margin-bottom: 30px;
+}
+
+.objekt-save-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.objekt-row {
+  margin-bottom: 0;
 }
 
 .immobilie-details-box {
@@ -16,18 +61,15 @@
 }
 
 .save-button {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  padding: 10px 16px;
-  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  padding: 10px 20px;
+  background: var(--accent);
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
 }
 
@@ -230,8 +272,9 @@
 
 .property-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
 }
 
 .property-box,
@@ -409,7 +452,25 @@
   padding: 24px;
   background-color: var(--input-bg);
   position: relative;
-  margin-top: 30px;
+}
+
+.total-costs-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.total-cost-sep {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.total-cost-equals {
+  color: var(--accent);
 }
 
 .total-costs-form {

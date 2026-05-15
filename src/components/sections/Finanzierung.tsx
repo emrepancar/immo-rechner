@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import NumberInput from '../NumberInput'
 import './Finanzierung.css'
 import { MIETERHOHUNG_INCREMENTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
@@ -299,15 +300,15 @@ function Finanzierung() {
           </div>
           <div className="form-group">
             <label>{tf.kaufpreis} ({settings.currency})</label>
-            <input type="number" value={kaufpreis} disabled placeholder="0" />
+            <NumberInput value={kaufpreis} disabled placeholder="0" />
           </div>
           <div className="form-group">
             <label>{tf.nebenkosten} ({settings.currency})</label>
-            <input type="number" value={nebenkosten} disabled placeholder="0" />
+            <NumberInput value={nebenkosten} disabled placeholder="0" />
           </div>
           <div className="form-group">
             <label>{tf.gesamtkosten} ({settings.currency})</label>
-            <input type="number" value={gesamtkosten} disabled placeholder="0" />
+            <NumberInput value={gesamtkosten} disabled placeholder="0" />
           </div>
         </div>
       </div>
@@ -318,11 +319,11 @@ function Finanzierung() {
           <div className="finanzierung-row">
             <div className="finanzierung-group">
               <label>{tf.eigenkapital} ({settings.currency})</label>
-              <input type="number" value={eigenkapital} onChange={(e) => handleEigenkapitalChange(e.target.value)} placeholder="0" />
+              <NumberInput value={eigenkapital} onChange={(e) => handleEigenkapitalChange(e.target.value)} placeholder="0" />
             </div>
             <div className="finanzierung-group">
               <label>{tf.eigenkapitalProzent} (%)</label>
-              <input type="number" value={eigenkapitalProzent.toFixed(2)} onChange={(e) => handleProzentChange(e.target.value)} placeholder="0" step="0.01" />
+              <NumberInput value={eigenkapitalProzent.toFixed(2)} onChange={(e) => handleProzentChange(e.target.value)} placeholder="0" step="0.01" />
             </div>
           </div>
         </div>
@@ -333,7 +334,7 @@ function Finanzierung() {
         <div className="finanzierung-form">
           <div className="form-group">
             <label>{tf.eigenmittel} ({settings.currency})</label>
-            <input type="number" value={(nebenkosten + eigenkapital).toFixed(2)} disabled placeholder="0" />
+            <NumberInput value={(nebenkosten + eigenkapital).toFixed(2)} disabled placeholder="0" />
           </div>
         </div>
       </div>
@@ -343,7 +344,7 @@ function Finanzierung() {
         <div className="finanzierung-form">
           <div className="form-group">
             <label>{tf.finanzierungssumme} ({settings.currency})</label>
-            <input type="number" value={finanzierungssumme} disabled placeholder="0" />
+            <NumberInput value={finanzierungssumme} disabled placeholder="0" />
           </div>
         </div>
       </div>
@@ -354,7 +355,7 @@ function Finanzierung() {
           <div className="finanzierung-row">
             <div className="finanzierung-group">
               <label>{tf.sollzinssatz}</label>
-              <input type="number" value={sollzinssatz} onChange={(e) => setSollzinssatz(e.target.value)} placeholder={tf.sollzinssatzPlaceholder} step="0.01" />
+              <NumberInput value={sollzinssatz} onChange={(e) => setSollzinssatz(e.target.value)} placeholder={tf.sollzinssatzPlaceholder} step="0.01" />
             </div>
             <div className="finanzierung-group">
               <label>{tf.laufzeit}</label>
@@ -391,7 +392,7 @@ function Finanzierung() {
                   </div>
                   <div className="form-group">
                     <label htmlFor="mieterhohung-betrag">{tf.mieterhohungBetrag}</label>
-                    <input id="mieterhohung-betrag" type="number" value={mieterhohungBetrag} onChange={(e) => setMieterhohungBetrag(e.target.value)} placeholder={tf.mieterhohungBetragPlaceholder} step="10" />
+                    <NumberInput id="mieterhohung-betrag" value={mieterhohungBetrag} onChange={(e) => setMieterhohungBetrag(e.target.value)} placeholder={tf.mieterhohungBetragPlaceholder} step="10" />
                   </div>
                 </>
               )}
@@ -404,7 +405,7 @@ function Finanzierung() {
               {mieterhohungType === 'percentage' && (
                 <div className="form-group">
                   <label htmlFor="mieterhohung-prozent">{tf.mieterhohungProzent}</label>
-                  <input id="mieterhohung-prozent" type="number" value={mieterhohungProzent} onChange={(e) => setMieterhohungProzent(e.target.value)} placeholder={tf.mieterhohungProzentPlaceholder} step="0.1" />
+                  <NumberInput id="mieterhohung-prozent" value={mieterhohungProzent} onChange={(e) => setMieterhohungProzent(e.target.value)} placeholder={tf.mieterhohungProzentPlaceholder} step="0.1" />
                 </div>
               )}
             </div>
@@ -430,7 +431,7 @@ function Finanzierung() {
               {tilgungsvariante === 'monatsrate' && (
                 <div className="form-group">
                   <label htmlFor="monatsrate">{tf.monatsrateLabel}</label>
-                  <input id="monatsrate" type="number" value={monatsrate} onChange={(e) => setMonatsrate(e.target.value)} placeholder={tf.monatsratePlaceholder} step="10" />
+                  <NumberInput id="monatsrate" value={monatsrate} onChange={(e) => setMonatsrate(e.target.value)} placeholder={tf.monatsratePlaceholder} step="10" />
                 </div>
               )}
             </div>
@@ -442,7 +443,7 @@ function Finanzierung() {
               {tilgungsvariante === 'tilgungssatz' && (
                 <div className="form-group">
                   <label htmlFor="tilgungssatz">{tf.tilgungssatzLabel}</label>
-                  <input id="tilgungssatz" type="number" value={tilgungssatz} onChange={(e) => setTilgungssatz(e.target.value)} placeholder={tf.tilgungssatzPlaceholder} step="0.1" />
+                  <NumberInput id="tilgungssatz" value={tilgungssatz} onChange={(e) => setTilgungssatz(e.target.value)} placeholder={tf.tilgungssatzPlaceholder} step="0.1" />
                 </div>
               )}
             </div>
@@ -463,7 +464,7 @@ function Finanzierung() {
               <div className="finanzierung-row">
                 <div className="finanzierung-group">
                   <label>{tf.monatlicheRate}</label>
-                  <input type="number" value={calculationResult.monthlyPayment} disabled readOnly />
+                  <NumberInput value={calculationResult.monthlyPayment} disabled readOnly />
                 </div>
                 <div className="finanzierung-group">
                   <label>{tf.laufzeitResult}</label>
@@ -473,11 +474,11 @@ function Finanzierung() {
               <div className="finanzierung-row">
                 <div className="finanzierung-group">
                   <label>{tf.gesamtzinsen}</label>
-                  <input type="number" value={calculationResult.totalInterest} disabled readOnly />
+                  <NumberInput value={calculationResult.totalInterest} disabled readOnly />
                 </div>
                 <div className="finanzierung-group">
                   <label>{tf.restschuld}</label>
-                  <input type="number" value={restschuld ? restschuld.toFixed(2) : '0.00'} disabled readOnly />
+                  <NumberInput value={restschuld ? restschuld.toFixed(2) : '0.00'} disabled readOnly />
                 </div>
               </div>
             </div>

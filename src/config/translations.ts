@@ -4,7 +4,7 @@ const translations = {
     nav: {
       neueImmobilie: 'Neue Immobilie',
       finanzierung: 'Finanzierung',
-      gespeicherteObjekte: 'Gespeicherte Objekte',
+      gespeicherteObjekte: 'Gespeicherte Immobilien',
       zinsangebote: 'Zinsangebote',
       settings: 'Einstellungen',
       profile: 'Profil',
@@ -57,7 +57,7 @@ const translations = {
     // Neue Immobilie
     neueImmobilie: {
       title: 'Neue Immobilie',
-      sectionObjekt: 'Objekt',
+      sectionObjekt: 'Immobilie',
       sectionGrundkosten: 'Grundkosten',
       sectionNebenkosten: 'Nebenkosten',
       sectionGesamtkosten: 'Gesamtkosten',
@@ -91,13 +91,13 @@ const translations = {
       hausgeldPlaceholder: 'z.B. 300',
       eigentuemeranteil: 'Eigentümeranteil',
       saveDialog: {
-        title: 'Objekt speichern',
+        title: 'Immobilie speichern',
         namePlaceholder: 'z.B. Meine Wohnung in Berlin',
         nameRequired: 'Name ist erforderlich',
       },
       alerts: {
-        saved: 'Objekt erfolgreich gespeichert!',
-        saveError: 'Fehler beim Speichern des Objekts',
+        saved: 'Immobilie erfolgreich gespeichert!',
+        saveError: 'Fehler beim Speichern der Immobilie',
         serverError: 'Fehler: Server ist nicht erreichbar. Stellen Sie sicher, dass der Server läuft.',
       },
     },
@@ -106,7 +106,7 @@ const translations = {
     finanzierung: {
       title: 'Finanzierung',
       subtitle: 'Geben Sie Ihr Eigenkapital ein, um die Finanzierungssumme zu berechnen',
-      boxObjekt: 'OBJEKT & GESAMTKOSTEN',
+      boxObjekt: 'IMMOBILIE & GESAMTKOSTEN',
       boxEigenkapital: 'EIGENKAPITAL GRUNDKOSTEN',
       boxEigenmittel: 'EIGENMITTEL',
       boxFinanzierungssumme: 'FINANZIERUNGSSUMME',
@@ -115,8 +115,8 @@ const translations = {
       boxTilgungsvariante: 'TILGUNGSVARIANTE',
       boxErgebnis: 'BERECHNUNGSERGEBNIS',
       boxTilgungsplan: 'TILGUNGSPLAN',
-      gespeichertesObjekt: 'Gespeichertes Objekt',
-      objektPlaceholder: '-- Objekt auswählen --',
+      gespeichertesObjekt: 'Gespeicherte Immobilie',
+      objektPlaceholder: '-- Immobilie auswählen --',
       kaufpreis: 'Kaufpreis',
       nebenkosten: 'Nebenkosten',
       gesamtkosten: 'Gesamtkosten',
@@ -159,7 +159,7 @@ const translations = {
       tpCashflow: 'Cashflow (€)',
       // Alerts
       alerts: {
-        missingFields: 'Bitte Sollzinssatz eingeben und ein Objekt auswählen',
+        missingFields: 'Bitte Sollzinssatz eingeben und eine Immobilie auswählen',
         missingLaufzeit: 'Bitte Laufzeit eingeben',
         missingMonatsrate: 'Bitte Monatsrate eingeben',
         missingTilgungssatz: 'Bitte Tilgungssatz eingeben',
@@ -168,7 +168,7 @@ const translations = {
       pdf: {
         title: 'Tilgungsplan',
         generatedOn: 'Erstellt am',
-        property: 'Objekt',
+        property: 'Immobilie',
         address: 'Adresse',
         kaufpreis: 'Kaufpreis',
         nebenkosten: 'Nebenkosten',
@@ -185,9 +185,9 @@ const translations = {
 
     // Gespeicherte Immobilien
     gespeicherte: {
-      title: 'Gespeicherte Objekte',
-      empty: 'Keine Objekte gespeichert',
-      emptyHint: 'Speichern Sie ein Objekt unter "Neue Immobilie", um es hier zu sehen',
+      title: 'Gespeicherte Immobilien',
+      empty: 'Keine Immobilien gespeichert',
+      emptyHint: 'Speichern Sie eine Immobilie unter "Neue Immobilie", um sie hier zu sehen',
       loading: 'Wird geladen...',
       address: 'Adresse',
       rooms: 'Zimmer',
@@ -195,8 +195,8 @@ const translations = {
       quadratmeter: 'Quadratmeter',
       gesamtkosten: 'Gesamtkosten',
       savedDate: 'Gespeichert',
-      editTitle: 'Objekt bearbeiten',
-      sectionDetails: 'Objekt Details',
+      editTitle: 'Immobilie bearbeiten',
+      sectionDetails: 'Immobilien Details',
       sectionKosten: 'Kosten',
       sectionNebenkosten: 'Nebenkosten (%)',
       sectionMiete: 'Miete',
@@ -220,12 +220,12 @@ const translations = {
       inseratUrl: 'Inserat',
       compareMode: 'Vergleichen',
       compareExit: 'Vergleich beenden',
-      compareTitle: 'Objektvergleich',
+      compareTitle: 'Immobilienvergleich',
       bruttomietrendite: 'Bruttomietrendite',
       alerts: {
-        updateSuccess: 'Objekt erfolgreich aktualisiert!',
-        updateError: 'Fehler beim Aktualisieren des Objekts',
-        deleteError: 'Fehler beim Löschen des Objekts',
+        updateSuccess: 'Immobilie erfolgreich aktualisiert!',
+        updateError: 'Fehler beim Aktualisieren der Immobilie',
+        deleteError: 'Fehler beim Löschen der Immobilie',
         serverError: 'Fehler: Server ist nicht erreichbar',
       },
     },
@@ -233,10 +233,10 @@ const translations = {
     // Zinsangebote
     zinsangebote: {
       title: 'Zinsangebote',
-      empty: 'Keine Objekte gefunden',
-      emptyHint: 'Speichern Sie zuerst ein Objekt unter "Neue Immobilie"',
+      empty: 'Keine Immobilien gefunden',
+      emptyHint: 'Speichern Sie zuerst eine Immobilie unter "Neue Immobilie"',
       loading: 'Wird geladen...',
-      selectProperty: 'Objekt auswählen:',
+      selectProperty: 'Immobilie auswählen:',
       kaufpreis: 'Kaufpreis',
       addTitle: 'Neues Zinsangebot hinzufügen',
       editTitle: 'Zinsangebot bearbeiten',
@@ -266,7 +266,7 @@ const translations = {
       chartZinsen: 'Gesamtzinsen',
       chartAxisLeft: 'Monatliche Rate (€)',
       chartAxisRight: 'Gesamtzinsen (€)',
-      noOffers: 'Keine Zinsangebote für dieses Objekt vorhanden',
+      noOffers: 'Keine Zinsangebote für diese Immobilie vorhanden',
       noOffersHint: 'Fügen Sie ein Zinsangebot hinzu, um zu beginnen',
       chartHint: 'Mehrere Angebote erforderlich für Vergleich',
       alerts: {
@@ -304,6 +304,8 @@ const translations = {
       themeLight: 'Hell',
       themeDark: 'Dunkel',
       themeDescription: 'Wechseln Sie zwischen dunklem und hellem Modus',
+      numberFormatLabel: 'Zahlenformat',
+      numberFormatDescription: 'Trennzeichen für Tausender und Dezimalstellen',
       previewLabel: 'VORSCHAU',
       previewFlaeche: 'Fläche',
       previewKaufpreis: 'Kaufpreis',
@@ -318,7 +320,7 @@ const translations = {
     nav: {
       neueImmobilie: 'New Property',
       finanzierung: 'Financing',
-      gespeicherteObjekte: 'Saved Properties',
+      gespeicherteObjekte: 'Saved Immobilien',
       zinsangebote: 'Interest Offers',
       settings: 'Settings',
       profile: 'Profile',
@@ -371,7 +373,7 @@ const translations = {
     // Neue Immobilie
     neueImmobilie: {
       title: 'New Property',
-      sectionObjekt: 'Property',
+      sectionObjekt: 'Immobilie',
       sectionGrundkosten: 'Purchase Costs',
       sectionNebenkosten: 'Ancillary Costs',
       sectionGesamtkosten: 'Total Costs',
@@ -420,7 +422,7 @@ const translations = {
     finanzierung: {
       title: 'Financing',
       subtitle: 'Enter your equity to calculate the financing amount',
-      boxObjekt: 'PROPERTY & TOTAL COSTS',
+      boxObjekt: 'IMMOBILIE & TOTAL COSTS',
       boxEigenkapital: 'EQUITY (PURCHASE PRICE)',
       boxEigenmittel: 'OWN FUNDS',
       boxFinanzierungssumme: 'FINANCING AMOUNT',
@@ -429,7 +431,7 @@ const translations = {
       boxTilgungsvariante: 'REPAYMENT TYPE',
       boxErgebnis: 'CALCULATION RESULT',
       boxTilgungsplan: 'AMORTIZATION SCHEDULE',
-      gespeichertesObjekt: 'Saved Property',
+      gespeichertesObjekt: 'Saved Immobilie',
       objektPlaceholder: '-- Select Property --',
       kaufpreis: 'Purchase Price',
       nebenkosten: 'Ancillary Costs',
@@ -496,9 +498,9 @@ const translations = {
 
     // Gespeicherte Immobilien
     gespeicherte: {
-      title: 'Saved Properties',
-      empty: 'No properties saved',
-      emptyHint: 'Save a property under "New Property" to see it here',
+      title: 'Saved Immobilien',
+      empty: 'No Immobilien saved',
+      emptyHint: 'Save an Immobilie under "New Property" to see it here',
       loading: 'Loading...',
       address: 'Address',
       rooms: 'Rooms',
@@ -615,6 +617,8 @@ const translations = {
       themeLight: 'Light',
       themeDark: 'Dark',
       themeDescription: 'Switch between dark and light mode',
+      numberFormatLabel: 'Number Format',
+      numberFormatDescription: 'Separator style for thousands and decimals',
       previewLabel: 'PREVIEW',
       previewFlaeche: 'Area',
       previewKaufpreis: 'Purchase Price',
