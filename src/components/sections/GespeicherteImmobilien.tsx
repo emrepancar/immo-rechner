@@ -11,10 +11,10 @@ type GespeicherteT = ReturnType<typeof useLanguage>['t']['gespeicherte']
 
 function cardNameFontSize(name: string): string {
   const len = name.length
-  if (len <= 20) return '18px'
-  if (len <= 32) return '15px'
-  if (len <= 48) return '13px'
-  return '11px'
+  if (len <= 20) return '22px'
+  if (len <= 32) return '17px'
+  if (len <= 48) return '14px'
+  return '12px'
 }
 
 function cardAddressFontSize(address: string): string {
