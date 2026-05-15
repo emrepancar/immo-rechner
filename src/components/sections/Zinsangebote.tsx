@@ -30,6 +30,7 @@ function Zinsangebote() {
     zinsbindung: '',
     darlehenssumme: '',
     monatlicheRate: '',
+    gesamtbetrag: '',
   })
   const [chartData, setChartData] = useState<ChartEntry[]>([])
   const [saving, setSaving] = useState(false)
@@ -103,7 +104,7 @@ function Zinsangebote() {
   }
 
   const resetForm = () => {
-    setFormData({ name: '', zinssatz: '', effektiverJahreszins: '', eigenkapital: '', zinsbindung: '', darlehenssumme: '', monatlicheRate: '' })
+    setFormData({ name: '', zinssatz: '', effektiverJahreszins: '', eigenkapital: '', zinsbindung: '', darlehenssumme: '', monatlicheRate: '', gesamtbetrag: '' })
     setEditingOffer(null)
   }
 
@@ -117,6 +118,7 @@ function Zinsangebote() {
       zinsbindung: offer.zinsbindung ? String(offer.zinsbindung) : '',
       darlehenssumme: offer.darlehenssumme != null ? String(offer.darlehenssumme) : '',
       monatlicheRate: offer.monatliche_rate != null ? String(offer.monatliche_rate) : '',
+      gesamtbetrag: offer.gesamtbetrag != null ? String(offer.gesamtbetrag) : '',
     })
   }
 
@@ -154,6 +156,7 @@ function Zinsangebote() {
       zinsbindung: parseInt(formData.zinsbindung),
       darlehenssumme: formData.darlehenssumme ? parseFloat(formData.darlehenssumme) : null,
       monatliche_rate: formData.monatlicheRate ? parseFloat(formData.monatlicheRate) : null,
+      gesamtbetrag: formData.gesamtbetrag ? parseFloat(formData.gesamtbetrag) : null,
     }
 
     try {
@@ -302,6 +305,21 @@ function Zinsangebote() {
 
         <div className="form-row">
           <div className="form-group">
+            <label htmlFor="gesamtbetrag">{tz.gesamtbetrag}</label>
+            <input
+              id="gesamtbetrag"
+              type="number"
+              placeholder="350000"
+              value={formData.gesamtbetrag}
+              onChange={(e) => handleFormChange('gesamtbetrag', e.target.value)}
+              step="1000"
+              min="0"
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
             <label htmlFor="zinsbindung">{tz.zinsbindung}</label>
             <input
               id="zinsbindung"
@@ -379,6 +397,12 @@ function Zinsangebote() {
                         <div className="detail-row">
                           <span className="label">{tz.monatlicheRateLabel}:</span>
                           <span className="value">€ {offer.monatliche_rate.toLocaleString('de-DE')}</span>
+                        </div>
+                      )}
+                      {offer.gesamtbetrag != null && (
+                        <div className="detail-row">
+                          <span className="label">{tz.gesamtbetragLabel}:</span>
+                          <span className="value">€ {offer.gesamtbetrag.toLocaleString('de-DE')}</span>
                         </div>
                       )}
                       <div className="detail-row">

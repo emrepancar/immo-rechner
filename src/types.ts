@@ -29,6 +29,7 @@ export interface RateOffer {
   zinsbindung: number
   darlehenssumme: number | null
   monatliche_rate: number | null
+  gesamtbetrag: number | null
   created_at?: string
 }
 

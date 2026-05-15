@@ -93,6 +93,7 @@ function initializeDatabase() {
   db.run(`ALTER TABLE zinsangebote ADD COLUMN effektiver_jahreszins REAL`, () => {})
   db.run(`ALTER TABLE zinsangebote ADD COLUMN darlehenssumme REAL`, () => {})
   db.run(`ALTER TABLE zinsangebote ADD COLUMN monatliche_rate REAL`, () => {})
+  db.run(`ALTER TABLE zinsangebote ADD COLUMN gesamtbetrag REAL`, () => {})
 
   db.run(`
     CREATE TABLE IF NOT EXISTS zinsangebote (
@@ -106,6 +107,7 @@ function initializeDatabase() {
       zinsbindung INTEGER,
       darlehenssumme REAL,
       monatliche_rate REAL,
+      gesamtbetrag REAL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE
@@ -292,17 +294,18 @@ app.post('/api/zinsangebote', (req, res) => {
     zinsbindung,
     darlehenssumme,
     monatliche_rate,
+    gesamtbetrag,
   } = req.body
 
   db.run(
     `INSERT INTO zinsangebote (
       property_id, name, zinssatz, effektiver_jahreszins,
       eigenkapital_amount, eigenkapital_percentage, zinsbindung,
-      darlehenssumme, monatliche_rate
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      darlehenssumme, monatliche_rate, gesamtbetrag
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [property_id, name, zinssatz, effektiver_jahreszins ?? null,
      eigenkapital_amount, eigenkapital_percentage, zinsbindung,
-     darlehenssumme ?? null, monatliche_rate ?? null],
+     darlehenssumme ?? null, monatliche_rate ?? null, gesamtbetrag ?? null],
     function (err) {
       if (err) {
         res.status(500).json({ error: err.message })
@@ -332,17 +335,18 @@ app.put('/api/zinsangebote/:id', (req, res) => {
     zinsbindung,
     darlehenssumme,
     monatliche_rate,
+    gesamtbetrag,
   } = req.body
 
   db.run(
     `UPDATE zinsangebote SET
       property_id = ?, name = ?, zinssatz = ?, effektiver_jahreszins = ?,
       eigenkapital_amount = ?, eigenkapital_percentage = ?, zinsbindung = ?,
-      darlehenssumme = ?, monatliche_rate = ?, updated_at = CURRENT_TIMESTAMP
+      darlehenssumme = ?, monatliche_rate = ?, gesamtbetrag = ?, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?`,
     [property_id, name, zinssatz, effektiver_jahreszins ?? null,
      eigenkapital_amount, eigenkapital_percentage, zinsbindung,
-     darlehenssumme ?? null, monatliche_rate ?? null, id],
+     darlehenssumme ?? null, monatliche_rate ?? null, gesamtbetrag ?? null, id],
     function (err) {
       if (err) {
         res.status(500).json({ error: err.message })
