@@ -90,6 +90,58 @@
   gap: var(--space-lg);
 }
 
+/* ── Data badges ─────────────────────────────────────────────────── */
+.data-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+
+.data-badge-primary {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.data-badge-secondary {
+  background: var(--accent-secondary-bg);
+  color: var(--accent-secondary);
+}
+
+.data-badge-success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.data-badge-warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.data-badge-danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+/* ── Secondary neutral helpers ───────────────────────────────────── */
+.divider-neutral {
+  height: 1px;
+  background: var(--secondary-neutral);
+  opacity: 0.15;
+}
+
+.timeline-marker {
+  background: var(--secondary-neutral-light);
+  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+}
+
 /* ── KPI / stat display ──────────────────────────────────────────── */
 .kpi-value {
   font-family: var(--mono);

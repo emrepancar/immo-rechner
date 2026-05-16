@@ -86,9 +86,10 @@
 }
 
 .ct-rate {
-  color: var(--accent);
+  color: var(--accent-secondary);
   font-size: 15px;
   font-weight: 700;
+  font-family: var(--mono);
 }
 
 .ct-best {
@@ -154,8 +155,8 @@
   color: var(--text-h);
 }
 
-.cashflow-value.positive { color: #177b5e; }
-.cashflow-value.negative { color: #c23f3a; }
+.cashflow-value.positive { color: var(--success); }
+.cashflow-value.negative { color: var(--danger); }
 
 .cashflow-sub {
   font-size: 10px;
@@ -296,7 +297,7 @@
   font-family: var(--mono);
   font-size: 28px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--accent-secondary);
   line-height: 1;
   letter-spacing: -0.02em;
   margin-bottom: 4px;
