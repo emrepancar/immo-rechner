@@ -5,10 +5,10 @@ import { useSettings } from './context/SettingsContext'
 import TopBar from './components/TopBar'
 import Sidebar from './components/Sidebar'
 import Toast from './components/Toast'
-import NeueImmobilie from './components/sections/NeueImmobilie'
-import Finanzierung from './components/sections/Finanzierung'
-import GespeicherteImmobilien from './components/sections/GespeicherteImmobilien'
-import Zinsangebote from './components/sections/Zinsangebote'
+import NewProperty from './components/sections/NewProperty'
+import Financing from './components/sections/Financing'
+import SavedProperties from './components/sections/SavedProperties'
+import MortgageOffers from './components/sections/MortgageOffers'
 import Settings from './components/sections/Settings'
 import './App.css'
 
@@ -42,10 +42,10 @@ function AppContent() {
           <Sidebar onNavigate={handleNavigation} />
           <main className="content">
             <Routes key={location.pathname}>
-              <Route path="/" element={<NeueImmobilie />} />
-              <Route path="/finanzierung" element={<Finanzierung />} />
-              <Route path="/gespeicherte-objekte" element={<GespeicherteImmobilien />} />
-              <Route path="/zinsangebote" element={<Zinsangebote />} />
+              <Route path="/" element={<NewProperty />} />
+              <Route path="/finanzierung" element={<Financing />} />
+              <Route path="/gespeicherte-objekte" element={<SavedProperties />} />
+              <Route path="/zinsangebote" element={<MortgageOffers />} />
               <Route path="/einstellungen" element={<div className="section-scroll"><Settings /></div>} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

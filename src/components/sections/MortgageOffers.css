@@ -1,15 +1,15 @@
-.zinsangebote-container {
+.mortgage-offers-container {
   width: 100%;
 }
 
-.zinsangebote-loading,
-.zinsangebote-empty {
+.mortgage-offers-loading,
+.mortgage-offers-empty {
   text-align: center;
   padding: 60px 20px;
   color: var(--text-subtle);
 }
 
-.zinsangebote-empty h2 {
+.mortgage-offers-empty h2 {
   font-size: 20px;
   font-weight: 600;
   margin: 0 0 8px;
@@ -165,7 +165,7 @@
 }
 
 /* ── Main 2-column grid ── */
-.zins-main-grid {
+.mortgage-main-grid {
   display: grid;
   grid-template-columns: 340px 1fr;
   gap: 16px;
@@ -173,7 +173,7 @@
 }
 
 /* ── Form box ── */
-.zinsangebot-form-box {
+.mortgage-offer-form-box {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -181,14 +181,14 @@
   box-shadow: var(--shadow-card);
 }
 
-.zinsangebote-container .form-group {
+.mortgage-offers-container .form-group {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
   margin-bottom: var(--space-lg);
 }
 
-.zinsangebote-container .form-group label {
+.mortgage-offers-container .form-group label {
   font-size: var(--text-xs);
   font-weight: 700;
   color: var(--text-subtle);
@@ -196,7 +196,7 @@
   letter-spacing: 0.07em;
 }
 
-.zinsangebote-container .form-group input {
+.mortgage-offers-container .form-group input {
   width: 100%;
   padding: 8px 10px;
   border: 1.5px solid var(--border);
@@ -209,7 +209,7 @@
   transition: border-color 0.2s;
 }
 
-.zinsangebote-container .form-group input:focus {
+.mortgage-offers-container .form-group input:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(46, 91, 255, 0.1);

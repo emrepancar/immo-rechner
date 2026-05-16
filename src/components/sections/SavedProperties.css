@@ -10,11 +10,11 @@
   --a-line2: #EDF0F5;
 }
 
-.gespeicherte-container {
+.saved-properties-container {
   width: 100%;
 }
 
-.gespeicherte-header {
+.saved-properties-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -305,7 +305,7 @@
 }
 
 /* Semantic value colors */
-.info-row .value.kaufpreis-value {
+.info-row .value.purchase-price-value {
   color: var(--accent);
 }
 
@@ -353,18 +353,18 @@
   color: var(--text-muted);
 }
 
-.gespeicherte-empty {
+.saved-properties-empty {
   text-align: center;
   padding: 60px 20px;
 }
 
-.gespeicherte-empty h2 {
+.saved-properties-empty h2 {
   font-size: 28px;
   margin: 0 0 16px 0;
   color: var(--text-h);
 }
 
-.gespeicherte-empty p {
+.saved-properties-empty p {
   font-size: 16px;
   color: var(--text-muted);
   margin: 8px 0;
@@ -376,7 +376,7 @@
   margin-top: 24px !important;
 }
 
-.gespeicherte-loading {
+.saved-properties-loading {
   text-align: center;
   padding: 60px 20px;
   font-size: 16px;
@@ -686,7 +686,7 @@
 }
 
 @media (max-width: 768px) {
-  .gespeicherte-container h2 {
+  .saved-properties-container h2 {
     font-size: 24px;
     margin-bottom: 20px;
   }
@@ -713,7 +713,7 @@
   opacity: 0.5;
 }
 
-.gespeicherte-empty h2 {
+.saved-properties-empty h2 {
   font-size: 20px;
   font-weight: 600;
   margin: 0 0 8px;

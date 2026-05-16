@@ -7,7 +7,7 @@ import ExpandableCard from '../ExpandableCard'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import NumberInput from '../NumberInput'
-import './Finanzierung.css'
+import './Financing.css'
 import { MIETERHOHUNG_INCREMENTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
 import { useSettings } from '../../context/SettingsContext'
@@ -15,7 +15,7 @@ import { propertiesApi } from '../../api'
 import { useAnimatedNumber } from '../../hooks/useAnimatedNumber'
 import type { Property, CalculationResult, TilgungsRow } from '../../types'
 
-function Finanzierung() {
+function Financing() {
   const { t, language } = useLanguage()
   const tf = t.finanzierung
   const { settings } = useSettings()
@@ -23,25 +23,25 @@ function Finanzierung() {
   const [properties, setProperties] = useState<Property[]>([])
   const [selectedProperty, setSelectedProperty] = useState('')
   const [selectedPropertyData, setSelectedPropertyData] = useState<Property | null>(null)
-  const [kaufpreis, setKaufpreis] = useState(0)
-  const [nebenkosten, setNebenkosten] = useState(0)
-  const [gesamtkosten, setGesamtkosten] = useState(0)
-  const [eigenkapital, setEigenkapital] = useState(0)
-  const [eigenkapitalProzent, setEigenkapitalProzent] = useState(0)
-  const [finanzierungssumme, setFinanzierungssumme] = useState(0)
-  const [sollzinssatz, setSollzinssatz] = useState('')
-  const [laufzeit, setLaufzeit] = useState('')
-  const [tilgungsvariante, setTilgungsvariante] = useState('volltilgung')
-  const [monatsrate, setMonatsrate] = useState('')
-  const [tilgungssatz, setTilgungssatz] = useState('')
+  const [purchasePriceVal, setPurchasePriceVal] = useState(0)
+  const [acqCosts, setAcqCosts] = useState(0)
+  const [totalCosts, setTotalCosts] = useState(0)
+  const [equity, setEquity] = useState(0)
+  const [equityPercent, setEquityPercent] = useState(0)
+  const [loanTotal, setLoanTotal] = useState(0)
+  const [nominalRate, setNominalRate] = useState('')
+  const [loanTerm, setLoanTerm] = useState('')
+  const [repaymentMethod, setRepaymentMethod] = useState('volltilgung')
+  const [monthlyPaymentVal, setMonthlyPaymentVal] = useState('')
+  const [amortizationRate, setAmortizationRate] = useState('')
   const [calculationResult, setCalculationResult] = useState<CalculationResult | null>(null)
-  const [tilgungsplan, setTilgungsplan] = useState<TilgungsRow[] | null>(null)
-  const [restschuld, setRestschuld] = useState<number | null>(null)
-  const [kaltmiete, setKaltmiete] = useState(0)
-  const [mieterhohungType, setMieterhohungType] = useState('none')
-  const [mieterhohungBetrag, setMieterhohungBetrag] = useState('')
-  const [mieterhohungProzent, setMieterhohungProzent] = useState('')
-  const [mieterhohungJahre, setMieterhohungJahre] = useState(2)
+  const [amortizationSchedule, setAmortizationSchedule] = useState<TilgungsRow[] | null>(null)
+  const [outstandingBalance, setOutstandingBalance] = useState<number | null>(null)
+  const [baseRentVal, setBaseRentVal] = useState(0)
+  const [rentIncreaseType, setRentIncreaseType] = useState('none')
+  const [rentIncreaseAmount, setRentIncreaseAmount] = useState('')
+  const [rentIncreasePercent, setRentIncreasePercent] = useState('')
+  const [rentIncreaseYears, setRentIncreaseYears] = useState(2)
   const [chartYears, setChartYears] = useState(10)
   const [mhPct, setMhPct] = useState(2)
 
@@ -51,14 +51,14 @@ function Finanzierung() {
   const [showLaufzeitTooltip, setShowLaufzeitTooltip] = useState(false)
 
   // Animated display numbers for key outputs
-  const animatedFinanzierungssumme = useAnimatedNumber(finanzierungssumme)
-  const animatedMonatsrate = useAnimatedNumber(calculationResult ? parseFloat(calculationResult.monthlyPayment) : 0)
-  const animatedGesamtzinsen = useAnimatedNumber(calculationResult ? parseFloat(calculationResult.totalInterest) : 0)
+  const animatedLoanTotal = useAnimatedNumber(loanTotal)
+  const animatedMonthlyPayment = useAnimatedNumber(calculationResult ? parseFloat(calculationResult.monthlyPayment) : 0)
+  const animatedTotalInterest = useAnimatedNumber(calculationResult ? parseFloat(calculationResult.totalInterest) : 0)
 
   // Circular progress computed values
-  const ekProzent = kaufpreis > 0 ? (eigenkapital / kaufpreis) * 100 : 0
-  const ltvRatio = kaufpreis > 0 ? (finanzierungssumme / kaufpreis) * 100 : 0
-  const tilgungssatzNum = parseFloat(tilgungssatz) || 0
+  const ekProzent = purchasePriceVal > 0 ? (equity / purchasePriceVal) * 100 : 0
+  const ltvRatio = purchasePriceVal > 0 ? (loanTotal / purchasePriceVal) * 100 : 0
+  const amortizationRateNum = parseFloat(amortizationRate) || 0
 
   const ekColor: 'success' | 'warning' | 'danger' = ekProzent >= 20 ? 'success' : ekProzent >= 10 ? 'warning' : 'danger'
   const ltvColor: 'success' | 'warning' | 'danger' = ltvRatio <= 80 ? 'success' : ltvRatio <= 90 ? 'warning' : 'danger'
@@ -81,101 +81,101 @@ function Finanzierung() {
       const property = properties.find(p => p.id === parseInt(propertyId))
       if (property) {
         setSelectedPropertyData(property)
-        setKaufpreis(property.kaufpreis || 0)
-        setNebenkosten(property.nebenkosten_total || 0)
-        setGesamtkosten(property.gesamtkosten || 0)
-        setEigenkapital(0)
-        setEigenkapitalProzent(0)
-        setFinanzierungssumme(property.gesamtkosten || 0)
-        setKaltmiete(property.kaltmiete || 0)
+        setPurchasePriceVal(property.kaufpreis || 0)
+        setAcqCosts(property.nebenkosten_total || 0)
+        setTotalCosts(property.gesamtkosten || 0)
+        setEquity(0)
+        setEquityPercent(0)
+        setLoanTotal(property.gesamtkosten || 0)
+        setBaseRentVal(property.kaltmiete || 0)
       }
     } else {
       setSelectedPropertyData(null)
-      setKaufpreis(0); setNebenkosten(0); setGesamtkosten(0)
-      setEigenkapital(0); setEigenkapitalProzent(0); setFinanzierungssumme(0); setKaltmiete(0)
+      setPurchasePriceVal(0); setAcqCosts(0); setTotalCosts(0)
+      setEquity(0); setEquityPercent(0); setLoanTotal(0); setBaseRentVal(0)
     }
   }
 
-  const handleEigenkapitalChange = (value: string) => {
+  const handleEquityChange = (value: string) => {
     const amount = parseFloat(value) || 0
-    setEigenkapital(amount)
-    if (kaufpreis > 0) setEigenkapitalProzent((amount / kaufpreis) * 100)
-    setFinanzierungssumme(Math.max(0, kaufpreis - amount))
+    setEquity(amount)
+    if (purchasePriceVal > 0) setEquityPercent((amount / purchasePriceVal) * 100)
+    setLoanTotal(Math.max(0, purchasePriceVal - amount))
   }
 
-  const handleProzentChange = (value: string) => {
-    const prozent = parseFloat(value) || 0
-    setEigenkapitalProzent(prozent)
-    const amount = (kaufpreis * prozent) / 100
-    setEigenkapital(amount)
-    setFinanzierungssumme(Math.max(0, kaufpreis - amount))
+  const handlePercentChange = (value: string) => {
+    const percent = parseFloat(value) || 0
+    setEquityPercent(percent)
+    const amount = (purchasePriceVal * percent) / 100
+    setEquity(amount)
+    setLoanTotal(Math.max(0, purchasePriceVal - amount))
   }
 
-  const getEffectiveKaltmiete = (year: number): number => {
-    if (mieterhohungType === 'none' || kaltmiete === 0) return kaltmiete
-    if (mieterhohungType === 'percentage') {
-      const prozent = parseFloat(mieterhohungProzent) || 0
-      return kaltmiete * Math.pow(1 + prozent / 100, year - 1)
+  const getEffectiveBaseRent = (year: number): number => {
+    if (rentIncreaseType === 'none' || baseRentVal === 0) return baseRentVal
+    if (rentIncreaseType === 'percentage') {
+      const percent = parseFloat(rentIncreasePercent) || 0
+      return baseRentVal * Math.pow(1 + percent / 100, year - 1)
     }
-    if (mieterhohungType === 'fixed') {
-      const betrag = parseFloat(mieterhohungBetrag) || 0
-      const jahre = parseInt(String(mieterhohungJahre)) || 2
-      return kaltmiete + (betrag * Math.floor((year - 1) / jahre))
+    if (rentIncreaseType === 'fixed') {
+      const amount = parseFloat(rentIncreaseAmount) || 0
+      const years = parseInt(String(rentIncreaseYears)) || 2
+      return baseRentVal + (amount * Math.floor((year - 1) / years))
     }
-    return kaltmiete
+    return baseRentVal
   }
 
-  const calculateVolltilgung = () => {
-    const zinssatz = parseFloat(sollzinssatz) || 0
-    const jahre = parseFloat(laufzeit) || 0
-    if (!zinssatz || !jahre || finanzierungssumme <= 0) return null
-    const monthlyRate = zinssatz / 12 / 100
-    const n = jahre * 12
-    const monthlyPayment = finanzierungssumme * (monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1)
+  const calculateFullAmortization = () => {
+    const rate = parseFloat(nominalRate) || 0
+    const years = parseFloat(loanTerm) || 0
+    if (!rate || !years || loanTotal <= 0) return null
+    const monthlyRate = rate / 12 / 100
+    const n = years * 12
+    const monthlyPayment = loanTotal * (monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1)
     const totalPaid = monthlyPayment * n
-    return { monthlyPayment: monthlyPayment.toFixed(2), totalInterest: (totalPaid - finanzierungssumme).toFixed(2), totalPaid: totalPaid.toFixed(2), laufzeit: jahre }
+    return { monthlyPayment: monthlyPayment.toFixed(2), totalInterest: (totalPaid - loanTotal).toFixed(2), totalPaid: totalPaid.toFixed(2), laufzeit: years }
   }
 
-  const calculateMonatsrate = () => {
-    const zinssatz = parseFloat(sollzinssatz) || 0
-    const monatlicheRate = parseFloat(monatsrate) || 0
-    if (!zinssatz || !monatlicheRate || finanzierungssumme <= 0 || monatlicheRate <= 0) return null
-    const monthlyRate = zinssatz / 12 / 100
-    const numerator = monatlicheRate / (monatlicheRate - finanzierungssumme * monthlyRate)
+  const calculateByMonthlyPayment = () => {
+    const rate = parseFloat(nominalRate) || 0
+    const monthlyRate2 = parseFloat(monthlyPaymentVal) || 0
+    if (!rate || !monthlyRate2 || loanTotal <= 0 || monthlyRate2 <= 0) return null
+    const monthlyRate = rate / 12 / 100
+    const numerator = monthlyRate2 / (monthlyRate2 - loanTotal * monthlyRate)
     if (numerator <= 0 || monthlyRate === 0) return null
     const numberOfMonths = Math.log(numerator) / Math.log(1 + monthlyRate)
-    const totalPaid = monatlicheRate * numberOfMonths
-    return { monthlyPayment: monatlicheRate.toFixed(2), totalInterest: (totalPaid - finanzierungssumme).toFixed(2), totalPaid: totalPaid.toFixed(2), laufzeit: (numberOfMonths / 12).toFixed(1), numberOfMonths: Math.ceil(numberOfMonths) }
+    const totalPaid = monthlyRate2 * numberOfMonths
+    return { monthlyPayment: monthlyRate2.toFixed(2), totalInterest: (totalPaid - loanTotal).toFixed(2), totalPaid: totalPaid.toFixed(2), laufzeit: (numberOfMonths / 12).toFixed(1), numberOfMonths: Math.ceil(numberOfMonths) }
   }
 
-  const calculateTilgungssatz = () => {
-    const zinssatz = parseFloat(sollzinssatz) || 0
-    const tilgung = parseFloat(tilgungssatz) || 0
-    if (!zinssatz || !tilgung || finanzierungssumme <= 0) return null
-    const monthlyInterestRate = zinssatz / 12 / 100
-    const monthlyRepaymentRate = tilgung / 12 / 100
-    const initialMonthlyPayment = finanzierungssumme * (monthlyInterestRate + monthlyRepaymentRate)
-    let remainingDebt = finanzierungssumme, totalInterest = 0, numberOfMonths = 0
+  const calculateByAmortizationRate = () => {
+    const rate = parseFloat(nominalRate) || 0
+    const amortRate = parseFloat(amortizationRate) || 0
+    if (!rate || !amortRate || loanTotal <= 0) return null
+    const monthlyInterestRate = rate / 12 / 100
+    const monthlyRepaymentRate = amortRate / 12 / 100
+    const initialMonthlyPayment = loanTotal * (monthlyInterestRate + monthlyRepaymentRate)
+    let remainingDebt = loanTotal, totalInterest = 0, numberOfMonths = 0
     while (remainingDebt > 0 && numberOfMonths < 600) {
       totalInterest += remainingDebt * monthlyInterestRate
       remainingDebt -= remainingDebt * monthlyRepaymentRate
       numberOfMonths++
     }
-    return { monthlyPayment: initialMonthlyPayment.toFixed(2), totalInterest: totalInterest.toFixed(2), totalPaid: (finanzierungssumme + totalInterest).toFixed(2), laufzeit: (numberOfMonths / 12).toFixed(1), numberOfMonths }
+    return { monthlyPayment: initialMonthlyPayment.toFixed(2), totalInterest: totalInterest.toFixed(2), totalPaid: (loanTotal + totalInterest).toFixed(2), laufzeit: (numberOfMonths / 12).toFixed(1), numberOfMonths }
   }
 
-  const createTilgungsplan = (result: CalculationResult): TilgungsRow[] => {
-    const monthlyRate = parseFloat(sollzinssatz) / 100 / 12
+  const createAmortizationSchedule = (result: CalculationResult): TilgungsRow[] => {
+    const monthlyRate = parseFloat(nominalRate) / 100 / 12
     const monthlyPayment = parseFloat(result.monthlyPayment)
-    let remainingDebt = finanzierungssumme, month = 0
+    let remainingDebt = loanTotal, month = 0
     while (remainingDebt > 0.01 && month < 600) {
       remainingDebt -= Math.min(monthlyPayment - remainingDebt * monthlyRate, remainingDebt)
       month++
     }
 
     const schedule = []
-    remainingDebt = finanzierungssumme
-    let yearData = { year: 1, startBalance: finanzierungssumme, annualPayment: 0, annualInterest: 0, annualPrincipal: 0, endBalance: 0 }
+    remainingDebt = loanTotal
+    let yearData = { year: 1, startBalance: loanTotal, annualPayment: 0, annualInterest: 0, annualPrincipal: 0, endBalance: 0 }
     let year = 0
 
     for (let m = 1; m <= month; m++) {
@@ -199,27 +199,27 @@ function Finanzierung() {
   }
 
   const handleCalculate = () => {
-    if (!sollzinssatz || finanzierungssumme <= 0) { alert(tf.alerts.missingFields); return }
+    if (!nominalRate || loanTotal <= 0) { alert(tf.alerts.missingFields); return }
     let result = null
-    if (tilgungsvariante === 'volltilgung') {
-      if (!laufzeit) { alert(tf.alerts.missingLaufzeit); return }
-      result = calculateVolltilgung()
-    } else if (tilgungsvariante === 'monatsrate') {
-      if (!monatsrate) { alert(tf.alerts.missingMonatsrate); return }
-      result = calculateMonatsrate()
-    } else if (tilgungsvariante === 'tilgungssatz') {
-      if (!tilgungssatz) { alert(tf.alerts.missingTilgungssatz); return }
-      result = calculateTilgungssatz()
+    if (repaymentMethod === 'volltilgung') {
+      if (!loanTerm) { alert(tf.alerts.missingLaufzeit); return }
+      result = calculateFullAmortization()
+    } else if (repaymentMethod === 'monatsrate') {
+      if (!monthlyPaymentVal) { alert(tf.alerts.missingMonatsrate); return }
+      result = calculateByMonthlyPayment()
+    } else if (repaymentMethod === 'tilgungssatz') {
+      if (!amortizationRate) { alert(tf.alerts.missingTilgungssatz); return }
+      result = calculateByAmortizationRate()
     }
     if (result) {
       setCalculationResult(result)
-      setRestschuld(parseFloat(result.totalPaid) - finanzierungssumme)
-      setTilgungsplan(createTilgungsplan(result))
+      setOutstandingBalance(parseFloat(result.totalPaid) - loanTotal)
+      setAmortizationSchedule(createAmortizationSchedule(result))
     }
   }
 
   const handleExportPdf = () => {
-    if (!tilgungsplan || !calculationResult) return
+    if (!amortizationSchedule || !calculationResult) return
 
     const tp = tf.pdf
     const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
@@ -246,14 +246,14 @@ function Finanzierung() {
 
     const infoLeft = [
       [tp.address, selectedPropertyData?.address || '-'],
-      [tp.kaufpreis, `€ ${currency(kaufpreis)}`],
-      [tp.nebenkosten, `€ ${currency(nebenkosten)}`],
-      [tp.gesamtkosten, `€ ${currency(gesamtkosten)}`],
+      [tp.kaufpreis, `€ ${currency(purchasePriceVal)}`],
+      [tp.nebenkosten, `€ ${currency(acqCosts)}`],
+      [tp.gesamtkosten, `€ ${currency(totalCosts)}`],
     ]
     const infoRight = [
-      [tp.eigenkapital, `€ ${currency(eigenkapital)}`],
-      [tp.finanzierungssumme, `€ ${currency(finanzierungssumme)}`],
-      [tp.sollzinssatz, `${sollzinssatz}%`],
+      [tp.eigenkapital, `€ ${currency(equity)}`],
+      [tp.finanzierungssumme, `€ ${currency(loanTotal)}`],
+      [tp.sollzinssatz, `${nominalRate}%`],
       [tp.monatlicheRate, `€ ${currency(calculationResult.monthlyPayment)}`],
     ]
 
@@ -271,16 +271,16 @@ function Finanzierung() {
       y += 7
     })
 
-    // Tilgungsplan table
+    // Amortization table
     const headers = [
       tf.tpJahr, tf.tpAnfangssaldo, tf.tpZinsen, tf.tpSumme,
       tf.tpTilgung, tf.tpRestschuld, tf.tpKaltmiete, tf.tpMonatlicheRate, tf.tpCashflow
     ]
 
-    const rows = tilgungsplan.map(row => {
+    const rows = amortizationSchedule.map(row => {
       const monthlyRate = parseFloat(calculationResult.monthlyPayment)
-      const effectiveKaltmiete = getEffectiveKaltmiete(row.year)
-      const cashflow = effectiveKaltmiete - monthlyRate
+      const effectiveBaseRent = getEffectiveBaseRent(row.year)
+      const cashflow = effectiveBaseRent - monthlyRate
       return [
         row.year,
         currency(row.startBalance),
@@ -288,7 +288,7 @@ function Finanzierung() {
         currency(row.startBalance + row.annualInterest),
         currency(row.annualPrincipal),
         currency(row.endBalance),
-        currency(effectiveKaltmiete * 12),
+        currency(effectiveBaseRent * 12),
         currency(monthlyRate * 12),
         currency(cashflow),
       ]
@@ -304,25 +304,25 @@ function Finanzierung() {
       margin: { left: 14, right: 14 },
     })
 
-    const propName = selectedPropertyData?.name || 'tilgungsplan'
+    const propName = selectedPropertyData?.name || 'amortization-schedule'
     doc.save(`${propName.replace(/\s+/g, '_')}_${tp.title.replace(/\s+/g, '_')}.pdf`)
   }
 
-  const baseRent = kaltmiete || 1500
+  const rentBase = baseRentVal || 1500
   const rentTimeline = Array.from({ length: chartYears + 1 }, (_, i) => ({
     year: i,
-    rent: mieterhohungType === 'percentage'
-      ? baseRent * Math.pow(1 + mhPct / 100, i)
-      : mieterhohungType === 'fixed' && parseFloat(mieterhohungBetrag) > 0
-      ? baseRent + Math.floor(i / mieterhohungJahre) * parseFloat(mieterhohungBetrag)
-      : baseRent
+    rent: rentIncreaseType === 'percentage'
+      ? rentBase * Math.pow(1 + mhPct / 100, i)
+      : rentIncreaseType === 'fixed' && parseFloat(rentIncreaseAmount) > 0
+      ? rentBase + Math.floor(i / rentIncreaseYears) * parseFloat(rentIncreaseAmount)
+      : rentBase
   }))
   const maxRent = Math.max(...rentTimeline.map(x => x.rent))
   const minRent = Math.min(...rentTimeline.map(x => x.rent))
   const rentRange = maxRent - minRent
 
   return (
-    <div className="finanzierung page-shell">
+    <div className="financing page-shell">
       <div className="page-shell-header">
         <div className="page-shell-top-bar">
           <div>
@@ -336,12 +336,12 @@ function Finanzierung() {
         <div className="page-shell-divider" />
       </div>
       <div className="page-shell-body">
-      <div className="finanzierung-top-grid">
+      <div className="financing-top-grid">
 
-        {/* Box 1: Immobilie & Gesamtkosten */}
-        <div className="finanzierung-box">
+        {/* Box 1: Property & Total Costs */}
+        <div className="financing-box">
           <SectionDivider label={tf.boxObjekt} />
-          <div className="finanzierung-form">
+          <div className="financing-form">
             <div className="form-group">
               <label>{tf.gespeichertesObjekt}</label>
               <CustomSelect
@@ -358,72 +358,72 @@ function Finanzierung() {
             </div>
             <div className="form-group">
               <label>{tf.kaufpreis} ({settings.currency})</label>
-              <NumberInput value={kaufpreis} disabled placeholder="0" />
+              <NumberInput value={purchasePriceVal} disabled placeholder="0" />
             </div>
             <div className="form-group">
               <label>{tf.nebenkosten} ({settings.currency})</label>
-              <NumberInput value={nebenkosten} disabled placeholder="0" />
+              <NumberInput value={acqCosts} disabled placeholder="0" />
             </div>
             <div className="form-group">
               <label>{tf.gesamtkosten} ({settings.currency})</label>
-              <NumberInput value={gesamtkosten} disabled placeholder="0" />
+              <NumberInput value={totalCosts} disabled placeholder="0" />
             </div>
           </div>
         </div>
 
-        {/* Column 2: EK + Darlehen stacked */}
-        <div className="finanzierung-right-col">
+        {/* Column 2: Equity + Loan stacked */}
+        <div className="financing-right-col">
 
-          <div className="finanzierung-box">
+          <div className="financing-box">
             <SectionDivider label={tf.boxEigenkapital} />
-            <div className="finanzierung-form">
-              <div className="finanzierung-row">
-                <div className="finanzierung-group">
+            <div className="financing-form">
+              <div className="financing-row">
+                <div className="financing-group">
                   <label>{tf.eigenkapital} ({settings.currency})</label>
-                  <NumberInput value={eigenkapital} onChange={(e) => handleEigenkapitalChange(e.target.value)} placeholder="0" />
+                  <NumberInput value={equity} onChange={(e) => handleEquityChange(e.target.value)} placeholder="0" />
                 </div>
-                <div className="finanzierung-group">
+                <div className="financing-group">
                   <label>{tf.eigenmittel} ({settings.currency})</label>
-                  <NumberInput value={(nebenkosten + eigenkapital).toFixed(2)} disabled placeholder="0" />
+                  <NumberInput value={(acqCosts + equity).toFixed(2)} disabled placeholder="0" />
                   <span className="field-hint">EK + Nebenkosten</span>
                 </div>
               </div>
-              <div className="ek-slider-finsum-row">
-                <div className="darlehen-slider-group" style={{ flex: 1 }}>
+              <div className="equity-loan-row">
+                <div className="loan-slider-group" style={{ flex: 1 }}>
                   <div className="slider-tooltip-wrapper">
                     <input
                       type="range"
-                      className="darlehen-slider"
+                      className="loan-slider"
                       min={0}
                       max={100}
                       step={5}
-                      value={eigenkapitalProzent}
+                      value={equityPercent}
                       onChange={(e) => {
                         const pct = parseFloat(e.target.value)
-                        const ek = Math.round((pct / 100) * (kaufpreis || 0))
-                        handleEigenkapitalChange(String(ek))
+                        const ek = Math.round((pct / 100) * (purchasePriceVal || 0))
+                        handleEquityChange(String(ek))
                       }}
                       onMouseEnter={() => setShowEkTooltip(true)}
                       onMouseLeave={() => setShowEkTooltip(false)}
                       style={{
-                        '--fill': `${eigenkapitalProzent}%`,
-                        '--thumb-pos': `${eigenkapitalProzent}%`,
+                        '--fill': `${equityPercent}%`,
+                        '--thumb-pos': `${equityPercent}%`,
                       } as React.CSSProperties}
                     />
                     {showEkTooltip && (
-                      <div className="slider-tooltip" style={{ '--thumb-pos': `${eigenkapitalProzent}%` } as React.CSSProperties}>
-                        {eigenkapitalProzent.toFixed(0)} %
+                      <div className="slider-tooltip" style={{ '--thumb-pos': `${equityPercent}%` } as React.CSSProperties}>
+                        {equityPercent.toFixed(0)} %
                       </div>
                     )}
                   </div>
-                  <div className="darlehen-slider-value">{eigenkapitalProzent.toFixed(0)} %</div>
+                  <div className="loan-slider-value">{equityPercent.toFixed(0)} %</div>
                 </div>
-                <div className="finanzierung-group" style={{ flex: 1 }}>
+                <div className="financing-group" style={{ flex: 1 }}>
                   <label>{tf.finanzierungssumme} ({settings.currency})</label>
-                  <NumberInput value={animatedFinanzierungssumme.toFixed(2)} disabled placeholder="0" />
+                  <NumberInput value={animatedLoanTotal.toFixed(2)} disabled placeholder="0" />
                 </div>
               </div>
-              {kaufpreis > 0 && (
+              {purchasePriceVal > 0 && (
                 <div className="circular-progress-row">
                   <CircularProgress
                     value={ekProzent}
@@ -439,11 +439,11 @@ function Finanzierung() {
                     color={ltvColor}
                     size="md"
                   />
-                  {tilgungsvariante === 'tilgungssatz' && tilgungssatzNum > 0 && (
+                  {repaymentMethod === 'tilgungssatz' && amortizationRateNum > 0 && (
                     <CircularProgress
-                      value={Math.min(tilgungssatzNum * 10, 100)}
+                      value={Math.min(amortizationRateNum * 10, 100)}
                       label="Tilgung"
-                      sublabel={`${tilgungssatzNum.toFixed(1)} % p.a.`}
+                      sublabel={`${amortizationRateNum.toFixed(1)} % p.a.`}
                       color="accent"
                       size="md"
                     />
@@ -453,55 +453,55 @@ function Finanzierung() {
             </div>
           </div>
 
-          <div className="finanzierung-box">
+          <div className="financing-box">
             <SectionDivider label={tf.boxDarlehen} />
-            <div className="finanzierung-form">
-              <div className="finanzierung-row">
-                <div className="darlehen-slider-group">
-                  <label className="darlehen-slider-label">{tf.sollzinssatz}</label>
+            <div className="financing-form">
+              <div className="financing-row">
+                <div className="loan-slider-group">
+                  <label className="loan-slider-label">{tf.sollzinssatz}</label>
                   <div className="slider-tooltip-wrapper">
                     <input
                       type="range"
-                      className="darlehen-slider"
+                      className="loan-slider"
                       min={0.5}
                       max={8}
                       step={0.1}
-                      value={sollzinssatz || 3.5}
-                      onChange={(e) => setSollzinssatz(e.target.value)}
+                      value={nominalRate || 3.5}
+                      onChange={(e) => setNominalRate(e.target.value)}
                       onMouseEnter={() => setShowZinsTooltip(true)}
                       onMouseLeave={() => setShowZinsTooltip(false)}
-                      style={{ '--fill': `${((parseFloat(sollzinssatz || '3.5') - 0.5) / (8 - 0.5)) * 100}%`, '--thumb-pos': `${((parseFloat(sollzinssatz || '3.5') - 0.5) / (8 - 0.5)) * 100}%` } as React.CSSProperties}
+                      style={{ '--fill': `${((parseFloat(nominalRate || '3.5') - 0.5) / (8 - 0.5)) * 100}%`, '--thumb-pos': `${((parseFloat(nominalRate || '3.5') - 0.5) / (8 - 0.5)) * 100}%` } as React.CSSProperties}
                     />
                     {showZinsTooltip && (
-                      <div className="slider-tooltip" style={{ '--thumb-pos': `${((parseFloat(sollzinssatz || '3.5') - 0.5) / (8 - 0.5)) * 100}%` } as React.CSSProperties}>
-                        {parseFloat(sollzinssatz || '3.5').toFixed(2)} %
+                      <div className="slider-tooltip" style={{ '--thumb-pos': `${((parseFloat(nominalRate || '3.5') - 0.5) / (8 - 0.5)) * 100}%` } as React.CSSProperties}>
+                        {parseFloat(nominalRate || '3.5').toFixed(2)} %
                       </div>
                     )}
                   </div>
-                  <div className="darlehen-slider-value">{parseFloat(sollzinssatz || '3.5').toFixed(2)} %</div>
+                  <div className="loan-slider-value">{parseFloat(nominalRate || '3.5').toFixed(2)} %</div>
                 </div>
-                <div className="darlehen-slider-group">
-                  <label className="darlehen-slider-label">{tf.laufzeit}</label>
+                <div className="loan-slider-group">
+                  <label className="loan-slider-label">{tf.laufzeit}</label>
                   <div className="slider-tooltip-wrapper">
                     <input
                       type="range"
-                      className="darlehen-slider"
+                      className="loan-slider"
                       min={5}
                       max={40}
                       step={1}
-                      value={laufzeit || 20}
-                      onChange={(e) => setLaufzeit(e.target.value)}
+                      value={loanTerm || 20}
+                      onChange={(e) => setLoanTerm(e.target.value)}
                       onMouseEnter={() => setShowLaufzeitTooltip(true)}
                       onMouseLeave={() => setShowLaufzeitTooltip(false)}
-                      style={{ '--fill': `${((parseInt(laufzeit || '20') - 5) / (40 - 5)) * 100}%`, '--thumb-pos': `${((parseInt(laufzeit || '20') - 5) / (40 - 5)) * 100}%` } as React.CSSProperties}
+                      style={{ '--fill': `${((parseInt(loanTerm || '20') - 5) / (40 - 5)) * 100}%`, '--thumb-pos': `${((parseInt(loanTerm || '20') - 5) / (40 - 5)) * 100}%` } as React.CSSProperties}
                     />
                     {showLaufzeitTooltip && (
-                      <div className="slider-tooltip" style={{ '--thumb-pos': `${((parseInt(laufzeit || '20') - 5) / (40 - 5)) * 100}%` } as React.CSSProperties}>
-                        {laufzeit || 20} {t.common.years}
+                      <div className="slider-tooltip" style={{ '--thumb-pos': `${((parseInt(loanTerm || '20') - 5) / (40 - 5)) * 100}%` } as React.CSSProperties}>
+                        {loanTerm || 20} {t.common.years}
                       </div>
                     )}
                   </div>
-                  <div className="darlehen-slider-value">{laufzeit || 20} {t.common.years}</div>
+                  <div className="loan-slider-value">{loanTerm || 20} {t.common.years}</div>
                 </div>
               </div>
             </div>
@@ -511,10 +511,10 @@ function Finanzierung() {
 
       </div>
 
-      <div className="finanzierung-mid-grid">
+      <div className="financing-mid-grid">
 
-        {/* MIETERHÖHUNG */}
-        <div className="finanzierung-box">
+        {/* RENT INCREASE */}
+        <div className="financing-box">
           <SectionDivider label={tf.boxMieterhohung} />
 
           {/* 3 card selectors */}
@@ -526,11 +526,11 @@ function Finanzierung() {
             ].map(opt => (
               <div
                 key={opt.id}
-                className={`selector-card ${mieterhohungType === opt.id ? 'active' : ''}`}
-                onClick={() => setMieterhohungType(opt.id)}
+                className={`selector-card ${rentIncreaseType === opt.id ? 'active' : ''}`}
+                onClick={() => setRentIncreaseType(opt.id)}
               >
                 <div className="selector-card-icon">{opt.icon}</div>
-                <div className={`selector-card-label ${mieterhohungType === opt.id ? 'active' : ''}`}>{opt.label}</div>
+                <div className={`selector-card-label ${rentIncreaseType === opt.id ? 'active' : ''}`}>{opt.label}</div>
                 <div className="selector-card-desc">{opt.desc}</div>
               </div>
             ))}
@@ -541,13 +541,13 @@ function Finanzierung() {
             <div className="mh-chart-header">
               <span className="mh-chart-title">{chartYears}-Jahres-Simulation</span>
               <div className="mh-chart-controls">
-                <span className="darlehen-slider-label">Jahre:</span>
+                <span className="loan-slider-label">Jahre:</span>
                 <input
-                  type="range" className="darlehen-slider" min={5} max={20} step={1}
+                  type="range" className="loan-slider" min={5} max={20} step={1}
                   value={chartYears} onChange={e => setChartYears(Number(e.target.value))}
                   style={{ '--fill': `${((chartYears - 5) / (20 - 5)) * 100}%`, width: 100 } as React.CSSProperties}
                 />
-                <span className="darlehen-slider-value" style={{ minWidth: 32 }}>{chartYears} J.</span>
+                <span className="loan-slider-value" style={{ minWidth: 32 }}>{chartYears} J.</span>
               </div>
             </div>
 
@@ -568,34 +568,34 @@ function Finanzierung() {
               })}
             </div>
 
-            {mieterhohungType === 'percentage' && (
+            {rentIncreaseType === 'percentage' && (
               <div className="mh-input-panel">
-                <label className="darlehen-slider-label">Jährliche Erhöhung (%)</label>
+                <label className="loan-slider-label">Jährliche Erhöhung (%)</label>
                 <input
-                  type="range" className="darlehen-slider" min={0} max={10} step={0.1}
+                  type="range" className="loan-slider" min={0} max={10} step={0.1}
                   value={mhPct} onChange={e => setMhPct(Number(e.target.value))}
                   style={{ '--fill': `${(mhPct / 10) * 100}%` } as React.CSSProperties}
                 />
-                <div className="darlehen-slider-value">{mhPct.toFixed(1)} % p.a.</div>
+                <div className="loan-slider-value">{mhPct.toFixed(1)} % p.a.</div>
               </div>
             )}
-            {mieterhohungType === 'fixed' && (
+            {rentIncreaseType === 'fixed' && (
               <div className="mh-input-panel">
-                <div className="finanzierung-row">
-                  <div className="finanzierung-group">
+                <div className="financing-row">
+                  <div className="financing-group">
                     <label>{tf.mieterhohungJahre}</label>
                     <CustomSelect
-                      value={String(mieterhohungJahre)}
-                      onChange={(v) => setMieterhohungJahre(Number(v))}
+                      value={String(rentIncreaseYears)}
+                      onChange={(v) => setRentIncreaseYears(Number(v))}
                       options={MIETERHOHUNG_INCREMENTS.map(j => ({
                         value: String(j),
                         label: `${j} ${j === 1 ? t.common.year : t.common.years}`,
                       }))}
                     />
                   </div>
-                  <div className="finanzierung-group">
+                  <div className="financing-group">
                     <label>{tf.mieterhohungBetrag}</label>
-                    <NumberInput value={mieterhohungBetrag} onChange={e => setMieterhohungBetrag(e.target.value)} placeholder={tf.mieterhohungBetragPlaceholder} step="10" />
+                    <NumberInput value={rentIncreaseAmount} onChange={e => setRentIncreaseAmount(e.target.value)} placeholder={tf.mieterhohungBetragPlaceholder} step="10" />
                   </div>
                 </div>
               </div>
@@ -603,98 +603,98 @@ function Finanzierung() {
           </div>
         </div>
 
-        {/* TILGUNGSVARIANTE */}
-        <div className="finanzierung-box">
+        {/* REPAYMENT METHOD */}
+        <div className="financing-box">
           <SectionDivider label={tf.boxTilgungsvariante} />
 
           <div className="selector-cards">
             {[
-              { id: 'volltilgung',  label: tf.volltilgung,  preview: laufzeit ? `${laufzeit} J.`   : '25 J.',      desc: 'Nach Laufzeit' },
-              { id: 'monatsrate',   label: tf.monatsrate,   preview: monatsrate ? `€ ${parseFloat(monatsrate).toLocaleString('de-DE')}` : '€ 1.200', desc: 'Nach Wunschrate' },
-              { id: 'tilgungssatz', label: tf.tilgungssatz, preview: tilgungssatz ? `${tilgungssatz} %` : '2,0 %',  desc: 'Nach %' },
+              { id: 'volltilgung',  label: tf.volltilgung,  preview: loanTerm ? `${loanTerm} J.`   : '25 J.',      desc: 'Nach Laufzeit' },
+              { id: 'monatsrate',   label: tf.monatsrate,   preview: monthlyPaymentVal ? `€ ${parseFloat(monthlyPaymentVal).toLocaleString('de-DE')}` : '€ 1.200', desc: 'Nach Wunschrate' },
+              { id: 'tilgungssatz', label: tf.tilgungssatz, preview: amortizationRate ? `${amortizationRate} %` : '2,0 %',  desc: 'Nach %' },
             ].map(opt => (
               <div
                 key={opt.id}
-                className={`selector-card ${tilgungsvariante === opt.id ? 'active' : ''}`}
-                onClick={() => setTilgungsvariante(opt.id)}
+                className={`selector-card ${repaymentMethod === opt.id ? 'active' : ''}`}
+                onClick={() => setRepaymentMethod(opt.id)}
               >
-                <div className={`selector-card-label ${tilgungsvariante === opt.id ? 'active' : ''}`}>{opt.label}</div>
+                <div className={`selector-card-label ${repaymentMethod === opt.id ? 'active' : ''}`}>{opt.label}</div>
                 <div className="selector-card-preview">{opt.preview}</div>
                 <div className="selector-card-desc">{opt.desc}</div>
               </div>
             ))}
           </div>
 
-          {tilgungsvariante === 'volltilgung' && (
+          {repaymentMethod === 'volltilgung' && (
             <div className="tilg-input-panel">
-              <div className="darlehen-slider-group">
-                <label className="darlehen-slider-label">{tf.laufzeit}</label>
+              <div className="loan-slider-group">
+                <label className="loan-slider-label">{tf.laufzeit}</label>
                 <input
-                  type="range" className="darlehen-slider" min={5} max={40} step={1}
-                  value={laufzeit || 25}
-                  onChange={e => setLaufzeit(e.target.value)}
-                  style={{ '--fill': `${((parseInt(laufzeit || '25') - 5) / (40 - 5)) * 100}%` } as React.CSSProperties}
+                  type="range" className="loan-slider" min={5} max={40} step={1}
+                  value={loanTerm || 25}
+                  onChange={e => setLoanTerm(e.target.value)}
+                  style={{ '--fill': `${((parseInt(loanTerm || '25') - 5) / (40 - 5)) * 100}%` } as React.CSSProperties}
                 />
-                <div className="darlehen-slider-value">{laufzeit || 25} {t.common.years}</div>
+                <div className="loan-slider-value">{loanTerm || 25} {t.common.years}</div>
               </div>
             </div>
           )}
-          {tilgungsvariante === 'monatsrate' && (
+          {repaymentMethod === 'monatsrate' && (
             <div className="tilg-input-panel">
               <div className="form-group">
                 <label>{tf.monatsrateLabel}</label>
-                <NumberInput value={monatsrate} onChange={e => setMonatsrate(e.target.value)} placeholder={tf.monatsratePlaceholder} step="10" />
+                <NumberInput value={monthlyPaymentVal} onChange={e => setMonthlyPaymentVal(e.target.value)} placeholder={tf.monatsratePlaceholder} step="10" />
               </div>
             </div>
           )}
-          {tilgungsvariante === 'tilgungssatz' && (
+          {repaymentMethod === 'tilgungssatz' && (
             <div className="tilg-input-panel">
               <div className="form-group">
                 <label>{tf.tilgungssatzLabel}</label>
-                <NumberInput value={tilgungssatz} onChange={e => setTilgungssatz(e.target.value)} placeholder={tf.tilgungssatzPlaceholder} step="0.1" />
+                <NumberInput value={amortizationRate} onChange={e => setAmortizationRate(e.target.value)} placeholder={tf.tilgungssatzPlaceholder} step="0.1" />
               </div>
             </div>
           )}
         </div>
 
-      </div>{/* finanzierung-mid-grid */}
+      </div>{/* financing-mid-grid */}
 
       {calculationResult && (
         <>
-          <div className="finanzierung-box">
+          <div className="financing-box">
             <SectionDivider label={tf.boxErgebnis} />
-            <div className="finanzierung-form">
-              <div className="finanzierung-row">
-                <div className="finanzierung-group">
+            <div className="financing-form">
+              <div className="financing-row">
+                <div className="financing-group">
                   <label>{tf.monatlicheRate}</label>
-                  <NumberInput value={animatedMonatsrate.toFixed(2)} disabled readOnly />
+                  <NumberInput value={animatedMonthlyPayment.toFixed(2)} disabled readOnly />
                 </div>
-                <div className="finanzierung-group">
+                <div className="financing-group">
                   <label>{tf.laufzeitResult}</label>
                   <input type="number" value={calculationResult.laufzeit} disabled readOnly />
                 </div>
               </div>
-              <div className="finanzierung-row">
-                <div className="finanzierung-group">
+              <div className="financing-row">
+                <div className="financing-group">
                   <label>{tf.gesamtzinsen}</label>
-                  <NumberInput value={animatedGesamtzinsen.toFixed(2)} disabled readOnly />
+                  <NumberInput value={animatedTotalInterest.toFixed(2)} disabled readOnly />
                 </div>
-                <div className="finanzierung-group">
+                <div className="financing-group">
                   <label>{tf.restschuld}</label>
-                  <NumberInput value={restschuld ? restschuld.toFixed(2) : '0.00'} disabled readOnly />
+                  <NumberInput value={outstandingBalance ? outstandingBalance.toFixed(2) : '0.00'} disabled readOnly />
                 </div>
               </div>
             </div>
           </div>
 
-          {tilgungsplan && (
+          {amortizationSchedule && (
             <ExpandableCard
               title={tf.boxTilgungsplan}
               defaultOpen={false}
               icon={<Table size={15} weight="duotone" />}
               summary={
                 <span>
-                  {tilgungsplan.length} {t.common.years} &mdash; {settings.currency} {Math.round(parseFloat(calculationResult.monthlyPayment)).toLocaleString('de-DE')} / Monat
+                  {amortizationSchedule.length} {t.common.years} &mdash; {settings.currency} {Math.round(parseFloat(calculationResult.monthlyPayment)).toLocaleString('de-DE')} / Monat
                 </span>
               }
             >
@@ -704,8 +704,8 @@ function Finanzierung() {
                   {t.common.exportPdf}
                 </button>
               </div>
-              <div className="tilgungsplan-table-container">
-                <table className="tilgungsplan-table">
+              <div className="amortization-table-container">
+                <table className="amortization-table">
                   <thead>
                     <tr>
                       <th>{tf.tpJahr}</th>
@@ -720,17 +720,17 @@ function Finanzierung() {
                     </tr>
                   </thead>
                   <tbody>
-                    {tilgungsplan.map((row, index) => {
+                    {amortizationSchedule.map((row, index) => {
                       const monthlyInterest = (row.annualInterest / 12).toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })
                       const monthlyPrincipal = (row.annualPrincipal / 12).toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })
                       const monthlyRate = parseFloat(calculationResult.monthlyPayment)
-                      const effectiveKaltmiete = getEffectiveKaltmiete(row.year)
-                      const annualKaltmiete = effectiveKaltmiete * 12
+                      const effectiveBaseRent = getEffectiveBaseRent(row.year)
+                      const annualBaseRent = effectiveBaseRent * 12
                       const annualRate = monthlyRate * 12
-                      const monthlyKaltmieteFormatted = effectiveKaltmiete.toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })
+                      const monthlyBaseRentFormatted = effectiveBaseRent.toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })
                       const monthlyRateFormatted = monthlyRate.toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })
-                      const cashflow = effectiveKaltmiete - monthlyRate
-                      const sumZinsen = row.startBalance + row.annualInterest
+                      const cashflow = effectiveBaseRent - monthlyRate
+                      const sumInterest = row.startBalance + row.annualInterest
 
                       return (
                         <tr key={index}>
@@ -740,15 +740,15 @@ function Finanzierung() {
                             {row.annualInterest.toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
                             <br /><span className="monthly-value">({monthlyInterest})</span>
                           </td>
-                          <td>{sumZinsen.toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</td>
+                          <td>{sumInterest.toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</td>
                           <td>
                             {row.annualPrincipal.toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
                             <br /><span className="monthly-value">({monthlyPrincipal})</span>
                           </td>
                           <td>{row.endBalance.toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</td>
                           <td>
-                            {annualKaltmiete.toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
-                            <br /><span className="monthly-value">({monthlyKaltmieteFormatted})</span>
+                            {annualBaseRent.toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                            <br /><span className="monthly-value">({monthlyBaseRentFormatted})</span>
                           </td>
                           <td>
                             {annualRate.toLocaleString('de-DE', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
@@ -768,28 +768,28 @@ function Finanzierung() {
       </div>{/* page-shell-body */}
 
       {/* Sticky summary footer */}
-      <div className="finanzierung-footer">
-        <div className="finanzierung-footer-item accent">
-          <div className="finanzierung-footer-label">Darlehenssumme</div>
-          <div className="finanzierung-footer-value">{settings.currency} {finanzierungssumme.toLocaleString('de-DE', { maximumFractionDigits: 0 })}</div>
+      <div className="financing-footer">
+        <div className="financing-footer-item accent">
+          <div className="financing-footer-label">Darlehenssumme</div>
+          <div className="financing-footer-value">{settings.currency} {loanTotal.toLocaleString('de-DE', { maximumFractionDigits: 0 })}</div>
         </div>
-        <div className="finanzierung-footer-item accent">
-          <div className="finanzierung-footer-label">Eigenkapital</div>
-          <div className="finanzierung-footer-value">{eigenkapitalProzent.toFixed(0)} %</div>
+        <div className="financing-footer-item accent">
+          <div className="financing-footer-label">Eigenkapital</div>
+          <div className="financing-footer-value">{equityPercent.toFixed(0)} %</div>
         </div>
-        <div className="finanzierung-footer-item secondary">
-          <div className="finanzierung-footer-label">Zinssatz</div>
-          <div className="finanzierung-footer-value">{parseFloat(sollzinssatz || '3.5').toFixed(2)} %</div>
+        <div className="financing-footer-item secondary">
+          <div className="financing-footer-label">Zinssatz</div>
+          <div className="financing-footer-value">{parseFloat(nominalRate || '3.5').toFixed(2)} %</div>
         </div>
-        <div className="finanzierung-footer-item secondary">
-          <div className="finanzierung-footer-label">Gesamtzinsen</div>
-          <div className="finanzierung-footer-value">
+        <div className="financing-footer-item secondary">
+          <div className="financing-footer-label">Gesamtzinsen</div>
+          <div className="financing-footer-value">
             {calculationResult ? `${settings.currency} ${parseFloat(calculationResult.totalInterest).toLocaleString('de-DE', { maximumFractionDigits: 0 })}` : '—'}
           </div>
         </div>
-        <div className="finanzierung-footer-item finanzierung-footer-highlight">
-          <div className="finanzierung-footer-label">Monatliche Rate</div>
-          <div className="finanzierung-footer-value">
+        <div className="financing-footer-item financing-footer-highlight">
+          <div className="financing-footer-label">Monatliche Rate</div>
+          <div className="financing-footer-value">
             {calculationResult ? `${settings.currency} ${Math.round(parseFloat(calculationResult.monthlyPayment)).toLocaleString('de-DE')}` : '—'}
           </div>
         </div>
@@ -799,4 +799,4 @@ function Finanzierung() {
   )
 }
 
-export default Finanzierung
+export default Financing

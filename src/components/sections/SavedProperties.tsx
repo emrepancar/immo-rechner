@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Heart, Scales, ChartBar, MapPin, ArrowSquareOut, Check } from '@phosphor-icons/react'
 import NumberInput from '../NumberInput'
-import './GespeicherteImmobilien.css'
+import './SavedProperties.css'
 import { FALLBACK_DEFAULTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
 import { propertiesApi } from '../../api'
@@ -9,7 +9,7 @@ import Notification from '../Notification'
 import SkeletonCard from '../SkeletonCard'
 import type { Property } from '../../types'
 
-type GespeicherteT = ReturnType<typeof useLanguage>['t']['gespeicherte']
+type SavedPropertiesT = ReturnType<typeof useLanguage>['t']['gespeicherte']
 
 function cardNameFontSize(name: string): string {
   const len = name.length
@@ -29,11 +29,11 @@ function cardAddressFontSize(address: string): string {
 
 interface ComparisonTableProps {
   selected: Property[]
-  tg: GespeicherteT
-  calculateBruttomietrendite: (kaltmiete: number | null, kaufpreis: number) => string | null
+  tg: SavedPropertiesT
+  calculateGrossYield: (kaltmiete: number | null, kaufpreis: number) => string | null
 }
 
-function ComparisonTable({ selected, tg, calculateBruttomietrendite }: ComparisonTableProps) {
+function ComparisonTable({ selected, tg, calculateGrossYield }: ComparisonTableProps) {
   return (
     <div className="comparison-table-wrap">
       <h3>{tg.compareTitle}</h3>
@@ -61,7 +61,7 @@ function ComparisonTable({ selected, tg, calculateBruttomietrendite }: Compariso
             <tr>
               <td>{tg.bruttomietrendite}</td>
               {selected.map(p => {
-                const r = calculateBruttomietrendite(p.kaltmiete, p.kaufpreis)
+                const r = calculateGrossYield(p.kaltmiete, p.kaufpreis)
                 return <td key={p.id}>{r ? `${r}%` : '—'}</td>
               })}
             </tr>
@@ -72,7 +72,7 @@ function ComparisonTable({ selected, tg, calculateBruttomietrendite }: Compariso
   )
 }
 
-function GespeicherteImmobilien() {
+function SavedProperties() {
   const { t } = useLanguage()
   const tg = t.gespeicherte
 
@@ -81,7 +81,7 @@ function GespeicherteImmobilien() {
   const [editingProperty, setEditingProperty] = useState<Property | null>(null)
   const [editFormData, setEditFormData] = useState<Record<string, string | number | null>>({})
   const [kpiProperty, setKpiProperty] = useState<Property | null>(null)
-  const [kpiEigenkapital, setKpiEigenkapital] = useState('')
+  const [kpiEquity, setKpiEquity] = useState('')
   const [saving, setSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' | '' }>({ message: '', type: '' })
@@ -138,25 +138,25 @@ function GespeicherteImmobilien() {
     setEditFormData({})
   }
 
-  const calculateBruttomietrendite = (kaltmiete: number | null, kaufpreis: number): string | null => {
+  const calculateGrossYield = (kaltmiete: number | null, kaufpreis: number): string | null => {
     if (!kaltmiete || !kaufpreis || kaufpreis === 0) return null
     return ((kaltmiete * 12 / kaufpreis) * 100).toFixed(2)
   }
 
-  const calculateEigenkapitalrendite = (kaltmiete: number | null, eigenkapital: number, monthly_costs = 0): string | null => {
-    if (!eigenkapital || eigenkapital === 0) return null
+  const calculateEquityYield = (kaltmiete: number | null, equityAmount: number, monthly_costs = 0): string | null => {
+    if (!equityAmount || equityAmount === 0) return null
     const cashflow = (kaltmiete ?? 0) * 12 - monthly_costs * 12
-    return ((cashflow / eigenkapital) * 100).toFixed(2)
+    return ((cashflow / equityAmount) * 100).toFixed(2)
   }
 
   const openKpiModal = (property: Property) => {
     setKpiProperty(property)
-    setKpiEigenkapital('')
+    setKpiEquity('')
   }
 
   const closeKpiModal = () => {
     setKpiProperty(null)
-    setKpiEigenkapital('')
+    setKpiEquity('')
   }
 
   const handleEditFormChange = (key: string, value: string | number | null) => {
@@ -231,8 +231,8 @@ function GespeicherteImmobilien() {
 
   if (loading) {
     return (
-      <div className="gespeicherte-container">
-        <div className="gespeicherte-header">
+      <div className="saved-properties-container">
+        <div className="saved-properties-header">
           <h2>{tg.title}</h2>
         </div>
         <div className="properties-grid">
@@ -246,7 +246,7 @@ function GespeicherteImmobilien() {
 
   if (properties.length === 0) {
     return (
-      <div className="gespeicherte-empty">
+      <div className="saved-properties-empty">
         <div className="empty-icon-wrap">
           <svg className="empty-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M8 30L32 10l24 20v22a2 2 0 01-2 2H10a2 2 0 01-2-2V30z" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
@@ -264,7 +264,7 @@ function GespeicherteImmobilien() {
     : properties
 
   return (
-    <div className="gespeicherte-container page-shell">
+    <div className="saved-properties-container page-shell">
       <div className="page-shell-header">
         <div className="page-shell-top-bar">
           <div>
@@ -279,7 +279,7 @@ function GespeicherteImmobilien() {
       </div>
       <div className="page-shell-body">
       <Notification message={notification.message} type={notification.type} onClose={clearNotification} />
-      <div className="gespeicherte-header">
+      <div className="saved-properties-header">
         <div className="tab-bar">
           <button
             className={`tab-pill ${activeTab === 'alle' ? 'active' : ''}`}
@@ -298,7 +298,7 @@ function GespeicherteImmobilien() {
       </div>
 
       {activeTab === 'favoriten' && visibleProperties.length === 0 && (
-        <div className="gespeicherte-empty favorites-empty">
+        <div className="saved-properties-empty favorites-empty">
           <div className="empty-icon-wrap">
             <Heart size={48} weight="duotone" />
           </div>
@@ -309,7 +309,7 @@ function GespeicherteImmobilien() {
 
       <div className="properties-grid">
         {visibleProperties.map(property => {
-          const yieldVal = calculateBruttomietrendite(property.kaltmiete, property.kaufpreis)
+          const yieldVal = calculateGrossYield(property.kaltmiete, property.kaufpreis)
           const yieldNum = yieldVal ? parseFloat(yieldVal) : null
           let yieldClass = ''
           let yieldLabel = ''
@@ -374,7 +374,7 @@ function GespeicherteImmobilien() {
               </div>
               <div className="info-row">
                 <span className="label">{tg.kaufpreis}:</span>
-                <span className="value kaufpreis-value">€ {(property.kaufpreis || 0).toLocaleString('de-DE')}</span>
+                <span className="value purchase-price-value">€ {(property.kaufpreis || 0).toLocaleString('de-DE')}</span>
               </div>
               <div className="info-row">
                 <span className="label">{tg.quadratmeter}:</span>
@@ -411,7 +411,7 @@ function GespeicherteImmobilien() {
         <ComparisonTable
           selected={properties.filter(p => compareIds.includes(p.id))}
           tg={tg}
-          calculateBruttomietrendite={calculateBruttomietrendite}
+          calculateGrossYield={calculateGrossYield}
         />
       )}
 
@@ -544,7 +544,7 @@ function GespeicherteImmobilien() {
                   </div>
                 </div>
                 <div className="kpi-result">
-                  <div className="kpi-value">{calculateBruttomietrendite(kpiProperty.kaltmiete, kpiProperty.kaufpreis)}%</div>
+                  <div className="kpi-value">{calculateGrossYield(kpiProperty.kaltmiete, kpiProperty.kaufpreis)}%</div>
                   <div className="kpi-interpretation">{t.gespeicherte.kpiInterpretation}</div>
                 </div>
               </div>
@@ -552,17 +552,17 @@ function GespeicherteImmobilien() {
               <div className="kpi-card">
                 <div className="kpi-title">{t.gespeicherte.kpiEigenkapitalrendite}</div>
                 <div className="kpi-input-section">
-                  <label htmlFor="kpi-eigenkapital">{t.gespeicherte.kpiEigenkapitalLabel}</label>
+                  <label htmlFor="kpi-equity">{t.gespeicherte.kpiEigenkapitalLabel}</label>
                   <input
-                    id="kpi-eigenkapital"
+                    id="kpi-equity"
                     type="number"
-                    value={kpiEigenkapital}
-                    onChange={(e) => setKpiEigenkapital(e.target.value)}
+                    value={kpiEquity}
+                    onChange={(e) => setKpiEquity(e.target.value)}
                     placeholder="z.B. 100000"
                     step="1000"
                   />
                 </div>
-                {kpiEigenkapital && (
+                {kpiEquity && (
                   <>
                     <div className="kpi-calculation">
                       <div className="calc-row">
@@ -571,12 +571,12 @@ function GespeicherteImmobilien() {
                       </div>
                       <div className="calc-row">
                         <span>÷ Eigenkapital:</span>
-                        <span>€ {parseFloat(kpiEigenkapital).toLocaleString('de-DE')}</span>
+                        <span>€ {parseFloat(kpiEquity).toLocaleString('de-DE')}</span>
                       </div>
                     </div>
                     <div className="kpi-result">
                       <div className="kpi-value">
-                        {calculateEigenkapitalrendite(kpiProperty.kaltmiete, parseFloat(kpiEigenkapital) || 0, kpiProperty.hausgeld || 0)}%
+                        {calculateEquityYield(kpiProperty.kaltmiete, parseFloat(kpiEquity) || 0, kpiProperty.hausgeld || 0)}%
                       </div>
                       <div className="kpi-interpretation">{t.gespeicherte.kpiRoeInterpretation}</div>
                     </div>
@@ -592,4 +592,4 @@ function GespeicherteImmobilien() {
   )
 }
 
-export default GespeicherteImmobilien
+export default SavedProperties

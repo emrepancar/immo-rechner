@@ -2,7 +2,7 @@ import { BookmarkSimple, MapPin, ArrowSquareOut } from '@phosphor-icons/react'
 import MapBox from '../MapBox'
 import SectionDivider from '../SectionDivider'
 import { useState, useEffect } from 'react'
-import './NeueImmobilie.css'
+import './NewProperty.css'
 import { FALLBACK_DEFAULTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
 import { useSettings } from '../../context/SettingsContext'
@@ -10,51 +10,51 @@ import { useToast } from '../../context/ToastContext'
 import { propertiesApi, ApiError } from '../../api'
 import { useAnimatedNumber } from '../../hooks/useAnimatedNumber'
 
-function NeueImmobilie() {
+function NewProperty() {
   const { t } = useLanguage()
   const ti = t.neueImmobilie
   const { settings } = useSettings()
   const { addToast } = useToast()
 
-  const [immobilie, setImmobilie] = useState({ name: '', address: '', rooms: '', inseratUrl: '' })
-  const [kaufpreis, setKaufpreis] = useState('')
-  const [quadratmeter, setQuadratmeter] = useState('')
-  const [nebenkosten, setNebenkosten] = useState<Record<string, string>>({
+  const [propertyInfo, setPropertyInfo] = useState({ name: '', address: '', rooms: '', inseratUrl: '' })
+  const [purchasePrice, setPurchasePrice] = useState('')
+  const [squareMeters, setSquareMeters] = useState('')
+  const [acquisitionCosts, setAcquisitionCosts] = useState<Record<string, string>>({
     grunderwerbsteuer: String(FALLBACK_DEFAULTS.grunderwerbsteuer),
     maklerprovision: String(FALLBACK_DEFAULTS.maklerprovision),
     notarkosten: String(FALLBACK_DEFAULTS.notarkosten),
     grundbucheintrag: String(FALLBACK_DEFAULTS.grundbucheintrag),
   })
-  const [miete, setMiete] = useState({ kaltmiete: '', warmmiete: '', hausgeld: '' })
+  const [rentData, setRentData] = useState({ kaltmiete: '', warmmiete: '', hausgeld: '' })
   const [showSaveDialog, setShowSaveDialog] = useState(false)
   const [propertyName, setPropertyName] = useState('')
   const [nameError, setNameError] = useState('')
   const [saving, setSaving] = useState(false)
 
-  const calculatePreisPerQm = () => {
-    if (kaufpreis && quadratmeter && parseFloat(quadratmeter) > 0) {
-      return (parseFloat(kaufpreis) / parseFloat(quadratmeter)).toFixed(2)
+  const calculatePricePerSqm = () => {
+    if (purchasePrice && squareMeters && parseFloat(squareMeters) > 0) {
+      return (parseFloat(purchasePrice) / parseFloat(squareMeters)).toFixed(2)
     }
     return ''
   }
 
-  const calculateNebenkosten = (percentage: string): string => {
-    if (kaufpreis && percentage) {
-      return (parseFloat(kaufpreis) * parseFloat(percentage) / 100).toFixed(2)
+  const calculateAcqCost = (percentage: string): string => {
+    if (purchasePrice && percentage) {
+      return (parseFloat(purchasePrice) * parseFloat(percentage) / 100).toFixed(2)
     }
     return '0'
   }
 
-  const handleNebenaustenChange = (key: string, value: string) => {
-    setNebenkosten(prev => ({ ...prev, [key]: value }))
+  const handleAcqCostChange = (key: string, value: string) => {
+    setAcquisitionCosts(prev => ({ ...prev, [key]: value }))
   }
 
-  const handleMieteChange = (key: string, value: string) => {
-    setMiete(prev => ({ ...prev, [key]: value }))
+  const handleRentChange = (key: string, value: string) => {
+    setRentData(prev => ({ ...prev, [key]: value }))
   }
 
-  const handleImmobilieChange = (key: string, value: string) => {
-    setImmobilie(prev => ({ ...prev, [key]: value }))
+  const handlePropertyInfoChange = (key: string, value: string) => {
+    setPropertyInfo(prev => ({ ...prev, [key]: value }))
   }
 
   useEffect(() => {
@@ -75,57 +75,57 @@ function NeueImmobilie() {
     setNameError('')
     setSaving(true)
     if (true) {
-      const gesamtkosten = kaufpreis
+      const totalCosts = purchasePrice
         ? (
-            parseFloat(kaufpreis) +
-            parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer)) +
-            parseFloat(calculateNebenkosten(nebenkosten.maklerprovision)) +
-            parseFloat(calculateNebenkosten(nebenkosten.notarkosten)) +
-            parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag))
+            parseFloat(purchasePrice) +
+            parseFloat(calculateAcqCost(acquisitionCosts.grunderwerbsteuer)) +
+            parseFloat(calculateAcqCost(acquisitionCosts.maklerprovision)) +
+            parseFloat(calculateAcqCost(acquisitionCosts.notarkosten)) +
+            parseFloat(calculateAcqCost(acquisitionCosts.grundbucheintrag))
           ).toFixed(2)
         : '0'
 
-      const nebenkostenTotal = kaufpreis
+      const acqCostsTotal = purchasePrice
         ? (
-            parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer)) +
-            parseFloat(calculateNebenkosten(nebenkosten.maklerprovision)) +
-            parseFloat(calculateNebenkosten(nebenkosten.notarkosten)) +
-            parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag))
+            parseFloat(calculateAcqCost(acquisitionCosts.grunderwerbsteuer)) +
+            parseFloat(calculateAcqCost(acquisitionCosts.maklerprovision)) +
+            parseFloat(calculateAcqCost(acquisitionCosts.notarkosten)) +
+            parseFloat(calculateAcqCost(acquisitionCosts.grundbucheintrag))
           ).toFixed(2)
         : '0'
 
       const propertyData = {
         name: propertyName,
-        address: immobilie.address,
-        inserat_url: immobilie.inseratUrl || null,
-        rooms: parseFloat(immobilie.rooms) || null,
-        kaufpreis: parseFloat(kaufpreis) || 0,
-        quadratmeter: parseFloat(quadratmeter) || null,
-        grunderwerbsteuer: parseFloat(nebenkosten.grunderwerbsteuer) || 0,
-        maklerprovision: parseFloat(nebenkosten.maklerprovision) || 0,
-        notarkosten: parseFloat(nebenkosten.notarkosten) || 0,
-        grundbucheintrag: parseFloat(nebenkosten.grundbucheintrag) || 0,
-        nebenkosten_total: parseFloat(nebenkostenTotal),
-        gesamtkosten: parseFloat(gesamtkosten),
-        kaltmiete: parseFloat(miete.kaltmiete) || null,
-        warmmiete: parseFloat(miete.warmmiete) || null,
-        hausgeld: parseFloat(miete.hausgeld) || null,
+        address: propertyInfo.address,
+        inserat_url: propertyInfo.inseratUrl || null,
+        rooms: parseFloat(propertyInfo.rooms) || null,
+        kaufpreis: parseFloat(purchasePrice) || 0,
+        quadratmeter: parseFloat(squareMeters) || null,
+        grunderwerbsteuer: parseFloat(acquisitionCosts.grunderwerbsteuer) || 0,
+        maklerprovision: parseFloat(acquisitionCosts.maklerprovision) || 0,
+        notarkosten: parseFloat(acquisitionCosts.notarkosten) || 0,
+        grundbucheintrag: parseFloat(acquisitionCosts.grundbucheintrag) || 0,
+        nebenkosten_total: parseFloat(acqCostsTotal),
+        gesamtkosten: parseFloat(totalCosts),
+        kaltmiete: parseFloat(rentData.kaltmiete) || null,
+        warmmiete: parseFloat(rentData.warmmiete) || null,
+        hausgeld: parseFloat(rentData.hausgeld) || null,
       }
 
       try {
         await propertiesApi.create(propertyData)
         setPropertyName('')
         setShowSaveDialog(false)
-        setImmobilie({ name: '', address: '', rooms: '', inseratUrl: '' })
-        setKaufpreis('')
-        setQuadratmeter('')
-        setNebenkosten({
+        setPropertyInfo({ name: '', address: '', rooms: '', inseratUrl: '' })
+        setPurchasePrice('')
+        setSquareMeters('')
+        setAcquisitionCosts({
           grunderwerbsteuer: String(FALLBACK_DEFAULTS.grunderwerbsteuer),
           maklerprovision: String(FALLBACK_DEFAULTS.maklerprovision),
           notarkosten: String(FALLBACK_DEFAULTS.notarkosten),
           grundbucheintrag: String(FALLBACK_DEFAULTS.grundbucheintrag),
         })
-        setMiete({ kaltmiete: '', warmmiete: '', hausgeld: '' })
+        setRentData({ kaltmiete: '', warmmiete: '', hausgeld: '' })
         addToast(ti.alerts.saved, 'success')
       } catch (err) {
         const message = err instanceof ApiError ? err.message : ti.alerts.serverError
@@ -136,61 +136,61 @@ function NeueImmobilie() {
     }
   }
 
-  const preisPro = calculatePreisPerQm()
+  const pricePerSqm = calculatePricePerSqm()
 
-  const nebenkostenTotalNum = kaufpreis
-    ? parseFloat(calculateNebenkosten(nebenkosten.grunderwerbsteuer)) +
-      parseFloat(calculateNebenkosten(nebenkosten.maklerprovision)) +
-      parseFloat(calculateNebenkosten(nebenkosten.notarkosten)) +
-      parseFloat(calculateNebenkosten(nebenkosten.grundbucheintrag))
+  const acqCostsTotalNum = purchasePrice
+    ? parseFloat(calculateAcqCost(acquisitionCosts.grunderwerbsteuer)) +
+      parseFloat(calculateAcqCost(acquisitionCosts.maklerprovision)) +
+      parseFloat(calculateAcqCost(acquisitionCosts.notarkosten)) +
+      parseFloat(calculateAcqCost(acquisitionCosts.grundbucheintrag))
     : 0
 
-  const gesamtkostenNum = kaufpreis ? parseFloat(kaufpreis) + nebenkostenTotalNum : 0
+  const totalCostNum = purchasePrice ? parseFloat(purchasePrice) + acqCostsTotalNum : 0
 
-  const animatedNebenkosten = useAnimatedNumber(nebenkostenTotalNum)
-  const animatedGesamtkosten = useAnimatedNumber(gesamtkostenNum)
+  const animatedAcqCosts = useAnimatedNumber(acqCostsTotalNum)
+  const animatedTotalCost = useAnimatedNumber(totalCostNum)
 
-  const kpf = parseFloat(kaufpreis) || 0
-  const kaltmieteNum = parseFloat(miete.kaltmiete) || 0
-  const hausgeldNum = parseFloat(miete.hausgeld) || 0
-  const qmNum = parseFloat(quadratmeter) || 0
-  const bruttorendite = kpf > 0 && kaltmieteNum > 0 ? (kaltmieteNum * 12 / kpf) * 100 : null
-  const nettorendite = gesamtkostenNum > 0 && kaltmieteNum > 0 ? ((kaltmieteNum - hausgeldNum) * 12 / gesamtkostenNum) * 100 : null
-  const monatCashflow = kaltmieteNum > 0 ? kaltmieteNum - hausgeldNum : null
-  const preisProQmKpi = kpf > 0 && qmNum > 0 ? kpf / qmNum : null
-  const ampel = bruttorendite === null
+  const kpf = parseFloat(purchasePrice) || 0
+  const baseRentNum = parseFloat(rentData.kaltmiete) || 0
+  const serviceChargeNum = parseFloat(rentData.hausgeld) || 0
+  const sqmNum = parseFloat(squareMeters) || 0
+  const grossYield = kpf > 0 && baseRentNum > 0 ? (baseRentNum * 12 / kpf) * 100 : null
+  const netYield = totalCostNum > 0 && baseRentNum > 0 ? ((baseRentNum - serviceChargeNum) * 12 / totalCostNum) * 100 : null
+  const monthlyCashflow = baseRentNum > 0 ? baseRentNum - serviceChargeNum : null
+  const pricePerSqmKpi = kpf > 0 && sqmNum > 0 ? kpf / sqmNum : null
+  const yieldIndicator = grossYield === null
     ? { color: '#9ca3af', label: '—', subtext: 'Kaufpreis & Miete eingeben' }
-    : bruttorendite >= 5
+    : grossYield >= 5
     ? { color: '#22c55e', label: 'Sehr gut', subtext: '≥ 5 % Bruttomietrendite' }
-    : bruttorendite >= 3
+    : grossYield >= 3
     ? { color: '#eab308', label: 'Gut', subtext: '3 – 5 %' }
-    : bruttorendite >= 1
+    : grossYield >= 1
     ? { color: '#f97316', label: 'Mittel', subtext: '1 – 3 %' }
     : { color: '#ef4444', label: 'Schwach', subtext: '< 1 %' }
 
   return (
-    <div className="neue-immobilie">
-      <div className="neue-immobilie-header">
-      <div className="objekt-top-bar">
-        <div className="objekt-top-bar-text">
-          <div className="objekt-top-bar-title">Neue Immobilie</div>
-          <div className="objekt-top-bar-sub">Kaufpreis, Nebenkosten und Mietdaten erfassen</div>
+    <div className="new-property">
+      <div className="new-property-header">
+      <div className="property-top-bar">
+        <div className="property-top-bar-text">
+          <div className="property-top-bar-title">Neue Immobilie</div>
+          <div className="property-top-bar-sub">Kaufpreis, Nebenkosten und Mietdaten erfassen</div>
         </div>
         <button
           className="btn btn-primary save-button"
-          onClick={() => { setPropertyName(immobilie.name); setShowSaveDialog(true) }}
+          onClick={() => { setPropertyName(propertyInfo.name); setShowSaveDialog(true) }}
         >
           <BookmarkSimple size={15} weight='duotone' /> {t.common.save}
         </button>
       </div>
-      <div className="objekt-divider" />
-      </div>{/* neue-immobilie-header */}
-      <div className="neue-immobilie-body">
-      <div className="objekt-section">
-      <div className="objekt-row">
-      <div className="immobilie-details-box">
+      <div className="property-divider" />
+      </div>{/* new-property-header */}
+      <div className="new-property-body">
+      <div className="property-section">
+      <div className="property-row">
+      <div className="property-details-box">
         <SectionDivider label={ti.sectionObjekt} />
-        <div className="immobilie-details-form">
+        <div className="property-details-form">
           <div className="form-group">
             <label htmlFor="address">{ti.address}</label>
             <div className="address-input-wrapper">
@@ -198,12 +198,12 @@ function NeueImmobilie() {
                 id="address"
                 type="text"
                 placeholder={ti.addressPlaceholder}
-                value={immobilie.address}
-                onChange={(e) => handleImmobilieChange('address', e.target.value)}
+                value={propertyInfo.address}
+                onChange={(e) => handlePropertyInfoChange('address', e.target.value)}
               />
-              {immobilie.address && (
+              {propertyInfo.address && (
                 <a
-                  href={`https://www.google.com/maps/search/${encodeURIComponent(immobilie.address)}`}
+                  href={`https://www.google.com/maps/search/${encodeURIComponent(propertyInfo.address)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="map-button"
@@ -221,8 +221,8 @@ function NeueImmobilie() {
               id="rooms"
               type="number"
               placeholder={ti.roomsPlaceholder}
-              value={immobilie.rooms}
-              onChange={(e) => handleImmobilieChange('rooms', e.target.value)}
+              value={propertyInfo.rooms}
+              onChange={(e) => handlePropertyInfoChange('rooms', e.target.value)}
               min="0"
               step="0.5"
             />
@@ -235,12 +235,12 @@ function NeueImmobilie() {
                 id="inserat-url"
                 type="url"
                 placeholder={ti.inseratUrlPlaceholder}
-                value={immobilie.inseratUrl}
-                onChange={(e) => handleImmobilieChange('inseratUrl', e.target.value)}
+                value={propertyInfo.inseratUrl}
+                onChange={(e) => handlePropertyInfoChange('inseratUrl', e.target.value)}
               />
-              {immobilie.inseratUrl && (
+              {propertyInfo.inseratUrl && (
                 <a
-                  href={immobilie.inseratUrl}
+                  href={propertyInfo.inseratUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="map-button"
@@ -253,11 +253,11 @@ function NeueImmobilie() {
           </div>
         </div>
       </div>
-        <div className="objekt-map">
-          <MapBox address={immobilie.address} />
+        <div className="property-map">
+          <MapBox address={propertyInfo.address} />
         </div>
-      </div>{/* objekt-row */}
-      </div>{/* objekt-section */}
+      </div>{/* property-row */}
+      </div>{/* property-section */}
 
       <div className="costs-grid">
         <div className="property-box">
@@ -269,8 +269,8 @@ function NeueImmobilie() {
                 id="kaufpreis"
                 type="number"
                 placeholder={ti.kaufpreisPlaceholder}
-                value={kaufpreis}
-                onChange={(e) => setKaufpreis(e.target.value)}
+                value={purchasePrice}
+                onChange={(e) => setPurchasePrice(e.target.value)}
                 min="0"
                 step="1000"
               />
@@ -282,8 +282,8 @@ function NeueImmobilie() {
                 id="quadratmeter"
                 type="number"
                 placeholder={ti.quadratmeterPlaceholder}
-                value={quadratmeter}
-                onChange={(e) => setQuadratmeter(e.target.value)}
+                value={squareMeters}
+                onChange={(e) => setSquareMeters(e.target.value)}
                 min="0"
                 step="0.1"
               />
@@ -291,19 +291,19 @@ function NeueImmobilie() {
 
             <div className="form-group">
               <label htmlFor="preis-pro">{ti.preisProFlaeche} ({settings.currency}/{settings.spaceUnit})</label>
-              <input id="preis-pro" type="number" value={preisPro} readOnly disabled />
+              <input id="preis-pro" type="number" value={pricePerSqm} readOnly disabled />
             </div>
           </div>
         </div>
 
-        <div className="nebenkosten-box">
+        <div className="acquisition-costs-box">
           <SectionDivider label={ti.sectionNebenkosten} />
-          <div className="nk-grid-form">
+          <div className="acq-grid-form">
             {/* Column headers */}
-            <div className="nk-row nk-header-row">
-              <div className="nk-col-label nk-col-header">{ti.position}</div>
+            <div className="acq-row-item acq-header-row">
+              <div className="nk-col-label acq-col-header">{ti.position}</div>
               <div />
-              <div className="nk-col-amount nk-col-header">{ti.betrag}</div>
+              <div className="nk-col-amount acq-col-header">{ti.betrag}</div>
             </div>
 
             {[
@@ -312,49 +312,49 @@ function NeueImmobilie() {
               { key: 'notarkosten',       label: ti.notarkosten },
               { key: 'grundbucheintrag',  label: ti.grundbucheintrag },
             ].map(({ key, label }) => (
-              <div className="nk-row" key={key}>
-                <div className="nk-field">
+              <div className="acq-row-item" key={key}>
+                <div className="acq-field">
                   <label htmlFor={key}>{label}</label>
                   <input
                     id={key}
                     type="number"
-                    value={nebenkosten[key]}
-                    onChange={(e) => handleNebenaustenChange(key, e.target.value)}
+                    value={acquisitionCosts[key]}
+                    onChange={(e) => handleAcqCostChange(key, e.target.value)}
                     min="0"
                     step="0.01"
 
                   />
                 </div>
-                <div className="nk-arrow">→</div>
-                <div className="nk-field">
+                <div className="acq-arrow">→</div>
+                <div className="acq-field">
                   <label>{ti.betrag} ({settings.currency})</label>
-                  <input type="number" value={calculateNebenkosten(nebenkosten[key])} readOnly disabled />
+                  <input type="number" value={calculateAcqCost(acquisitionCosts[key])} readOnly disabled />
                 </div>
               </div>
             ))}
 
             {/* Total row */}
-            <div className="nk-total-row">
-              <span className="nk-total-label">{ti.summeNebenkosten}</span>
-              <span className="nk-total-value">
-                {kaufpreis ? `${settings.currency} ${animatedNebenkosten.toFixed(2)}` : '—'}
+            <div className="acq-total-row">
+              <span className="acq-total-label">{ti.summeNebenkosten}</span>
+              <span className="acq-total-value">
+                {purchasePrice ? `${settings.currency} ${animatedAcqCosts.toFixed(2)}` : '—'}
               </span>
             </div>
           </div>
         </div>
-        <div className="total-costs-box">
+        <div className="total-cost-box">
           <SectionDivider label={ti.sectionGesamtkosten} />
-          <div className="total-costs-vertical">
+          <div className="total-cost-vertical">
             <div className="total-cost-item accent-color">
               <label>{ti.kaufpreisLabel} ({settings.currency})</label>
-              <input type="number" value={kaufpreis} readOnly disabled />
+              <input type="number" value={purchasePrice} readOnly disabled />
             </div>
             <div className="total-cost-sep">+</div>
             <div className="total-cost-item secondary-color">
               <label>{ti.nebenkostenLabel} ({settings.currency})</label>
               <input
                 type="number"
-                value={kaufpreis ? animatedNebenkosten.toFixed(2) : ''}
+                value={purchasePrice ? animatedAcqCosts.toFixed(2) : ''}
                 readOnly
                 disabled
               />
@@ -364,7 +364,7 @@ function NeueImmobilie() {
               <label>{ti.gesamtkostenLabel} ({settings.currency})</label>
               <input
                 type="number"
-                value={kaufpreis ? animatedGesamtkosten.toFixed(2) : ''}
+                value={purchasePrice ? animatedTotalCost.toFixed(2) : ''}
                 readOnly
                 disabled
               />
@@ -373,8 +373,8 @@ function NeueImmobilie() {
         </div>
       </div>
 
-      <div className="miete-kpi-row">
-      <div className="miete-box">
+      <div className="rent-kpi-row">
+      <div className="rent-box">
         <SectionDivider label={ti.sectionMiete} />
         <div className="miete-form">
           <div className="miete-row miete-row-2col">
@@ -384,8 +384,8 @@ function NeueImmobilie() {
                 id="kaltmiete"
                 type="number"
                 placeholder={ti.kaltmietePlaceholder}
-                value={miete.kaltmiete}
-                onChange={(e) => handleMieteChange('kaltmiete', e.target.value)}
+                value={rentData.kaltmiete}
+                onChange={(e) => handleRentChange('kaltmiete', e.target.value)}
                 min="0"
                 step="10"
               />
@@ -396,8 +396,8 @@ function NeueImmobilie() {
                 id="warmmiete"
                 type="number"
                 placeholder={ti.warmmietePlaceholder}
-                value={miete.warmmiete}
-                onChange={(e) => handleMieteChange('warmmiete', e.target.value)}
+                value={rentData.warmmiete}
+                onChange={(e) => handleRentChange('warmmiete', e.target.value)}
                 min="0"
                 step="10"
               />
@@ -411,8 +411,8 @@ function NeueImmobilie() {
                 id="hausgeld"
                 type="number"
                 placeholder={ti.hausgeldPlaceholder}
-                value={miete.hausgeld}
-                onChange={(e) => handleMieteChange('hausgeld', e.target.value)}
+                value={rentData.hausgeld}
+                onChange={(e) => handleRentChange('hausgeld', e.target.value)}
                 min="0"
                 step="10"
               />
@@ -423,8 +423,8 @@ function NeueImmobilie() {
                 id="betriebskosten"
                 type="number"
                 value={
-                  miete.kaltmiete && miete.warmmiete
-                    ? (parseFloat(miete.warmmiete) - parseFloat(miete.kaltmiete)).toFixed(2)
+                  rentData.kaltmiete && rentData.warmmiete
+                    ? (parseFloat(rentData.warmmiete) - parseFloat(rentData.kaltmiete)).toFixed(2)
                     : ''
                 }
                 readOnly
@@ -437,10 +437,10 @@ function NeueImmobilie() {
                 id="eigentuemeranteil"
                 type="number"
                 value={
-                  miete.hausgeld && miete.kaltmiete && miete.warmmiete
+                  rentData.hausgeld && rentData.kaltmiete && rentData.warmmiete
                     ? (
-                        parseFloat(miete.hausgeld) -
-                        (parseFloat(miete.warmmiete) - parseFloat(miete.kaltmiete))
+                        parseFloat(rentData.hausgeld) -
+                        (parseFloat(rentData.warmmiete) - parseFloat(rentData.kaltmiete))
                       ).toFixed(2)
                     : ''
                 }
@@ -450,50 +450,50 @@ function NeueImmobilie() {
             </div>
           </div>
         </div>
-      </div>{/* miete-box */}
+      </div>{/* rent-box */}
 
       <div className="kpi-col">
         <div className="kpi-panel">
           <SectionDivider label="Live Kennzahlen" />
           <div className="kpi-row">
             <span className="kpi-label">Bruttorendite</span>
-            <span className={`kpi-value ${bruttorendite !== null ? (bruttorendite >= 3 ? 'positive' : 'negative') : 'neutral'}`}>
-              {bruttorendite !== null ? bruttorendite.toFixed(2) + ' %' : '—'}
+            <span className={`kpi-value ${grossYield !== null ? (grossYield >= 3 ? 'positive' : 'negative') : 'neutral'}`}>
+              {grossYield !== null ? grossYield.toFixed(2) + ' %' : '—'}
             </span>
           </div>
           <div className="kpi-row">
             <span className="kpi-label">Nettorendite</span>
-            <span className={`kpi-value ${nettorendite !== null ? (nettorendite >= 2 ? 'positive' : 'negative') : 'neutral'}`}>
-              {nettorendite !== null ? nettorendite.toFixed(2) + ' %' : '—'}
+            <span className={`kpi-value ${netYield !== null ? (netYield >= 2 ? 'positive' : 'negative') : 'neutral'}`}>
+              {netYield !== null ? netYield.toFixed(2) + ' %' : '—'}
             </span>
           </div>
           <div className="kpi-row">
             <span className="kpi-label">Monatl. Überschuss</span>
-            <span className={`kpi-value ${monatCashflow !== null ? (monatCashflow >= 0 ? 'positive' : 'negative') : 'neutral'}`}>
-              {monatCashflow !== null ? settings.currency + ' ' + monatCashflow.toFixed(2) : '—'}
+            <span className={`kpi-value ${monthlyCashflow !== null ? (monthlyCashflow >= 0 ? 'positive' : 'negative') : 'neutral'}`}>
+              {monthlyCashflow !== null ? settings.currency + ' ' + monthlyCashflow.toFixed(2) : '—'}
             </span>
           </div>
           <div className="kpi-row">
             <span className="kpi-label">Preis / m²</span>
-            <span className={`kpi-value ${preisProQmKpi !== null ? 'neutral' : 'neutral'}`}>
-              {preisProQmKpi !== null ? settings.currency + ' ' + preisProQmKpi.toFixed(0) : '—'}
+            <span className={`kpi-value ${pricePerSqmKpi !== null ? 'neutral' : 'neutral'}`}>
+              {pricePerSqmKpi !== null ? settings.currency + ' ' + pricePerSqmKpi.toFixed(0) : '—'}
             </span>
           </div>
         </div>
 
-        <div className="rendite-ampel">
+        <div className="yield-indicator">
           <SectionDivider label="Rendite-Ampel" />
           <div className="ampel-body">
             <div className="ampel-lights">
-              <div className={`ampel-dot${bruttorendite !== null && bruttorendite >= 5 ? '' : ' dim'}`} style={{ background: '#22c55e' }} />
-              <div className={`ampel-dot${bruttorendite !== null && bruttorendite >= 3 && bruttorendite < 5 ? '' : ' dim'}`} style={{ background: '#eab308' }} />
-              <div className={`ampel-dot${bruttorendite !== null && bruttorendite < 3 ? '' : ' dim'}`} style={{ background: '#ef4444' }} />
+              <div className={`ampel-dot${grossYield !== null && grossYield >= 5 ? '' : ' dim'}`} style={{ background: '#22c55e' }} />
+              <div className={`ampel-dot${grossYield !== null && grossYield >= 3 && grossYield < 5 ? '' : ' dim'}`} style={{ background: '#eab308' }} />
+              <div className={`ampel-dot${grossYield !== null && grossYield < 3 ? '' : ' dim'}`} style={{ background: '#ef4444' }} />
             </div>
             <div className="ampel-info">
-              <div className="ampel-label" style={{ color: ampel.color }}>{ampel.label}</div>
-              <div className="ampel-sublabel">{ampel.subtext}</div>
-              {bruttorendite !== null && (
-                <div className="ampel-value" style={{ color: ampel.color }}>{bruttorendite.toFixed(2)} % Brutto</div>
+              <div className="yield-label" style={{ color: yieldIndicator.color }}>{yieldIndicator.label}</div>
+              <div className="ampel-sublabel">{yieldIndicator.subtext}</div>
+              {grossYield !== null && (
+                <div className="yield-value" style={{ color: yieldIndicator.color }}>{grossYield.toFixed(2)} % Brutto</div>
               )}
             </div>
           </div>
@@ -538,10 +538,10 @@ function NeueImmobilie() {
           </div>
         </div>
       )}
-      </div>{/* miete-kpi-row */}
-      </div>{/* neue-immobilie-body */}
+      </div>{/* rent-kpi-row */}
+      </div>{/* new-property-body */}
     </div>
   )
 }
 
-export default NeueImmobilie
+export default NewProperty
