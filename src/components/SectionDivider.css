@@ -8,7 +8,8 @@
 .section-divider-rule {
   flex: 1;
   height: 1px;
-  background: var(--border);
+  background: var(--secondary-neutral);
+  opacity: 0.2;
 }
 
 .section-divider-label {

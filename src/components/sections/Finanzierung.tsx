@@ -678,19 +678,19 @@ function Finanzierung() {
 
       {/* Sticky summary footer */}
       <div className="finanzierung-footer">
-        <div className="finanzierung-footer-item">
+        <div className="finanzierung-footer-item accent">
           <div className="finanzierung-footer-label">Darlehenssumme</div>
           <div className="finanzierung-footer-value">{settings.currency} {finanzierungssumme.toLocaleString('de-DE', { maximumFractionDigits: 0 })}</div>
         </div>
-        <div className="finanzierung-footer-item">
+        <div className="finanzierung-footer-item accent">
           <div className="finanzierung-footer-label">Eigenkapital</div>
           <div className="finanzierung-footer-value">{eigenkapitalProzent.toFixed(0)} %</div>
         </div>
-        <div className="finanzierung-footer-item">
+        <div className="finanzierung-footer-item secondary">
           <div className="finanzierung-footer-label">Zinssatz</div>
           <div className="finanzierung-footer-value">{parseFloat(sollzinssatz || '3.5').toFixed(2)} %</div>
         </div>
-        <div className="finanzierung-footer-item">
+        <div className="finanzierung-footer-item secondary">
           <div className="finanzierung-footer-label">Gesamtzinsen</div>
           <div className="finanzierung-footer-value">
             {calculationResult ? `${settings.currency} ${parseFloat(calculationResult.totalInterest).toLocaleString('de-DE', { maximumFractionDigits: 0 })}` : '—'}
