@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import SectionDivider from '../SectionDivider'
+import CustomSelect from '../CustomSelect'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import NumberInput from '../NumberInput'
 import './Zinsangebote.css'
@@ -94,8 +95,8 @@ function Zinsangebote() {
     setChartData(data)
   }
 
-  const handlePropertyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const propertyId = parseInt(e.target.value)
+  const handlePropertyChange = (e: React.ChangeEvent<HTMLSelectElement> | string) => {
+    const propertyId = parseInt(typeof e === 'string' ? e : e.target.value)
     const property = properties.find(p => p.id === propertyId) ?? null
     setSelectedProperty(property)
     resetForm()
@@ -232,22 +233,17 @@ function Zinsangebote() {
       <Notification message={notification.message} type={notification.type} onClose={clearNotification} />
       <div className="property-selector-box">
         <SectionDivider label={tz.selectProperty} />
-        <label htmlFor="property-select" style={{ display: 'none' }}>{tz.selectProperty}</label>
-        <select
-          id="property-select"
-          value={selectedProperty?.id || ''}
-          onChange={handlePropertyChange}
-          className="property-select"
-        >
-          {properties.map(prop => (
-            <option key={prop.id} value={prop.id}>
-              {prop.name} - {prop.address || t.common.noAddress}
-            </option>
-          ))}
-        </select>
-        <div className="property-info">
-          <span>{tz.kaufpreis}: € {(selectedProperty?.kaufpreis || 0).toLocaleString('de-DE')}</span>
-        </div>
+        <CustomSelect
+          value={String(selectedProperty?.id || '')}
+          onChange={(v) => handlePropertyChange(v)}
+          placeholder="— Immobilie auswählen —"
+          options={properties.map(p => ({
+            value: String(p.id),
+            label: p.name,
+            sub: p.address || t.common.noAddress,
+            meta: p.kaufpreis ? `€ ${p.kaufpreis.toLocaleString('de-DE')}` : undefined,
+          }))}
+        />
       </div>
 
       <div className="zinsangebot-form-box">
@@ -359,11 +355,11 @@ function Zinsangebote() {
         </div>
 
         <div className="form-actions">
-          <button className="save-btn" onClick={saveOffer} disabled={saving}>
+          <button className="btn btn-primary save-btn" onClick={saveOffer} disabled={saving}>
             {saving ? '...' : (editingOffer ? tz.updateBtn : tz.saveBtn)}
           </button>
           {editingOffer && (
-            <button className="cancel-btn" onClick={resetForm}>{t.common.cancel}</button>
+            <button className="btn btn-ghost cancel-btn" onClick={resetForm}>{t.common.cancel}</button>
           )}
         </div>
       </div>
@@ -384,7 +380,7 @@ function Zinsangebote() {
                       <h4>{offer.name || `Angebot ${offer.id}`}</h4>
                       <div className="offer-actions">
                         <button className="edit-btn" onClick={() => openEditMode(offer)} title={t.common.edit}>✎</button>
-                        <button className="delete-btn" onClick={() => deleteOffer(offer.id)} disabled={deletingId === offer.id} title={t.common.delete}>{deletingId === offer.id ? '…' : '✕'}</button>
+                        <button className="btn btn-danger btn-sm delete-btn" onClick={() => deleteOffer(offer.id)} disabled={deletingId === offer.id} title={t.common.delete}>{deletingId === offer.id ? '…' : '✕'}</button>
                       </div>
                     </div>
                     <div className="offer-details">

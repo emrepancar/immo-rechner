@@ -539,6 +539,138 @@
   color: var(--accent);
 }
 
+/* Selector cards */
+.selector-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.selector-card {
+  padding: 14px 10px;
+  background: var(--panel);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.selector-card:hover {
+  border-color: var(--accent);
+}
+
+.selector-card.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.selector-card-icon {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.selector-card-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin-bottom: 3px;
+}
+
+.selector-card-label.active {
+  color: var(--accent);
+}
+
+.selector-card-desc {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.selector-card-preview {
+  font-size: 17px;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--accent);
+  margin: 4px 0;
+}
+
+/* Mieterhöhung chart */
+.mh-chart-box {
+  background: var(--panel-alt);
+  border-radius: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+}
+
+.mh-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.mh-chart-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.mh-chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mh-chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 100px;
+  justify-content: space-around;
+  margin-bottom: 12px;
+}
+
+.mh-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.mh-bar {
+  width: 80%;
+  background: var(--accent);
+  border-radius: 3px 3px 0 0;
+  min-height: 6px;
+  margin-bottom: 4px;
+}
+
+.mh-bar-year {
+  font-size: 8px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.mh-bar-val {
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin-top: 1px;
+}
+
+.mh-input-panel,
+.tilg-input-panel {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--accent-bg);
+  border-radius: 8px;
+}
+
 .finanzierung-info-text {
   font-size: 13px;
   color: var(--text-muted);

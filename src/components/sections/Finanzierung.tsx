@@ -1,5 +1,7 @@
+import { Calculator, FilePdf } from '@phosphor-icons/react'
 import React, { useState, useEffect } from 'react'
 import SectionDivider from '../SectionDivider'
+import CustomSelect from '../CustomSelect'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import NumberInput from '../NumberInput'
@@ -37,6 +39,8 @@ function Finanzierung() {
   const [mieterhohungBetrag, setMieterhohungBetrag] = useState('')
   const [mieterhohungProzent, setMieterhohungProzent] = useState('')
   const [mieterhohungJahre, setMieterhohungJahre] = useState(2)
+  const [chartYears, setChartYears] = useState(10)
+  const [mhPct, setMhPct] = useState(2)
 
   useEffect(() => { loadProperties() }, [])
 
@@ -49,8 +53,8 @@ function Finanzierung() {
     }
   }
 
-  const handlePropertySelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const propertyId = e.target.value
+  const handlePropertySelect = (e: React.ChangeEvent<HTMLSelectElement> | string) => {
+    const propertyId = typeof e === 'string' ? e : e.target.value
     setSelectedProperty(propertyId)
     if (propertyId) {
       const property = properties.find(p => p.id === parseInt(propertyId))
@@ -283,6 +287,19 @@ function Finanzierung() {
     doc.save(`${propName.replace(/\s+/g, '_')}_${tp.title.replace(/\s+/g, '_')}.pdf`)
   }
 
+  const baseRent = kaltmiete || 1500
+  const rentTimeline = Array.from({ length: chartYears + 1 }, (_, i) => ({
+    year: i,
+    rent: mieterhohungType === 'percentage'
+      ? baseRent * Math.pow(1 + mhPct / 100, i)
+      : mieterhohungType === 'fixed' && parseFloat(mieterhohungBetrag) > 0
+      ? baseRent + Math.floor(i / mieterhohungJahre) * parseFloat(mieterhohungBetrag)
+      : baseRent
+  }))
+  const maxRent = Math.max(...rentTimeline.map(x => x.rent))
+  const minRent = Math.min(...rentTimeline.map(x => x.rent))
+  const rentRange = maxRent - minRent
+
   return (
     <div className="finanzierung page-shell">
       <div className="page-shell-header">
@@ -291,8 +308,8 @@ function Finanzierung() {
             <div className="page-shell-title">Finanzierung</div>
             <div className="page-shell-sub">Kreditberechnung und Tilgungsplan für gespeicherte Objekte</div>
           </div>
-          <button className="calculate-button" onClick={handleCalculate}>
-            📊 {t.common.calculate}
+          <button className="btn btn-primary calculate-button" onClick={handleCalculate}>
+            <Calculator size={15} weight='duotone' /> {t.common.calculate}
           </button>
         </div>
         <div className="page-shell-divider" />
@@ -306,14 +323,17 @@ function Finanzierung() {
           <div className="finanzierung-form">
             <div className="form-group">
               <label>{tf.gespeichertesObjekt}</label>
-              <select value={selectedProperty} onChange={handlePropertySelect} className="form-group-select">
-                <option value="">{tf.objektPlaceholder}</option>
-                {properties.map(property => (
-                  <option key={property.id} value={property.id}>
-                    {property.name} ({property.address || t.common.noAddress})
-                  </option>
-                ))}
-              </select>
+              <CustomSelect
+                value={selectedProperty}
+                onChange={(v) => handlePropertySelect(v)}
+                placeholder={tf.objektPlaceholder}
+                options={properties.map(p => ({
+                  value: String(p.id),
+                  label: p.name,
+                  sub: p.address || t.common.noAddress,
+                  meta: p.kaufpreis ? `€ ${p.kaufpreis.toLocaleString('de-DE')}` : undefined,
+                }))}
+              />
             </div>
             <div className="form-group">
               <label>{tf.kaufpreis} ({settings.currency})</label>
@@ -414,91 +434,151 @@ function Finanzierung() {
       </div>
 
       <div className="finanzierung-mid-grid">
-      <div className="finanzierung-box">
-        <SectionDivider label={tf.boxMieterhohung} />
-        <div className="finanzierung-form">
-          <div className="tilgungsvariante-options">
-            <div className="tilgungsvariante-option">
-              <label className="radio-label">
-                <input type="radio" name="mieterhohung" value="none" checked={mieterhohungType === 'none'} onChange={(e) => setMieterhohungType(e.target.value)} />
-                {tf.mieterhohungNone}
-              </label>
-            </div>
-            <div className="tilgungsvariante-option">
-              <label className="radio-label">
-                <input type="radio" name="mieterhohung" value="fixed" checked={mieterhohungType === 'fixed'} onChange={(e) => setMieterhohungType(e.target.value)} />
-                {tf.mieterhohungFixed}
-              </label>
-              {mieterhohungType === 'fixed' && (
-                <>
-                  <div className="form-group">
-                    <label htmlFor="mieterhohung-jahre">{tf.mieterhohungJahre}</label>
-                    <select id="mieterhohung-jahre" value={mieterhohungJahre} onChange={(e) => setMieterhohungJahre(Number(e.target.value))} className="form-group-select">
-                      {MIETERHOHUNG_INCREMENTS.map(jahr => (
-                        <option key={jahr} value={jahr}>{jahr} {jahr === 1 ? t.common.year : t.common.years}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="mieterhohung-betrag">{tf.mieterhohungBetrag}</label>
-                    <NumberInput id="mieterhohung-betrag" value={mieterhohungBetrag} onChange={(e) => setMieterhohungBetrag(e.target.value)} placeholder={tf.mieterhohungBetragPlaceholder} step="10" />
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="tilgungsvariante-option">
-              <label className="radio-label">
-                <input type="radio" name="mieterhohung" value="percentage" checked={mieterhohungType === 'percentage'} onChange={(e) => setMieterhohungType(e.target.value)} />
-                {tf.mieterhohungPercent}
-              </label>
-              {mieterhohungType === 'percentage' && (
-                <div className="form-group">
-                  <label htmlFor="mieterhohung-prozent">{tf.mieterhohungProzent}</label>
-                  <NumberInput id="mieterhohung-prozent" value={mieterhohungProzent} onChange={(e) => setMieterhohungProzent(e.target.value)} placeholder={tf.mieterhohungProzentPlaceholder} step="0.1" />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="finanzierung-box">
-        <SectionDivider label={tf.boxTilgungsvariante} />
-        <div className="finanzierung-form">
-          <div className="tilgungsvariante-options">
-            <div className="tilgungsvariante-option">
-              <label className="radio-label">
-                <input type="radio" name="tilgungsvariante" value="volltilgung" checked={tilgungsvariante === 'volltilgung'} onChange={(e) => setTilgungsvariante(e.target.value)} />
-                {tf.volltilgung}
-              </label>
+        {/* MIETERHÖHUNG */}
+        <div className="finanzierung-box">
+          <SectionDivider label={tf.boxMieterhohung} />
+
+          {/* 3 card selectors */}
+          <div className="selector-cards">
+            {[
+              { id: 'none',       label: tf.mieterhohungNone,    icon: '–',  desc: 'Miete bleibt gleich' },
+              { id: 'fixed',      label: tf.mieterhohungFixed,   icon: '⬆', desc: 'Nach Intervall' },
+              { id: 'percentage', label: tf.mieterhohungPercent, icon: '%', desc: 'Jahr für Jahr' },
+            ].map(opt => (
+              <div
+                key={opt.id}
+                className={`selector-card ${mieterhohungType === opt.id ? 'active' : ''}`}
+                onClick={() => setMieterhohungType(opt.id)}
+              >
+                <div className="selector-card-icon">{opt.icon}</div>
+                <div className={`selector-card-label ${mieterhohungType === opt.id ? 'active' : ''}`}>{opt.label}</div>
+                <div className="selector-card-desc">{opt.desc}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Chart + controls */}
+          <div className="mh-chart-box">
+            <div className="mh-chart-header">
+              <span className="mh-chart-title">{chartYears}-Jahres-Simulation</span>
+              <div className="mh-chart-controls">
+                <span className="darlehen-slider-label">Jahre:</span>
+                <input
+                  type="range" className="darlehen-slider" min={5} max={20} step={1}
+                  value={chartYears} onChange={e => setChartYears(Number(e.target.value))}
+                  style={{ '--fill': `${((chartYears - 5) / (20 - 5)) * 100}%`, width: 100 } as React.CSSProperties}
+                />
+                <span className="darlehen-slider-value" style={{ minWidth: 32 }}>{chartYears} J.</span>
+              </div>
             </div>
-            <div className="tilgungsvariante-option">
-              <label className="radio-label">
-                <input type="radio" name="tilgungsvariante" value="monatsrate" checked={tilgungsvariante === 'monatsrate'} onChange={(e) => setTilgungsvariante(e.target.value)} />
-                {tf.monatsrate}
-              </label>
-              {tilgungsvariante === 'monatsrate' && (
-                <div className="form-group">
-                  <label htmlFor="monatsrate">{tf.monatsrateLabel}</label>
-                  <NumberInput id="monatsrate" value={monatsrate} onChange={(e) => setMonatsrate(e.target.value)} placeholder={tf.monatsratePlaceholder} step="10" />
+
+            <div className="mh-chart-bars">
+              {rentTimeline.map((item, i) => {
+                const barH = rentRange > 0 ? ((item.rent - minRent) / rentRange) * 100 : 50
+                return (
+                  <div key={i} className="mh-bar-col">
+                    <div className="mh-bar" style={{ height: `${Math.max(barH, 12)}%`, opacity: i % 2 === 0 ? 1 : 0.5 }} />
+                    {i % 2 === 0 && (
+                      <>
+                        <div className="mh-bar-year">J.{item.year}</div>
+                        <div className="mh-bar-val">€{Math.round(item.rent)}</div>
+                      </>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            {mieterhohungType === 'percentage' && (
+              <div className="mh-input-panel">
+                <label className="darlehen-slider-label">Jährliche Erhöhung (%)</label>
+                <input
+                  type="range" className="darlehen-slider" min={0} max={10} step={0.1}
+                  value={mhPct} onChange={e => setMhPct(Number(e.target.value))}
+                  style={{ '--fill': `${(mhPct / 10) * 100}%` } as React.CSSProperties}
+                />
+                <div className="darlehen-slider-value">{mhPct.toFixed(1)} % p.a.</div>
+              </div>
+            )}
+            {mieterhohungType === 'fixed' && (
+              <div className="mh-input-panel">
+                <div className="finanzierung-row">
+                  <div className="finanzierung-group">
+                    <label>{tf.mieterhohungJahre}</label>
+                    <CustomSelect
+                      value={String(mieterhohungJahre)}
+                      onChange={(v) => setMieterhohungJahre(Number(v))}
+                      options={MIETERHOHUNG_INCREMENTS.map(j => ({
+                        value: String(j),
+                        label: `${j} ${j === 1 ? t.common.year : t.common.years}`,
+                      }))}
+                    />
+                  </div>
+                  <div className="finanzierung-group">
+                    <label>{tf.mieterhohungBetrag}</label>
+                    <NumberInput value={mieterhohungBetrag} onChange={e => setMieterhohungBetrag(e.target.value)} placeholder={tf.mieterhohungBetragPlaceholder} step="10" />
+                  </div>
                 </div>
-              )}
-            </div>
-            <div className="tilgungsvariante-option">
-              <label className="radio-label">
-                <input type="radio" name="tilgungsvariante" value="tilgungssatz" checked={tilgungsvariante === 'tilgungssatz'} onChange={(e) => setTilgungsvariante(e.target.value)} />
-                {tf.tilgungssatz}
-              </label>
-              {tilgungsvariante === 'tilgungssatz' && (
-                <div className="form-group">
-                  <label htmlFor="tilgungssatz">{tf.tilgungssatzLabel}</label>
-                  <NumberInput id="tilgungssatz" value={tilgungssatz} onChange={(e) => setTilgungssatz(e.target.value)} placeholder={tf.tilgungssatzPlaceholder} step="0.1" />
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
-      </div>
+
+        {/* TILGUNGSVARIANTE */}
+        <div className="finanzierung-box">
+          <SectionDivider label={tf.boxTilgungsvariante} />
+
+          <div className="selector-cards">
+            {[
+              { id: 'volltilgung',  label: tf.volltilgung,  preview: laufzeit ? `${laufzeit} J.`   : '25 J.',      desc: 'Nach Laufzeit' },
+              { id: 'monatsrate',   label: tf.monatsrate,   preview: monatsrate ? `€ ${parseFloat(monatsrate).toLocaleString('de-DE')}` : '€ 1.200', desc: 'Nach Wunschrate' },
+              { id: 'tilgungssatz', label: tf.tilgungssatz, preview: tilgungssatz ? `${tilgungssatz} %` : '2,0 %',  desc: 'Nach %' },
+            ].map(opt => (
+              <div
+                key={opt.id}
+                className={`selector-card ${tilgungsvariante === opt.id ? 'active' : ''}`}
+                onClick={() => setTilgungsvariante(opt.id)}
+              >
+                <div className={`selector-card-label ${tilgungsvariante === opt.id ? 'active' : ''}`}>{opt.label}</div>
+                <div className="selector-card-preview">{opt.preview}</div>
+                <div className="selector-card-desc">{opt.desc}</div>
+              </div>
+            ))}
+          </div>
+
+          {tilgungsvariante === 'volltilgung' && (
+            <div className="tilg-input-panel">
+              <div className="darlehen-slider-group">
+                <label className="darlehen-slider-label">{tf.laufzeit}</label>
+                <input
+                  type="range" className="darlehen-slider" min={5} max={40} step={1}
+                  value={laufzeit || 25}
+                  onChange={e => setLaufzeit(e.target.value)}
+                  style={{ '--fill': `${((parseInt(laufzeit || '25') - 5) / (40 - 5)) * 100}%` } as React.CSSProperties}
+                />
+                <div className="darlehen-slider-value">{laufzeit || 25} {t.common.years}</div>
+              </div>
+            </div>
+          )}
+          {tilgungsvariante === 'monatsrate' && (
+            <div className="tilg-input-panel">
+              <div className="form-group">
+                <label>{tf.monatsrateLabel}</label>
+                <NumberInput value={monatsrate} onChange={e => setMonatsrate(e.target.value)} placeholder={tf.monatsratePlaceholder} step="10" />
+              </div>
+            </div>
+          )}
+          {tilgungsvariante === 'tilgungssatz' && (
+            <div className="tilg-input-panel">
+              <div className="form-group">
+                <label>{tf.tilgungssatzLabel}</label>
+                <NumberInput value={tilgungssatz} onChange={e => setTilgungssatz(e.target.value)} placeholder={tf.tilgungssatzPlaceholder} step="0.1" />
+              </div>
+            </div>
+          )}
+        </div>
+
       </div>{/* finanzierung-mid-grid */}
 
       {calculationResult && (
@@ -531,7 +611,7 @@ function Finanzierung() {
 
           {tilgungsplan && (
             <div className="finanzierung-box">
-              <SectionDivider label={tf.boxTilgungsplan} btnLabel={`📄 ${t.common.exportPdf}`} onBtn={handleExportPdf} />
+              <SectionDivider label={tf.boxTilgungsplan} btnLabel={`${t.common.exportPdf}`} onBtn={handleExportPdf} />
 
               <div className="tilgungsplan-table-container">
                 <table className="tilgungsplan-table">

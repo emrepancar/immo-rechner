@@ -1,7 +1,7 @@
 .sidebar {
   width: 64px;
   flex-shrink: 0;
-  background: #0E1B33;
+  background: #2c3444;
   color: #f0f4ff;
   display: flex;
   flex-direction: column;
@@ -48,7 +48,7 @@
   left: calc(100% + 12px);
   top: 50%;
   transform: translateY(-50%);
-  background: #0E1B33;
+  background: #2c3444;
   color: #fff;
   padding: 6px 12px;
   border-radius: 6px;
@@ -71,7 +71,7 @@
   top: 50%;
   transform: translateY(-50%);
   border: 5px solid transparent;
-  border-right-color: #0E1B33;
+  border-right-color: #2c3444;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.15s ease;
