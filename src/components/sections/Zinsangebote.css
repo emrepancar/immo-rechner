@@ -6,67 +6,177 @@
 .zinsangebote-empty {
   text-align: center;
   padding: 60px 20px;
-  color: #666;
+  color: var(--text-subtle);
 }
 
+.zinsangebote-empty h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: var(--text-h);
+}
 
 .empty-hint {
-  color: #999;
+  color: var(--text-subtle);
   font-size: 14px;
 }
 
-/* Property Selector */
+.empty-icon-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.empty-icon {
+  width: 72px;
+  height: 72px;
+  color: var(--text-subtle);
+  opacity: 0.5;
+}
+
+/* ── Property Selector ── */
 .property-selector-box {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
   box-shadow: var(--shadow-card);
 }
 
-.property-selector-box label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #333;
+/* ── Comparison Box ── */
+.comparison-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
 }
 
-.property-select {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1.5px solid var(--border);
-  border-radius: 6px;
-  font-size: 13px;
-  font-family: inherit;
-  background-color: var(--bg);
-  color: var(--text-h);
-  margin-bottom: 12px;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
+/* Comparison table */
+.comparison-table {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 6px;
 }
 
-.property-select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(46, 91, 255, 0.1);
+.ct-header {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0 10px 8px;
 }
 
-.property-info {
-  padding: 8px 10px;
+.ct-cell {
+  padding: 10px 12px;
   background: var(--panel-alt);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 13px;
+  font-weight: 600;
   color: var(--text-h);
 }
 
-/* Form */
+.ct-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ct-rate {
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.ct-best {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent);
+}
+
+.ct-best-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-left: auto;
+}
+
+/* Cashflow section */
+.cashflow-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.cashflow-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+
+.cashflow-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.cashflow-card {
+  padding: 12px;
+  background: var(--panel-alt);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.cashflow-card.cashflow-best {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+
+.cashflow-bank {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-subtle);
+  margin-bottom: 4px;
+}
+
+.cashflow-best .cashflow-bank {
+  color: var(--text-h);
+}
+
+.cashflow-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.cashflow-value.positive { color: #177b5e; }
+.cashflow-value.negative { color: #c23f3a; }
+
+.cashflow-sub {
+  font-size: 10px;
+  color: var(--text-subtle);
+  margin-top: 2px;
+}
+
+/* ── Main 2-column grid ── */
+.zins-main-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+/* ── Form box ── */
 .zinsangebot-form-box {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
+  padding: 20px 24px;
   box-shadow: var(--shadow-card);
 }
 
@@ -79,14 +189,13 @@
 
 .zinsangebote-container .form-group label {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-h);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
-.zinsangebote-container .form-group input,
-.zinsangebote-container .form-group select {
+.zinsangebote-container .form-group input {
   width: 100%;
   padding: 8px 10px;
   border: 1.5px solid var(--border);
@@ -99,284 +208,188 @@
   transition: border-color 0.2s;
 }
 
-.zinsangebote-container .form-group input:focus,
-.zinsangebote-container .form-group select:focus {
+.zinsangebote-container .form-group input:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(46, 91, 255, 0.1);
 }
 
-.zinsangebote-container .form-group input:disabled {
-  background-color: var(--panel-alt);
-  color: var(--text-h);
-  cursor: not-allowed;
-}
-
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  gap: 12px;
 }
 
-/* Eigenkapital Toggle */
-.eigenkapital-toggle {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.toggle-btn {
-  padding: 8px;
-  border: 2px solid #ddd;
-  border-radius: 4px;
-  background: white;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  color: #666;
-  transition: all 0.2s ease;
-}
-
-.toggle-btn:hover {
-  border-color: #4a7ba7;
-  color: #4a7ba7;
-}
-
-.toggle-btn.active {
-  background: #4a7ba7;
-  color: white;
-  border-color: #4a7ba7;
-}
-
-/* Form Actions */
 .form-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
 }
 
-.save-btn,
-.cancel-btn,
-.edit-btn,
-.delete-btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
+.form-actions .save-btn {
+  flex: 1;
 }
 
-.save-btn {
-  background: #4a7ba7;
-  color: white;
-  grid-column: span 2;
-}
-
-.save-btn:hover {
-  background: #3a6a94;
-}
-
-.cancel-btn {
-  background: #ddd;
-  color: #333;
-}
-
-.cancel-btn:hover {
-  background: #ccc;
-}
-
-.edit-btn,
-.delete-btn {
-  padding: 6px 10px;
-  font-size: 13px;
-  color: white;
-}
-
-.edit-btn {
-  background: #4a7ba7;
-}
-
-.edit-btn:hover {
-  background: #3a6a94;
-}
-
-.delete-btn {
-  background: #e74c3c;
-}
-
-.delete-btn:hover {
-  background: #c0392b;
-}
-
-/* Offers List */
-.zinsangebote-list-box {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: var(--shadow-card);
-}
-
-.zinsangebote-list-box h3 {
-  color: #333;
-  margin-bottom: 20px;
-  font-size: 16px;
+/* ── Offers area ── */
+.offers-area {
+  min-height: 200px;
 }
 
 .offers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
 }
 
+/* ── Offer card ── */
 .offer-card {
-  background: #f8f8f8;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 15px;
-  transition: all 0.2s ease;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.15s;
 }
 
 .offer-card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-color: #4a7ba7;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.offer-card-best {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
 .offer-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
-.offer-header h4 {
-  color: #333;
-  margin: 0;
-  font-size: 15px;
+.offer-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-h);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.offer-best-badge {
+  font-size: 13px;
 }
 
 .offer-actions {
   display: flex;
-  gap: 5px;
+  gap: 4px;
 }
 
-.offer-details {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+/* Big rate hero */
+.offer-rate-hero {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
 }
 
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  border-bottom: 1px solid #e0e0e0;
-  font-size: 13px;
+.offer-rate-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 4px;
 }
 
-.detail-row:last-child {
-  border-bottom: none;
-}
-
-.detail-row .label {
-  color: #666;
+.offer-rate-sub {
+  font-size: 11px;
+  color: var(--text-subtle);
   font-weight: 500;
 }
 
-.detail-row .value {
-  color: #333;
+.offer-eff {
+  color: var(--text-h);
   font-weight: 600;
 }
 
-/* Comparison Chart */
-.comparison-chart-box {
+/* Monthly rate highlight */
+.offer-monthly-highlight {
+  padding: 10px;
+  background: var(--panel-alt);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.offer-monthly-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.offer-monthly-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Details grid */
+.offer-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.odg-item {}
+
+.odg-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-subtle);
+  margin-bottom: 2px;
+}
+
+.odg-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+/* Add card placeholder */
+.offer-card-add {
   background: var(--panel);
-  border: 1px solid var(--border);
+  border: 1.5px dashed var(--border);
   border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: var(--shadow-card);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--text-subtle);
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 120px;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 
-.comparison-chart-box h3 {
-  color: #333;
-  margin-bottom: 20px;
-  font-size: 16px;
+.offer-card-add:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
 }
 
-/* No Offers Message */
+/* No offers */
 .no-offers-message {
   text-align: center;
   padding: 40px 20px;
-  color: #999;
-  background: #f8f8f8;
-  border: 1px dashed #ddd;
-  border-radius: 8px;
-  margin-top: 20px;
+  color: var(--text-subtle);
+  background: var(--panel-alt);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
 }
 
-.no-offers-message p {
-  margin: 8px 0;
-}
-
-.no-offers-message .hint {
-  font-size: 13px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .zinsangebote-container {
-    padding: 10px;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .form-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .save-btn {
-    grid-column: span 1;
-  }
-
-  .offers-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .comparison-chart-box {
-    overflow-x: auto;
-  }
-
-  .zinsangebot-form-box,
-  .zinsangebote-list-box,
-  .comparison-chart-box {
-    padding: 15px;
-  }
-}
-
-.empty-icon-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.empty-icon {
-  width: 72px;
-  height: 72px;
-  color: var(--text-muted);
-  opacity: 0.5;
-}
-
-.zinsangebote-empty h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0 0 8px;
-  color: var(--text-h);
-}
+.no-offers-message p { margin: 8px 0; color: var(--text-h); }
+.no-offers-message .hint { font-size: 13px; color: var(--text-subtle); }

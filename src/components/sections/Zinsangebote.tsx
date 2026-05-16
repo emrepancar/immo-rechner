@@ -1,20 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import SectionDivider from '../SectionDivider'
 import CustomSelect from '../CustomSelect'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import NumberInput from '../NumberInput'
+import { PencilSimple, X, Plus, FloppyDisk } from '@phosphor-icons/react'
 import './Zinsangebote.css'
 import { useLanguage } from '../../context/LanguageContext'
 import { propertiesApi, ratesApi } from '../../api'
 import Notification from '../Notification'
 import type { Property, RateOffer } from '../../types'
-
-interface ChartEntry {
-  name: string
-  monatlicheRate: number
-  gesamtZinsen: number
-  finanzierungssumme: number
-}
 
 function Zinsangebote() {
   const { t } = useLanguage()
@@ -35,22 +28,13 @@ function Zinsangebote() {
     monatlicheRate: '',
     gesamtbetrag: '',
   })
-  const [chartData, setChartData] = useState<ChartEntry[]>([])
   const [saving, setSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' | '' }>({ message: '', type: '' })
   const clearNotification = useCallback(() => setNotification({ message: '', type: '' }), [])
 
   useEffect(() => { loadProperties() }, [])
-
-  useEffect(() => {
-    if (selectedProperty) loadOffers(selectedProperty.id)
-  }, [selectedProperty])
-
-  useEffect(() => {
-    if (offers.length > 0 && selectedProperty) generateChartData()
-    else setChartData([])
-  }, [offers, selectedProperty])
+  useEffect(() => { if (selectedProperty) loadOffers(selectedProperty.id) }, [selectedProperty])
 
   const loadProperties = async () => {
     try {
@@ -71,28 +55,6 @@ function Zinsangebote() {
     } catch (err) {
       console.error('Error loading offers:', err)
     }
-  }
-
-  const generateChartData = () => {
-    const data = offers.map(offer => {
-      const kaufpreis = selectedProperty?.kaufpreis || 0
-      const eigenkapital = offer.eigenkapital_amount || 0
-      const finanzierungssumme = kaufpreis - eigenkapital
-      const zinssatz = offer.zinssatz / 100 / 12
-      const laufzeit = (offer.zinsbindung || 1) * 12
-      const monthlyPayment = finanzierungssumme > 0
-        ? finanzierungssumme * (zinssatz * Math.pow(1 + zinssatz, laufzeit)) / (Math.pow(1 + zinssatz, laufzeit) - 1)
-        : 0
-      const totalInterest = (monthlyPayment * laufzeit) - finanzierungssumme
-
-      return {
-        name: offer.name || `Angebot ${offer.id}`,
-        monatlicheRate: Math.round(monthlyPayment * 100) / 100,
-        gesamtZinsen: Math.round(totalInterest * 100) / 100,
-        finanzierungssumme: Math.round(finanzierungssumme * 100) / 100,
-      }
-    })
-    setChartData(data)
   }
 
   const handlePropertyChange = (e: React.ChangeEvent<HTMLSelectElement> | string) => {
@@ -129,7 +91,6 @@ function Zinsangebote() {
     const zinssatz = parseFloat(formData.zinssatz)
     const eigenkapital = parseFloat(formData.eigenkapital)
     const zinsbindung = parseFloat(formData.zinsbindung)
-
     if (!formData.zinssatz || isNaN(zinssatz) || zinssatz <= 0 || zinssatz >= 15) {
       setNotification({ message: tz.alerts.invalidZinssatz, type: 'error' }); return false
     }
@@ -148,7 +109,6 @@ function Zinsangebote() {
   const saveOffer = async () => {
     if (!validateForm()) return
     setSaving(true)
-
     const offerData = {
       property_id: selectedProperty!.id,
       name: formData.name || `Angebot ${new Date().getTime()}`,
@@ -161,7 +121,6 @@ function Zinsangebote() {
       monatliche_rate: formData.monatlicheRate ? parseFloat(formData.monatlicheRate) : null,
       gesamtbetrag: formData.gesamtbetrag ? parseFloat(formData.gesamtbetrag) : null,
     }
-
     try {
       if (editingOffer) {
         await ratesApi.update(editingOffer.id, offerData)
@@ -214,6 +173,12 @@ function Zinsangebote() {
     )
   }
 
+  // Find best offer (lowest zinssatz)
+  const bestOffer = offers.length > 0
+    ? offers.reduce((best, o) => o.zinssatz < best.zinssatz ? o : best, offers[0])
+    : null
+
+  const kaltmiete = selectedProperty?.kaltmiete ?? 0
   const zinsSubtitle = selectedProperty
     ? `${selectedProperty.name}${selectedProperty.kaufpreis ? ` · ${selectedProperty.kaufpreis.toLocaleString('de-DE')} €` : ''}`
     : 'Zinsentwicklung und Angebotsvergleich'
@@ -229,231 +194,260 @@ function Zinsangebote() {
         </div>
         <div className="page-shell-divider" />
       </div>
+
       <div className="page-shell-body">
-      <Notification message={notification.message} type={notification.type} onClose={clearNotification} />
-      <div className="property-selector-box">
-        <SectionDivider label={tz.selectProperty} />
-        <CustomSelect
-          value={String(selectedProperty?.id || '')}
-          onChange={(v) => handlePropertyChange(v)}
-          placeholder="— Immobilie auswählen —"
-          options={properties.map(p => ({
-            value: String(p.id),
-            label: p.name,
-            sub: p.address || t.common.noAddress,
-            meta: p.kaufpreis ? `€ ${p.kaufpreis.toLocaleString('de-DE')}` : undefined,
-          }))}
-        />
-      </div>
+        <Notification message={notification.message} type={notification.type} onClose={clearNotification} />
 
-      <div className="zinsangebot-form-box">
-        <SectionDivider label={editingOffer ? tz.editTitle : tz.addTitle} />
-
-        <div className="form-group">
-          <label htmlFor="offer-name">{tz.nameLabel}</label>
-          <input
-            id="offer-name"
-            type="text"
-            placeholder={tz.namePlaceholder}
-            value={formData.name}
-            onChange={(e) => handleFormChange('name', e.target.value)}
+        {/* Property selector */}
+        <div className="property-selector-box">
+          <SectionDivider label={tz.selectProperty} />
+          <CustomSelect
+            value={String(selectedProperty?.id || '')}
+            onChange={(v) => handlePropertyChange(v)}
+            placeholder="— Immobilie auswählen —"
+            options={properties.map(p => ({
+              value: String(p.id),
+              label: p.name,
+              sub: p.address || t.common.noAddress,
+              meta: p.kaufpreis ? `€ ${p.kaufpreis.toLocaleString('de-DE')}` : undefined,
+            }))}
           />
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="zinssatz">{tz.zinssatz}</label>
-            <NumberInput
-              id="zinssatz"
-              value={formData.zinssatz}
-              onChange={(e) => handleFormChange('zinssatz', e.target.value)}
-              placeholder="3.5"
-              step="0.01"
-              min="0"
-              max="15"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="effektiver-jahreszins">{tz.effektiverJahreszins}</label>
-            <NumberInput
-              id="effektiver-jahreszins"
-              value={formData.effektiverJahreszins}
-              onChange={(e) => handleFormChange('effektiverJahreszins', e.target.value)}
-              placeholder="4.27"
-              step="0.01"
-              min="0"
-              max="15"
-            />
-          </div>
-        </div>
+        {/* Comparison table — shown when ≥2 offers */}
+        {offers.length >= 2 && (
+          <div className="comparison-box">
+            <SectionDivider label="Angebote vergleichen" />
 
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="darlehenssumme">{tz.darlehenssumme}</label>
-            <NumberInput
-              id="darlehenssumme"
-              value={formData.darlehenssumme}
-              onChange={(e) => handleFormChange('darlehenssumme', e.target.value)}
-              placeholder="250000"
-              step="1000"
-              min="0"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="monatliche-rate">{tz.monatlicheRate}</label>
-            <NumberInput
-              id="monatliche-rate"
-              value={formData.monatlicheRate}
-              onChange={(e) => handleFormChange('monatlicheRate', e.target.value)}
-              placeholder="1200"
-              step="10"
-              min="0"
-            />
-          </div>
-        </div>
+            <div className="comparison-table">
+              {/* Header */}
+              <div className="ct-header">Bank</div>
+              <div className="ct-header">Sollzinssatz</div>
+              <div className="ct-header">Monatliche Rate</div>
+              <div className="ct-header">Gesamtbetrag</div>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="gesamtbetrag">{tz.gesamtbetrag}</label>
-            <NumberInput
-              id="gesamtbetrag"
-              value={formData.gesamtbetrag}
-              onChange={(e) => handleFormChange('gesamtbetrag', e.target.value)}
-              placeholder="350000"
-              step="1000"
-              min="0"
-            />
-          </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="zinsbindung">{tz.zinsbindung}</label>
-            <input
-              id="zinsbindung"
-              type="number"
-              placeholder="10"
-              value={formData.zinsbindung}
-              onChange={(e) => handleFormChange('zinsbindung', e.target.value)}
-              step="1"
-              min="1"
-              max="30"
-            />
-          </div>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="eigenkapital">{tz.eigenkapital} (€)</label>
-          <NumberInput
-            id="eigenkapital"
-            value={formData.eigenkapital}
-            onChange={(e) => handleFormChange('eigenkapital', e.target.value)}
-            placeholder="50000"
-            step="1000"
-            min="0"
-          />
-        </div>
-
-        <div className="form-actions">
-          <button className="btn btn-primary save-btn" onClick={saveOffer} disabled={saving}>
-            {saving ? '...' : (editingOffer ? tz.updateBtn : tz.saveBtn)}
-          </button>
-          {editingOffer && (
-            <button className="btn btn-ghost cancel-btn" onClick={resetForm}>{t.common.cancel}</button>
-          )}
-        </div>
-      </div>
-
-      {offers.length > 0 && (
-        <>
-          <div className="zinsangebote-list-box">
-            <SectionDivider label={`${tz.offersTitle} (${offers.length})`} />
-            <div className="offers-grid">
+              {/* Rows */}
               {offers.map(offer => {
-                const eigenkapitalDisplay = offer.eigenkapital_amount != null
-                  ? `€ ${offer.eigenkapital_amount.toLocaleString('de-DE')}`
-                  : '—'
-
+                const isBest = offer.id === bestOffer?.id
                 return (
-                  <div key={offer.id} className="offer-card">
-                    <div className="offer-header">
-                      <h4>{offer.name || `Angebot ${offer.id}`}</h4>
-                      <div className="offer-actions">
-                        <button className="edit-btn" onClick={() => openEditMode(offer)} title={t.common.edit}>✎</button>
-                        <button className="btn btn-danger btn-sm delete-btn" onClick={() => deleteOffer(offer.id)} disabled={deletingId === offer.id} title={t.common.delete}>{deletingId === offer.id ? '…' : '✕'}</button>
-                      </div>
+                  <React.Fragment key={offer.id}>
+                    <div className={`ct-cell ct-name ${isBest ? 'ct-best' : ''}`}>
+                      {offer.name || `Angebot ${offer.id}`}
+                      {isBest && <span className="ct-best-badge">⭐ Best</span>}
                     </div>
-                    <div className="offer-details">
-                      <div className="detail-row">
-                        <span className="label">{tz.zinssatzLabel}:</span>
-                        <span className="value">{offer.zinssatz}%</span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="label">{tz.effektiverJahreszinsLabel}:</span>
-                        <span className="value">{offer.effektiver_jahreszins != null ? `${offer.effektiver_jahreszins}%` : '—'}</span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="label">{tz.darlehenssummeLabel}:</span>
-                        <span className="value">{offer.darlehenssumme != null ? `€ ${offer.darlehenssumme.toLocaleString('de-DE')}` : '—'}</span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="label">{tz.monatlicheRateLabel}:</span>
-                        <span className="value">{offer.monatliche_rate != null ? `€ ${offer.monatliche_rate.toLocaleString('de-DE')}` : '—'}</span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="label">{tz.gesamtbetragLabel}:</span>
-                        <span className="value">{offer.gesamtbetrag != null ? `€ ${offer.gesamtbetrag.toLocaleString('de-DE')}` : '—'}</span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="label">{tz.eigenkapitalLabel}:</span>
-                        <span className="value">{eigenkapitalDisplay}</span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="label">{tz.zinsbindungLabel}:</span>
-                        <span className="value">{offer.zinsbindung} {t.common.years}</span>
-                      </div>
+                    <div className={`ct-cell ct-rate ${isBest ? 'ct-best' : ''}`}>
+                      {offer.zinssatz.toFixed(2)}%
                     </div>
-                  </div>
+                    <div className={`ct-cell ${isBest ? 'ct-best' : ''}`}>
+                      {offer.monatliche_rate != null
+                        ? `€ ${offer.monatliche_rate.toLocaleString('de-DE')}`
+                        : '—'}
+                    </div>
+                    <div className={`ct-cell ${isBest ? 'ct-best' : ''}`}>
+                      {offer.gesamtbetrag != null
+                        ? `€ ${offer.gesamtbetrag.toLocaleString('de-DE')}`
+                        : '—'}
+                    </div>
+                  </React.Fragment>
                 )
               })}
             </div>
-          </div>
 
-          {chartData.length > 1 && (
-            <div className="comparison-chart-box">
-              <SectionDivider label={tz.chartTitle} />
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis yAxisId="left" label={{ value: tz.chartAxisLeft, angle: -90, position: 'insideLeft' }} />
-                  <YAxis yAxisId="right" orientation="right" label={{ value: tz.chartAxisRight, angle: 90, position: 'insideRight' }} />
-                  <Tooltip formatter={(value) => (value as number).toLocaleString('de-DE')} />
-                  <Legend />
-                  <Bar yAxisId="left" dataKey="monatlicheRate" fill="#4a7ba7" name={tz.chartMonatlich} />
-                  <Bar yAxisId="right" dataKey="gesamtZinsen" fill="#e67e22" name={tz.chartZinsen} />
-                </BarChart>
-              </ResponsiveContainer>
+            {/* Cashflow section */}
+            {kaltmiete > 0 && (
+              <div className="cashflow-section">
+                <div className="cashflow-label">
+                  Cashflow bei Kaltmiete {kaltmiete.toLocaleString('de-DE')} € / Monat
+                </div>
+                <div className="cashflow-grid">
+                  {offers.map(offer => {
+                    const isBest = offer.id === bestOffer?.id
+                    const rate = offer.monatliche_rate ?? 0
+                    const cf = rate > 0 ? kaltmiete - rate : null
+                    return (
+                      <div key={offer.id} className={`cashflow-card ${isBest ? 'cashflow-best' : ''}`}>
+                        <div className="cashflow-bank">{offer.name || `Angebot ${offer.id}`}</div>
+                        {cf !== null ? (
+                          <div className={`cashflow-value ${cf >= 0 ? 'positive' : 'negative'}`}>
+                            {cf >= 0 ? '+' : ''}€ {cf.toLocaleString('de-DE')}
+                          </div>
+                        ) : (
+                          <div className="cashflow-value">—</div>
+                        )}
+                        <div className="cashflow-sub">
+                          {isBest ? 'Bestes Angebot' : cf !== null && cf < 0 ? 'Kostet monatlich' : 'Cashflow'}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Main 2-column layout */}
+        <div className="zins-main-grid">
+
+          {/* LEFT: Form */}
+          <div className="zinsangebot-form-box">
+            <SectionDivider label={editingOffer ? tz.editTitle : tz.addTitle} />
+
+            <div className="form-group">
+              <label htmlFor="offer-name">{tz.nameLabel}</label>
+              <input
+                id="offer-name"
+                type="text"
+                placeholder={tz.namePlaceholder}
+                value={formData.name}
+                onChange={(e) => handleFormChange('name', e.target.value)}
+              />
             </div>
-          )}
-        </>
-      )}
 
-      {offers.length === 0 && selectedProperty && (
-        <div className="no-offers-message">
-          <div className="empty-icon-wrap">
-            <svg className="empty-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="8" y="28" width="8" height="28" rx="1" stroke="currentColor" strokeWidth="3"/>
-              <rect x="28" y="18" width="8" height="38" rx="1" stroke="currentColor" strokeWidth="3"/>
-              <rect x="48" y="8" width="8" height="48" rx="1" stroke="currentColor" strokeWidth="3"/>
-              <path d="M6 58h52" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-            </svg>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="zinssatz">{tz.zinssatz}</label>
+                <NumberInput id="zinssatz" value={formData.zinssatz} onChange={(e) => handleFormChange('zinssatz', e.target.value)} placeholder="3.5" step="0.01" min="0" max="15" />
+              </div>
+              <div className="form-group">
+                <label htmlFor="effektiver-jahreszins">{tz.effektiverJahreszins}</label>
+                <NumberInput id="effektiver-jahreszins" value={formData.effektiverJahreszins} onChange={(e) => handleFormChange('effektiverJahreszins', e.target.value)} placeholder="4.27" step="0.01" min="0" max="15" />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="darlehenssumme">{tz.darlehenssumme}</label>
+                <NumberInput id="darlehenssumme" value={formData.darlehenssumme} onChange={(e) => handleFormChange('darlehenssumme', e.target.value)} placeholder="250000" step="1000" min="0" />
+              </div>
+              <div className="form-group">
+                <label htmlFor="monatliche-rate">{tz.monatlicheRate}</label>
+                <NumberInput id="monatliche-rate" value={formData.monatlicheRate} onChange={(e) => handleFormChange('monatlicheRate', e.target.value)} placeholder="1200" step="10" min="0" />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="gesamtbetrag">{tz.gesamtbetrag}</label>
+                <NumberInput id="gesamtbetrag" value={formData.gesamtbetrag} onChange={(e) => handleFormChange('gesamtbetrag', e.target.value)} placeholder="350000" step="1000" min="0" />
+              </div>
+              <div className="form-group">
+                <label htmlFor="zinsbindung">{tz.zinsbindung}</label>
+                <input id="zinsbindung" type="number" placeholder="10" value={formData.zinsbindung} onChange={(e) => handleFormChange('zinsbindung', e.target.value)} step="1" min="1" max="30" />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="eigenkapital">{tz.eigenkapital} (€)</label>
+              <NumberInput id="eigenkapital" value={formData.eigenkapital} onChange={(e) => handleFormChange('eigenkapital', e.target.value)} placeholder="50000" step="1000" min="0" />
+            </div>
+
+            <div className="form-actions">
+              <button className="btn btn-primary save-btn" onClick={saveOffer} disabled={saving}>
+                <FloppyDisk size={14} weight="duotone" />
+                {saving ? '...' : (editingOffer ? tz.updateBtn : tz.saveBtn)}
+              </button>
+              {editingOffer && (
+                <button className="btn btn-ghost cancel-btn" onClick={resetForm}>
+                  <X size={14} weight="bold" /> {t.common.cancel}
+                </button>
+              )}
+            </div>
           </div>
-          <p>{tz.noOffers}</p>
-          <p className="hint">{tz.noOffersHint}</p>
+
+          {/* RIGHT: Offer cards */}
+          <div className="offers-area">
+            {offers.length === 0 && selectedProperty ? (
+              <div className="no-offers-message">
+                <div className="empty-icon-wrap">
+                  <svg className="empty-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="8" y="28" width="8" height="28" rx="1" stroke="currentColor" strokeWidth="3"/>
+                    <rect x="28" y="18" width="8" height="38" rx="1" stroke="currentColor" strokeWidth="3"/>
+                    <rect x="48" y="8" width="8" height="48" rx="1" stroke="currentColor" strokeWidth="3"/>
+                    <path d="M6 58h52" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <p>{tz.noOffers}</p>
+                <p className="hint">{tz.noOffersHint}</p>
+              </div>
+            ) : (
+              <div className="offers-grid">
+                {offers.map(offer => {
+                  const isBest = offer.id === bestOffer?.id
+                  return (
+                    <div key={offer.id} className={`offer-card ${isBest ? 'offer-card-best' : ''}`}>
+
+                      {/* Card header */}
+                      <div className="offer-header">
+                        <div className="offer-name">
+                          {offer.name || `Angebot ${offer.id}`}
+                          {isBest && <span className="offer-best-badge">⭐</span>}
+                        </div>
+                        <div className="offer-actions">
+                          <button className="btn btn-ghost btn-sm" onClick={() => openEditMode(offer)} title={t.common.edit}>
+                            <PencilSimple size={13} weight="duotone" />
+                          </button>
+                          <button className="btn btn-danger btn-sm" onClick={() => deleteOffer(offer.id)} disabled={deletingId === offer.id} title={t.common.delete}>
+                            {deletingId === offer.id ? '…' : <X size={13} weight="bold" />}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Big rate */}
+                      <div className="offer-rate-hero">
+                        <div className="offer-rate-number">{offer.zinssatz.toFixed(2)}%</div>
+                        <div className="offer-rate-sub">
+                          Sollzins
+                          {offer.effektiver_jahreszins != null && (
+                            <> · <span className="offer-eff">{offer.effektiver_jahreszins.toFixed(2)}% eff.</span></>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Monthly rate highlight */}
+                      {offer.monatliche_rate != null && (
+                        <div className="offer-monthly-highlight">
+                          <div className="offer-monthly-label">Monatliche Rate</div>
+                          <div className="offer-monthly-value">
+                            € {offer.monatliche_rate.toLocaleString('de-DE')}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Details grid */}
+                      <div className="offer-details-grid">
+                        <div className="odg-item">
+                          <div className="odg-label">{tz.darlehenssummeLabel}</div>
+                          <div className="odg-value">{offer.darlehenssumme != null ? `€ ${offer.darlehenssumme.toLocaleString('de-DE')}` : '—'}</div>
+                        </div>
+                        <div className="odg-item">
+                          <div className="odg-label">{tz.eigenkapitalLabel}</div>
+                          <div className="odg-value">{offer.eigenkapital_amount != null ? `€ ${offer.eigenkapital_amount.toLocaleString('de-DE')}` : '—'}</div>
+                        </div>
+                        <div className="odg-item">
+                          <div className="odg-label">{tz.zinsbindungLabel}</div>
+                          <div className="odg-value">{offer.zinsbindung} {t.common.years}</div>
+                        </div>
+                        <div className="odg-item">
+                          <div className="odg-label">{tz.gesamtbetragLabel}</div>
+                          <div className="odg-value">{offer.gesamtbetrag != null ? `€ ${offer.gesamtbetrag.toLocaleString('de-DE')}` : '—'}</div>
+                        </div>
+                      </div>
+
+                    </div>
+                  )
+                })}
+
+                {/* Add new card placeholder */}
+                <button className="offer-card-add" onClick={() => { resetForm(); document.getElementById('offer-name')?.focus() }}>
+                  <Plus size={20} weight="duotone" />
+                  <span>Angebot hinzufügen</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      )}
-      </div>{/* page-shell-body */}
+      </div>
     </div>
   )
 }
