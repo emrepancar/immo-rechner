@@ -1,30 +1,31 @@
 import { PlusCircle, Buildings, Calculator, Bank } from '@phosphor-icons/react'
+import { useLocation } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import './Sidebar.css'
 
 interface SidebarProps {
-  activeSection: string
-  setActiveSection: (section: string) => void
+  onNavigate: (path: string) => void
 }
 
-function Sidebar({ activeSection, setActiveSection }: SidebarProps) {
+function Sidebar({ onNavigate }: SidebarProps) {
   const { t } = useLanguage()
+  const location = useLocation()
 
   const sections = [
-    { id: 'neue-immobilie',          label: t.nav.neueImmobilie,       Icon: PlusCircle },
-    { id: 'gespeicherte-immobilien', label: t.nav.gespeicherteObjekte,  Icon: Buildings },
-    { id: 'finanzierung',            label: t.nav.finanzierung,         Icon: Calculator },
-    { id: 'zinsangebote',            label: t.nav.zinsangebote,         Icon: Bank },
+    { path: '/',                      label: t.nav.neueImmobilie,      Icon: PlusCircle },
+    { path: '/gespeicherte-objekte',  label: t.nav.gespeicherteObjekte, Icon: Buildings },
+    { path: '/finanzierung',          label: t.nav.finanzierung,        Icon: Calculator },
+    { path: '/zinsangebote',          label: t.nav.zinsangebote,        Icon: Bank },
   ]
 
   return (
     <aside className="sidebar">
       <nav className="sidebar-nav">
-        {sections.map(({ id, label, Icon }) => (
+        {sections.map(({ path, label, Icon }) => (
           <button
-            key={id}
-            className={`nav-item ${activeSection === id ? 'active' : ''}`}
-            onClick={() => setActiveSection(id)}
+            key={path}
+            className={`nav-item ${location.pathname === path ? 'active' : ''}`}
+            onClick={() => onNavigate(path)}
             data-tooltip={label}
           >
             <span className="nav-icon"><Icon size={22} weight="duotone" /></span>

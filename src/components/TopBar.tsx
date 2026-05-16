@@ -1,18 +1,19 @@
 import { useState } from 'react'
 import { GearSix, UserCircle } from '@phosphor-icons/react'
+import { useLocation } from 'react-router-dom'
 import { useProfile } from '../context/ProfileContext'
 import { useLanguage } from '../context/LanguageContext'
 import ProfileDialog from './ProfileDialog'
 import './TopBar.css'
 
 interface TopBarProps {
-  activeSection: string
-  setActiveSection: (section: string) => void
+  onNavigate: (path: string) => void
 }
 
-function TopBar({ activeSection, setActiveSection }: TopBarProps) {
+function TopBar({ onNavigate }: TopBarProps) {
   const { username } = useProfile()
   const { t } = useLanguage()
+  const location = useLocation()
   const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false)
 
   return (
@@ -25,8 +26,8 @@ function TopBar({ activeSection, setActiveSection }: TopBarProps) {
       </div>
       <div className="topbar-right">
         <button
-          className={`topbar-icon-btn ${activeSection === 'settings' ? 'active' : ''}`}
-          onClick={() => setActiveSection('settings')}
+          className={`topbar-icon-btn ${location.pathname === '/einstellungen' ? 'active' : ''}`}
+          onClick={() => onNavigate('/einstellungen')}
           title={t.nav.settings || 'Einstellungen'}
         >
           <GearSix size={18} weight="duotone" />
