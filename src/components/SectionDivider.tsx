@@ -12,7 +12,7 @@ export default function SectionDivider({ label, btnLabel, onBtn }: Props) {
       <div className="section-divider-rule" />
       <span className="section-divider-label">{label}</span>
       {onBtn && (
-        <button className="section-divider-btn" onClick={onBtn}>
+        <button className="btn btn-ghost btn-sm section-divider-btn" onClick={onBtn}>
           {btnLabel}
         </button>
       )}

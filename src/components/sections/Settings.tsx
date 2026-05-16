@@ -1,6 +1,8 @@
 import { useLanguage } from '../../context/LanguageContext'
 import { useSettings } from '../../context/SettingsContext'
 import { NUMBER_FORMAT_OPTIONS } from '../../utils/numberFormat'
+import CustomSelect from '../CustomSelect'
+import { Sun, Moon, Check } from '@phosphor-icons/react'
 import './Settings.css'
 
 function Settings() {
@@ -29,16 +31,11 @@ function Settings() {
       <div className="settings-box">
         <div className="box-label">{t.settings?.language}</div>
         <div className="settings-group">
-          <select
-            id="language"
+          <CustomSelect
             value={settings.language}
-            onChange={(e) => updateSettings('language', e.target.value)}
-            className="settings-select"
-          >
-            {languages.map(lang => (
-              <option key={lang.code} value={lang.code}>{lang.label}</option>
-            ))}
-          </select>
+            onChange={(v) => updateSettings('language', v)}
+            options={languages.map(lang => ({ value: lang.code, label: lang.label }))}
+          />
         </div>
       </div>
 
@@ -46,12 +43,12 @@ function Settings() {
         <div className="box-label">{t.settings?.themeLabel}</div>
         <div className="settings-group">
           <button
-            className="theme-toggle-button"
+            className="btn btn-ghost theme-toggle-button"
             onClick={() => updateSettings('isDark', !settings.isDark)}
           >
             {settings.isDark
-              ? `☀️ ${t.settings?.themeLight}`
-              : `🌙 ${t.settings?.themeDark}`}
+              ? <><Sun size={15} weight="duotone" /> {t.settings?.themeLight}</>
+              : <><Moon size={15} weight="duotone" /> {t.settings?.themeDark}</>}
           </button>
         </div>
       </div>
@@ -59,50 +56,33 @@ function Settings() {
       <div className="settings-box">
         <div className="box-label">{t.settings?.unitsLabel}</div>
         <div className="settings-group">
-          <select
-            id="space-unit"
+          <CustomSelect
             value={settings.spaceUnit}
-            onChange={(e) => updateSettings('spaceUnit', e.target.value)}
-            className="settings-select"
-          >
-            {spaceUnits.map(unit => (
-              <option key={unit} value={unit}>{unit}</option>
-            ))}
-          </select>
+            onChange={(v) => updateSettings('spaceUnit', v)}
+            options={spaceUnits.map(unit => ({ value: unit, label: unit }))}
+          />
         </div>
       </div>
 
       <div className="settings-box">
         <div className="box-label">{t.settings?.currency}</div>
         <div className="settings-group">
-          <select
-            id="currency"
+          <CustomSelect
             value={settings.currency}
-            onChange={(e) => updateSettings('currency', e.target.value)}
-            className="settings-select"
-          >
-            {currencies.map(curr => (
-              <option key={curr.symbol} value={curr.symbol}>
-                {curr.symbol} - {curr.name}
-              </option>
-            ))}
-          </select>
+            onChange={(v) => updateSettings('currency', v)}
+            options={currencies.map(curr => ({ value: curr.symbol, label: `${curr.symbol} – ${curr.name}` }))}
+          />
         </div>
       </div>
 
       <div className="settings-box">
         <div className="box-label">{t.settings?.numberFormatLabel || 'Zahlenformat'}</div>
         <div className="settings-group">
-          <select
-            id="number-format"
+          <CustomSelect
             value={settings.numberFormat || 'de'}
-            onChange={(e) => updateSettings('numberFormat', e.target.value)}
-            className="settings-select"
-          >
-            {NUMBER_FORMAT_OPTIONS.map(opt => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
+            onChange={(v) => updateSettings('numberFormat', v)}
+            options={NUMBER_FORMAT_OPTIONS.map(opt => ({ value: opt.value, label: opt.label }))}
+          />
         </div>
       </div>
 
@@ -124,18 +104,18 @@ function Settings() {
 
       <div className={`settings-action-bar ${hasUnsavedChanges ? 'active' : 'inactive'}`}>
         <button
-          className="settings-discard-btn"
+          className="btn btn-ghost settings-discard-btn"
           onClick={discardSettings}
           disabled={!hasUnsavedChanges}
         >
           {t.common?.cancel || 'Discard'}
         </button>
         <button
-          className="settings-save-btn"
+          className="btn btn-primary settings-save-btn"
           onClick={saveSettings}
           disabled={!hasUnsavedChanges}
         >
-          ✓ {t.common?.save || 'Save'}
+          <Check size={14} weight="bold" /> {t.common?.save || 'Save'}
         </button>
       </div>
     </div>

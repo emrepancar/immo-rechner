@@ -56,7 +56,7 @@ function AppContent() {
             <p>You have unsaved changes in Settings. Do you want to discard them?</p>
             <div className="confirm-dialog-buttons">
               <button onClick={() => setShowConfirm(false)}>Cancel</button>
-              <button onClick={handleConfirmDiscard} className="confirm-discard">Discard</button>
+              <button onClick={handleConfirmDiscard} className="btn btn-danger confirm-discard">Discard</button>
             </div>
           </div>
         </div>

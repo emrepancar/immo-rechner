@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Heart } from '@phosphor-icons/react'
+import { Heart, Scales, ChartBar, MapPin, ArrowSquareOut, Check } from '@phosphor-icons/react'
 import NumberInput from '../NumberInput'
 import './GespeicherteImmobilien.css'
 import { FALLBACK_DEFAULTS } from '../../config/defaults'
@@ -271,8 +271,8 @@ function GespeicherteImmobilien() {
             <div className="page-shell-title">Gespeicherte Immobilien</div>
             <div className="page-shell-sub">{properties.length} Objekte gespeichert</div>
           </div>
-          <button className={`compare-toggle-btn ${compareMode ? 'active' : ''}`} onClick={toggleCompareMode}>
-            {compareMode ? tg.compareExit : tg.compareMode}
+          <button className={`btn btn-ghost compare-toggle-btn ${compareMode ? 'active' : ''}`} onClick={toggleCompareMode}>
+            {compareMode ? tg.compareExit : <><Scales size={14} weight="duotone" /> {tg.compareMode}</>}
           </button>
         </div>
         <div className="page-shell-divider" />
@@ -338,9 +338,9 @@ function GespeicherteImmobilien() {
                 >
                   <Heart size={15} weight={property.is_favorite ? "fill" : "regular"} />
                 </button>
-                <button className="kpi-button" onClick={() => openKpiModal(property)} title="KPIs">📊</button>
+                <button className="kpi-button" onClick={() => openKpiModal(property)} title="KPIs"><ChartBar size={15} weight="duotone" /></button>
                 <button className="edit-button" onClick={() => openEditMode(property)} title={t.common.edit}>✎</button>
-                <button className="delete-button" onClick={() => deleteProperty(property.id)} disabled={deletingId === property.id} title={t.common.delete}>{deletingId === property.id ? '…' : '✕'}</button>
+                <button className="btn btn-danger btn-sm delete-button" onClick={() => deleteProperty(property.id)} disabled={deletingId === property.id} title={t.common.delete}>{deletingId === property.id ? '…' : '✕'}</button>
               </div>
             </div>
 
@@ -359,7 +359,7 @@ function GespeicherteImmobilien() {
                       rel="noopener noreferrer"
                       className="card-map-link"
                       title="In Google Maps öffnen"
-                    >📍</a>
+                    ><MapPin size={15} weight="duotone" /></a>
                   )}
                   <span
                     className="value"
@@ -395,7 +395,7 @@ function GespeicherteImmobilien() {
                   className="inserat-link"
                   title={tg.inseratUrl}
                 >
-                  🔗 {tg.inseratUrl}
+                  <ArrowSquareOut size={14} weight="duotone" /> {tg.inseratUrl}
                 </a>
               )}
               <span className="saved-date">
@@ -512,10 +512,10 @@ function GespeicherteImmobilien() {
               </div>
             </div>
             <div className="edit-dialog-footer">
-              <button className="edit-dialog-close-button" onClick={closeEditMode}>
+              <button className="btn btn-ghost edit-dialog-close-button" onClick={closeEditMode}>
                 {t.common.cancel}
               </button>
-              <button className="edit-dialog-save-button" onClick={saveEditedProperty} disabled={saving}>
+              <button className="btn btn-primary edit-dialog-save-button" onClick={saveEditedProperty} disabled={saving}>
                 {saving ? '...' : t.common.save}
               </button>
             </div>

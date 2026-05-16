@@ -1,3 +1,4 @@
+import { BookmarkSimple, MapPin, ArrowSquareOut } from '@phosphor-icons/react'
 import MapBox from '../MapBox'
 import SectionDivider from '../SectionDivider'
 import { useState, useEffect } from 'react'
@@ -176,10 +177,10 @@ function NeueImmobilie() {
           <div className="objekt-top-bar-sub">Kaufpreis, Nebenkosten und Mietdaten erfassen</div>
         </div>
         <button
-          className="save-button"
+          className="btn btn-primary save-button"
           onClick={() => { setPropertyName(immobilie.name); setShowSaveDialog(true) }}
         >
-          💾 {t.common.save}
+          <BookmarkSimple size={15} weight='duotone' /> {t.common.save}
         </button>
       </div>
       <div className="objekt-divider" />
@@ -208,7 +209,7 @@ function NeueImmobilie() {
                   className="map-button"
                   title="Open in Google Maps"
                 >
-                  📍
+                  <MapPin size={16} weight='duotone' />
                 </a>
               )}
             </div>
@@ -245,7 +246,7 @@ function NeueImmobilie() {
                   className="map-button"
                   title="Open listing"
                 >
-                  🔗
+                  <ArrowSquareOut size={16} weight='duotone' />
                 </a>
               )}
             </div>
@@ -523,11 +524,11 @@ function NeueImmobilie() {
               </div>
             </div>
             <div className="save-dialog-footer">
-              <button className="save-dialog-close-button" onClick={() => setShowSaveDialog(false)}>
+              <button className="btn btn-ghost save-dialog-close-button" onClick={() => setShowSaveDialog(false)}>
                 {t.common.close}
               </button>
               <button
-                className="save-dialog-save-button"
+                className="btn btn-primary save-dialog-save-button"
                 onClick={handleSaveProperty}
                 disabled={saving}
               >
