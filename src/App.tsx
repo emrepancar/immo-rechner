@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { AppProviders } from './providers'
 import { useSettings } from './context/SettingsContext'
 import TopBar from './components/TopBar'
@@ -12,40 +13,42 @@ import Settings from './components/sections/Settings'
 import './App.css'
 
 function AppContent() {
-  const [activeSection, setActiveSection] = useState('neue-immobilie')
+  const navigate = useNavigate()
+  const location = useLocation()
   const { hasUnsavedChanges, discardSettings } = useSettings()
-  const [nextSection, setNextSection] = useState<string | null>(null)
+  const [nextPath, setNextPath] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState(false)
 
-  const handleNavigation = (section: string) => {
-    if (activeSection === 'settings' && hasUnsavedChanges) {
-      setNextSection(section)
+  const handleNavigation = (path: string) => {
+    if (location.pathname === '/einstellungen' && hasUnsavedChanges) {
+      setNextPath(path)
       setShowConfirm(true)
     } else {
-      setActiveSection(section)
+      navigate(path)
     }
   }
 
   const handleConfirmDiscard = () => {
     discardSettings()
-    if (nextSection) setActiveSection(nextSection)
+    if (nextPath) navigate(nextPath)
     setShowConfirm(false)
   }
 
   return (
     <>
       <div className="app">
-        <TopBar activeSection={activeSection} setActiveSection={handleNavigation} />
+        <TopBar onNavigate={handleNavigation} />
         <div className="app-body">
-          <Sidebar activeSection={activeSection} setActiveSection={handleNavigation} />
+          <Sidebar onNavigate={handleNavigation} />
           <main className="content">
-            {activeSection === 'neue-immobilie' && <NeueImmobilie />}
-            {activeSection === 'finanzierung' && <Finanzierung />}
-            {activeSection === 'gespeicherte-immobilien' && <GespeicherteImmobilien />}
-            {activeSection === 'zinsangebote' && <Zinsangebote />}
-            {activeSection === 'settings' && (
-              <div className="section-scroll"><Settings /></div>
-            )}
+            <Routes>
+              <Route path="/" element={<NeueImmobilie />} />
+              <Route path="/finanzierung" element={<Finanzierung />} />
+              <Route path="/gespeicherte-objekte" element={<GespeicherteImmobilien />} />
+              <Route path="/zinsangebote" element={<Zinsangebote />} />
+              <Route path="/einstellungen" element={<div className="section-scroll"><Settings /></div>} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
           </main>
         </div>
       </div>
@@ -68,9 +71,11 @@ function AppContent() {
 
 function App() {
   return (
-    <AppProviders>
-      <AppContent />
-    </AppProviders>
+    <BrowserRouter>
+      <AppProviders>
+        <AppContent />
+      </AppProviders>
+    </BrowserRouter>
   )
 }
 
