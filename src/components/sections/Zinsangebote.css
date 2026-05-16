@@ -183,8 +183,8 @@
 .zinsangebote-container .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 12px;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
 }
 
 .zinsangebote-container .form-group label {
@@ -293,10 +293,12 @@
 }
 
 .offer-rate-number {
+  font-family: var(--mono);
   font-size: 28px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--accent);
   line-height: 1;
+  letter-spacing: -0.02em;
   margin-bottom: 4px;
 }
 
@@ -329,9 +331,11 @@
 }
 
 .offer-monthly-value {
+  font-family: var(--mono);
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--accent);
+  letter-spacing: -0.01em;
 }
 
 /* Details grid */

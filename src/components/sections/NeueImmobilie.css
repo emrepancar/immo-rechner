@@ -402,7 +402,7 @@
 .neue-immobilie .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-sm);
 }
 
 .neue-immobilie .form-group label {
