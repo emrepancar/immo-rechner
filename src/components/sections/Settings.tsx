@@ -50,6 +50,7 @@ function Settings() {
         )}
       </div>
 
+      <div className="settings-grid">
       {/* ── APPEARANCE ── */}
       <section className="settings-section">
         <div className="settings-section-label">
@@ -194,8 +195,10 @@ function Settings() {
         </div>
       </section>
 
+      </div>{/* end settings-grid */}
+
       {/* ── NUMBER FORMAT ── */}
-      <section className="settings-section">
+      <section className="settings-section settings-section-full">
         <div className="settings-section-label">
           <Hash size={14} weight="duotone" />
           {t.settings?.numberFormatLabel || 'Zahlenformat'}
@@ -224,7 +227,7 @@ function Settings() {
       </section>
 
       {/* ── LIVE PREVIEW ── */}
-      <section className="settings-section">
+      <section className="settings-section settings-section-full">
         <div className="settings-section-label">
           Preview
         </div>
