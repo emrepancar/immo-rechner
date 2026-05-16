@@ -39,8 +39,8 @@
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 20px 24px;
-  margin-bottom: 16px;
+  padding: var(--space-xl) var(--space-2xl);
+  margin-bottom: var(--space-lg);
   box-shadow: var(--shadow-card);
 }
 
@@ -49,8 +49,8 @@
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 20px 24px;
-  margin-bottom: 16px;
+  padding: var(--space-xl) var(--space-2xl);
+  margin-bottom: var(--space-lg);
   box-shadow: var(--shadow-card);
 }
 
@@ -86,9 +86,10 @@
 }
 
 .ct-rate {
-  color: var(--accent);
+  color: var(--accent-secondary);
   font-size: 15px;
   font-weight: 700;
+  font-family: var(--mono);
 }
 
 .ct-best {
@@ -154,8 +155,8 @@
   color: var(--text-h);
 }
 
-.cashflow-value.positive { color: #177b5e; }
-.cashflow-value.negative { color: #c23f3a; }
+.cashflow-value.positive { color: var(--success); }
+.cashflow-value.negative { color: var(--danger); }
 
 .cashflow-sub {
   font-size: 10px;
@@ -176,7 +177,7 @@
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 20px 24px;
+  padding: var(--space-xl) var(--space-2xl);
   box-shadow: var(--shadow-card);
 }
 
@@ -188,11 +189,11 @@
 }
 
 .zinsangebote-container .form-group label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
-  color: var(--text-h);
+  color: var(--text-subtle);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.07em;
 }
 
 .zinsangebote-container .form-group input {
@@ -246,7 +247,7 @@
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 16px;
+  padding: var(--space-2xl);
   box-shadow: var(--shadow-card);
   transition: box-shadow 0.15s;
 }
@@ -296,7 +297,7 @@
   font-family: var(--mono);
   font-size: 28px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--accent-secondary);
   line-height: 1;
   letter-spacing: -0.02em;
   margin-bottom: 4px;
@@ -334,7 +335,7 @@
   font-family: var(--mono);
   font-size: 18px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--accent-secondary);
   letter-spacing: -0.01em;
 }
 

@@ -345,12 +345,12 @@ function NeueImmobilie() {
         <div className="total-costs-box">
           <SectionDivider label={ti.sectionGesamtkosten} />
           <div className="total-costs-vertical">
-            <div className="total-cost-item">
+            <div className="total-cost-item accent-color">
               <label>{ti.kaufpreisLabel} ({settings.currency})</label>
               <input type="number" value={kaufpreis} readOnly disabled />
             </div>
             <div className="total-cost-sep">+</div>
-            <div className="total-cost-item">
+            <div className="total-cost-item secondary-color">
               <label>{ti.nebenkostenLabel} ({settings.currency})</label>
               <input
                 type="number"
@@ -378,7 +378,7 @@ function NeueImmobilie() {
         <SectionDivider label={ti.sectionMiete} />
         <div className="miete-form">
           <div className="miete-row miete-row-2col">
-            <div className="form-group">
+            <div className="form-group success-field">
               <label htmlFor="kaltmiete">{ti.kaltmiete} ({settings.currency})</label>
               <input
                 id="kaltmiete"
@@ -390,7 +390,7 @@ function NeueImmobilie() {
                 step="10"
               />
             </div>
-            <div className="form-group">
+            <div className="form-group success-field">
               <label htmlFor="warmmiete">{ti.warmmiete} ({settings.currency})</label>
               <input
                 id="warmmiete"

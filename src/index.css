@@ -15,6 +15,26 @@
   --accent: #2E5BFF;
   --accent-bg: rgba(46, 91, 255, 0.08);
   --accent-border: rgba(46, 91, 255, 0.4);
+
+  --accent-secondary: #D97757;
+  --accent-secondary-bg: rgba(217, 119, 87, 0.08);
+  --accent-secondary-border: rgba(217, 119, 87, 0.4);
+
+  --success: #10B981;
+  --success-bg: rgba(16, 185, 129, 0.08);
+  --success-border: rgba(16, 185, 129, 0.4);
+
+  --warning: #F59E0B;
+  --warning-bg: rgba(245, 158, 11, 0.08);
+  --warning-border: rgba(245, 158, 11, 0.4);
+
+  --danger: #EF4444;
+  --danger-bg: rgba(239, 68, 68, 0.08);
+
+  --secondary-neutral: #2c3444;
+  --secondary-neutral-light: #3a4454;
+  --secondary-neutral-lighter: #4a5464;
+
   --social-bg: rgba(237, 240, 245, 0.5);
   --hover-bg: rgba(46, 91, 255, 0.05);
   --active-bg: rgba(46, 91, 255, 0.08);
@@ -83,6 +103,17 @@
     --accent: #c084fc;
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
+    --accent-secondary: #F97316;
+    --accent-secondary-bg: rgba(249, 115, 22, 0.15);
+    --accent-secondary-border: rgba(249, 115, 22, 0.5);
+    --success: #34D399;
+    --success-bg: rgba(52, 211, 159, 0.15);
+    --success-border: rgba(52, 211, 159, 0.4);
+    --warning: #FBBF24;
+    --warning-bg: rgba(251, 191, 36, 0.15);
+    --warning-border: rgba(251, 191, 36, 0.4);
+    --danger: #F87171;
+    --danger-bg: rgba(248, 113, 113, 0.15);
     --social-bg: rgba(47, 48, 58, 0.5);
     --hover-bg: rgba(75, 85, 99, 0.2);
     --active-bg: rgba(75, 85, 99, 0.3);
@@ -136,6 +167,17 @@ html[data-theme="dark"] {
   --accent: #c084fc;
   --accent-bg: rgba(192, 132, 252, 0.15);
   --accent-border: rgba(192, 132, 252, 0.5);
+  --accent-secondary: #F97316;
+  --accent-secondary-bg: rgba(249, 115, 22, 0.15);
+  --accent-secondary-border: rgba(249, 115, 22, 0.5);
+  --success: #34D399;
+  --success-bg: rgba(52, 211, 159, 0.15);
+  --success-border: rgba(52, 211, 159, 0.4);
+  --warning: #FBBF24;
+  --warning-bg: rgba(251, 191, 36, 0.15);
+  --warning-border: rgba(251, 191, 36, 0.4);
+  --danger: #F87171;
+  --danger-bg: rgba(248, 113, 113, 0.15);
   --hover-bg: rgba(75, 85, 99, 0.2);
   --active-bg: rgba(75, 85, 99, 0.3);
   --border-active: rgba(192, 132, 252, 0.5);

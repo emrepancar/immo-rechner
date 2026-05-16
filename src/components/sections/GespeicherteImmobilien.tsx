@@ -374,7 +374,7 @@ function GespeicherteImmobilien() {
               </div>
               <div className="info-row">
                 <span className="label">{tg.kaufpreis}:</span>
-                <span className="value">€ {(property.kaufpreis || 0).toLocaleString('de-DE')}</span>
+                <span className="value kaufpreis-value">€ {(property.kaufpreis || 0).toLocaleString('de-DE')}</span>
               </div>
               <div className="info-row">
                 <span className="label">{tg.quadratmeter}:</span>

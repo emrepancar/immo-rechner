@@ -19,9 +19,9 @@
 .objekt-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: var(--space-2xl);
   align-items: stretch;
-  margin-bottom: 30px;
+  margin-bottom: var(--space-3xl);
 }
 
 .objekt-map {
@@ -46,7 +46,7 @@
 }
 
 .objekt-section {
-  margin-bottom: 30px;
+  margin-bottom: var(--space-3xl);
 }
 
 .objekt-top-bar {
@@ -226,8 +226,8 @@
 
 .save-dialog-form-group input:focus {
   outline: none;
-  border-color: #06b6d4;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
 .save-dialog-form-group input::placeholder {
@@ -263,13 +263,13 @@
 }
 
 .save-dialog-save-button {
-  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  background: var(--accent);
   color: white;
 }
 
 .save-dialog-save-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+  box-shadow: 0 4px 12px rgba(46, 91, 255, 0.3);
 }
 
 .save-dialog-save-button:disabled {
@@ -280,7 +280,7 @@
 .costs-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 24px;
+  gap: var(--space-2xl);
   align-items: stretch;
 }
 
@@ -298,7 +298,7 @@
 .property-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-lg);
 }
 
 .nebenkosten-form {
@@ -310,7 +310,7 @@
 .nk-grid-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 .nk-row {
@@ -325,9 +325,9 @@
 }
 
 .nk-col-header {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--text-h);
+  color: var(--text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -339,9 +339,9 @@
 }
 
 .nk-field label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--text-h);
+  color: var(--text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -396,7 +396,7 @@
   font-family: var(--mono);
   font-size: 17px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-secondary);
 }
 
 .neue-immobilie .form-group {
@@ -406,9 +406,9 @@
 }
 
 .neue-immobilie .form-group label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--text-h);
+  color: var(--text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -525,13 +525,13 @@
 
 .nebenkosten-total input {
   padding: 12px 16px;
-  border: 2px solid #06b6d4;
+  border: 2px solid var(--accent-secondary);
   border-radius: 6px;
   font-size: 16px;
   font-weight: 600;
-  font-family: inherit;
-  background-color: rgba(6, 182, 212, 0.05);
-  color: #06b6d4;
+  font-family: var(--mono);
+  background-color: var(--accent-secondary-bg);
+  color: var(--accent-secondary);
   cursor: not-allowed;
 }
 
@@ -547,8 +547,19 @@
 .total-costs-vertical {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-top: 8px;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+}
+
+/* Semantic color variants for total-cost items */
+.total-cost-item.accent-color input {
+  font-family: var(--mono);
+  color: var(--accent);
+}
+
+.total-cost-item.secondary-color input {
+  font-family: var(--mono);
+  color: var(--accent-secondary);
 }
 
 .total-cost-sep {
@@ -583,9 +594,9 @@
 }
 
 .total-cost-item label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--text-h);
+  color: var(--text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -604,18 +615,19 @@
 }
 
 .total-cost-item.total-highlight input {
-  border-color: #06b6d4;
-  background-color: rgba(6, 182, 212, 0.05);
-  color: #06b6d4;
+  border-color: var(--accent);
+  background-color: var(--accent-bg);
+  color: var(--accent);
   font-weight: 600;
+  font-family: var(--mono);
   opacity: 1;
 }
 
 .miete-kpi-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-top: 30px;
+  gap: var(--space-2xl);
+  margin-top: var(--space-3xl);
 }
 
 .miete-box {
@@ -642,7 +654,7 @@
 .kpi-col {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-lg);
 }
 
 .kpi-panel {
@@ -654,11 +666,11 @@
 }
 
 .kpi-panel-header {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-h);
+  color: var(--text-subtle);
   margin-bottom: 14px;
   display: flex;
   align-items: center;
@@ -676,16 +688,16 @@
 
 .kpi-row:last-child { border-bottom: none; }
 
-.kpi-label { color: var(--text-h); font-weight: 500; }
+.kpi-label { color: var(--text-muted); font-weight: 500; }
 
 .kpi-value {
   font-weight: 600;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-xs);
 }
 
-.kpi-value.positive { color: #22c55e; }
-.kpi-value.negative { color: #ef4444; }
+.kpi-value.positive { color: var(--success); }
+.kpi-value.negative { color: var(--danger); }
 .kpi-value.neutral  { color: var(--text-h); }
 
 .rendite-ampel {
@@ -697,11 +709,11 @@
 }
 
 .ampel-header {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-h);
+  color: var(--text-subtle);
   margin-bottom: 14px;
 }
 
@@ -735,8 +747,8 @@
 }
 
 .ampel-sublabel {
-  font-size: 11px;
-  color: var(--text-h);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
@@ -750,12 +762,12 @@
 .miete-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-2xl);
 }
 
 .miete-row {
   display: grid;
-  gap: 24px;
+  gap: var(--space-2xl);
 }
 
 .miete-row-2col {
@@ -813,14 +825,20 @@
   }
 }
 
+/* Miete form success-colored labels */
+.neue-immobilie .form-group.success-field input {
+  color: var(--success);
+  font-family: var(--mono);
+}
+
 .input-error {
-  border-color: #ef4444 !important;
-  outline-color: #ef4444 !important;
+  border-color: var(--danger) !important;
+  outline-color: var(--danger) !important;
 }
 
 .field-error {
   display: block;
-  color: #ef4444;
-  font-size: 12px;
-  margin-top: 4px;
+  color: var(--danger);
+  font-size: var(--text-xs);
+  margin-top: var(--space-xs);
 }
