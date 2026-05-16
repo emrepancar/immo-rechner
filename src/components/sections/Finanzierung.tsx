@@ -1,7 +1,9 @@
-import { Calculator, FilePdf } from '@phosphor-icons/react'
+import { Calculator, FilePdf, Table } from '@phosphor-icons/react'
 import React, { useState, useEffect } from 'react'
 import SectionDivider from '../SectionDivider'
 import CustomSelect from '../CustomSelect'
+import CircularProgress from '../CircularProgress'
+import ExpandableCard from '../ExpandableCard'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import NumberInput from '../NumberInput'
@@ -10,6 +12,7 @@ import { MIETERHOHUNG_INCREMENTS } from '../../config/defaults'
 import { useLanguage } from '../../context/LanguageContext'
 import { useSettings } from '../../context/SettingsContext'
 import { propertiesApi } from '../../api'
+import { useAnimatedNumber } from '../../hooks/useAnimatedNumber'
 import type { Property, CalculationResult, TilgungsRow } from '../../types'
 
 function Finanzierung() {
@@ -41,6 +44,24 @@ function Finanzierung() {
   const [mieterhohungJahre, setMieterhohungJahre] = useState(2)
   const [chartYears, setChartYears] = useState(10)
   const [mhPct, setMhPct] = useState(2)
+
+  // Tooltip state for sliders
+  const [showEkTooltip, setShowEkTooltip] = useState(false)
+  const [showZinsTooltip, setShowZinsTooltip] = useState(false)
+  const [showLaufzeitTooltip, setShowLaufzeitTooltip] = useState(false)
+
+  // Animated display numbers for key outputs
+  const animatedFinanzierungssumme = useAnimatedNumber(finanzierungssumme)
+  const animatedMonatsrate = useAnimatedNumber(calculationResult ? parseFloat(calculationResult.monthlyPayment) : 0)
+  const animatedGesamtzinsen = useAnimatedNumber(calculationResult ? parseFloat(calculationResult.totalInterest) : 0)
+
+  // Circular progress computed values
+  const ekProzent = kaufpreis > 0 ? (eigenkapital / kaufpreis) * 100 : 0
+  const ltvRatio = kaufpreis > 0 ? (finanzierungssumme / kaufpreis) * 100 : 0
+  const tilgungssatzNum = parseFloat(tilgungssatz) || 0
+
+  const ekColor: 'success' | 'warning' | 'danger' = ekProzent >= 20 ? 'success' : ekProzent >= 10 ? 'warning' : 'danger'
+  const ltvColor: 'success' | 'warning' | 'danger' = ltvRatio <= 80 ? 'success' : ltvRatio <= 90 ? 'warning' : 'danger'
 
   useEffect(() => { loadProperties() }, [])
 
@@ -369,27 +390,66 @@ function Finanzierung() {
               </div>
               <div className="ek-slider-finsum-row">
                 <div className="darlehen-slider-group" style={{ flex: 1 }}>
-                  <input
-                    type="range"
-                    className="darlehen-slider"
-                    min={0}
-                    max={100}
-                    step={5}
-                    value={eigenkapitalProzent}
-                    onChange={(e) => {
-                      const pct = parseFloat(e.target.value)
-                      const ek = Math.round((pct / 100) * (kaufpreis || 0))
-                      handleEigenkapitalChange(String(ek))
-                    }}
-                    style={{ '--fill': `${eigenkapitalProzent}%` } as React.CSSProperties}
-                  />
+                  <div className="slider-tooltip-wrapper">
+                    <input
+                      type="range"
+                      className="darlehen-slider"
+                      min={0}
+                      max={100}
+                      step={5}
+                      value={eigenkapitalProzent}
+                      onChange={(e) => {
+                        const pct = parseFloat(e.target.value)
+                        const ek = Math.round((pct / 100) * (kaufpreis || 0))
+                        handleEigenkapitalChange(String(ek))
+                      }}
+                      onMouseEnter={() => setShowEkTooltip(true)}
+                      onMouseLeave={() => setShowEkTooltip(false)}
+                      style={{
+                        '--fill': `${eigenkapitalProzent}%`,
+                        '--thumb-pos': `${eigenkapitalProzent}%`,
+                      } as React.CSSProperties}
+                    />
+                    {showEkTooltip && (
+                      <div className="slider-tooltip" style={{ '--thumb-pos': `${eigenkapitalProzent}%` } as React.CSSProperties}>
+                        {eigenkapitalProzent.toFixed(0)} %
+                      </div>
+                    )}
+                  </div>
                   <div className="darlehen-slider-value">{eigenkapitalProzent.toFixed(0)} %</div>
                 </div>
                 <div className="finanzierung-group" style={{ flex: 1 }}>
                   <label>{tf.finanzierungssumme} ({settings.currency})</label>
-                  <NumberInput value={finanzierungssumme} disabled placeholder="0" />
+                  <NumberInput value={animatedFinanzierungssumme.toFixed(2)} disabled placeholder="0" />
                 </div>
               </div>
+              {kaufpreis > 0 && (
+                <div className="circular-progress-row">
+                  <CircularProgress
+                    value={ekProzent}
+                    label="Eigenkapital"
+                    sublabel={`von Kaufpreis`}
+                    color={ekColor}
+                    size="md"
+                  />
+                  <CircularProgress
+                    value={ltvRatio}
+                    label="LTV"
+                    sublabel="Beleihung"
+                    color={ltvColor}
+                    size="md"
+                  />
+                  {tilgungsvariante === 'tilgungssatz' && tilgungssatzNum > 0 && (
+                    <CircularProgress
+                      value={Math.min(tilgungssatzNum * 10, 100)}
+                      label="Tilgung"
+                      sublabel={`${tilgungssatzNum.toFixed(1)} % p.a.`}
+                      color="accent"
+                      size="md"
+                    />
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -399,30 +459,48 @@ function Finanzierung() {
               <div className="finanzierung-row">
                 <div className="darlehen-slider-group">
                   <label className="darlehen-slider-label">{tf.sollzinssatz}</label>
-                  <input
-                    type="range"
-                    className="darlehen-slider"
-                    min={0.5}
-                    max={8}
-                    step={0.1}
-                    value={sollzinssatz || 3.5}
-                    onChange={(e) => setSollzinssatz(e.target.value)}
-                    style={{ '--fill': `${((parseFloat(sollzinssatz || '3.5') - 0.5) / (8 - 0.5)) * 100}%` } as React.CSSProperties}
-                  />
+                  <div className="slider-tooltip-wrapper">
+                    <input
+                      type="range"
+                      className="darlehen-slider"
+                      min={0.5}
+                      max={8}
+                      step={0.1}
+                      value={sollzinssatz || 3.5}
+                      onChange={(e) => setSollzinssatz(e.target.value)}
+                      onMouseEnter={() => setShowZinsTooltip(true)}
+                      onMouseLeave={() => setShowZinsTooltip(false)}
+                      style={{ '--fill': `${((parseFloat(sollzinssatz || '3.5') - 0.5) / (8 - 0.5)) * 100}%`, '--thumb-pos': `${((parseFloat(sollzinssatz || '3.5') - 0.5) / (8 - 0.5)) * 100}%` } as React.CSSProperties}
+                    />
+                    {showZinsTooltip && (
+                      <div className="slider-tooltip" style={{ '--thumb-pos': `${((parseFloat(sollzinssatz || '3.5') - 0.5) / (8 - 0.5)) * 100}%` } as React.CSSProperties}>
+                        {parseFloat(sollzinssatz || '3.5').toFixed(2)} %
+                      </div>
+                    )}
+                  </div>
                   <div className="darlehen-slider-value">{parseFloat(sollzinssatz || '3.5').toFixed(2)} %</div>
                 </div>
                 <div className="darlehen-slider-group">
                   <label className="darlehen-slider-label">{tf.laufzeit}</label>
-                  <input
-                    type="range"
-                    className="darlehen-slider"
-                    min={5}
-                    max={40}
-                    step={1}
-                    value={laufzeit || 20}
-                    onChange={(e) => setLaufzeit(e.target.value)}
-                    style={{ '--fill': `${((parseInt(laufzeit || '20') - 5) / (40 - 5)) * 100}%` } as React.CSSProperties}
-                  />
+                  <div className="slider-tooltip-wrapper">
+                    <input
+                      type="range"
+                      className="darlehen-slider"
+                      min={5}
+                      max={40}
+                      step={1}
+                      value={laufzeit || 20}
+                      onChange={(e) => setLaufzeit(e.target.value)}
+                      onMouseEnter={() => setShowLaufzeitTooltip(true)}
+                      onMouseLeave={() => setShowLaufzeitTooltip(false)}
+                      style={{ '--fill': `${((parseInt(laufzeit || '20') - 5) / (40 - 5)) * 100}%`, '--thumb-pos': `${((parseInt(laufzeit || '20') - 5) / (40 - 5)) * 100}%` } as React.CSSProperties}
+                    />
+                    {showLaufzeitTooltip && (
+                      <div className="slider-tooltip" style={{ '--thumb-pos': `${((parseInt(laufzeit || '20') - 5) / (40 - 5)) * 100}%` } as React.CSSProperties}>
+                        {laufzeit || 20} {t.common.years}
+                      </div>
+                    )}
+                  </div>
                   <div className="darlehen-slider-value">{laufzeit || 20} {t.common.years}</div>
                 </div>
               </div>
@@ -589,7 +667,7 @@ function Finanzierung() {
               <div className="finanzierung-row">
                 <div className="finanzierung-group">
                   <label>{tf.monatlicheRate}</label>
-                  <NumberInput value={calculationResult.monthlyPayment} disabled readOnly />
+                  <NumberInput value={animatedMonatsrate.toFixed(2)} disabled readOnly />
                 </div>
                 <div className="finanzierung-group">
                   <label>{tf.laufzeitResult}</label>
@@ -599,7 +677,7 @@ function Finanzierung() {
               <div className="finanzierung-row">
                 <div className="finanzierung-group">
                   <label>{tf.gesamtzinsen}</label>
-                  <NumberInput value={calculationResult.totalInterest} disabled readOnly />
+                  <NumberInput value={animatedGesamtzinsen.toFixed(2)} disabled readOnly />
                 </div>
                 <div className="finanzierung-group">
                   <label>{tf.restschuld}</label>
@@ -610,9 +688,22 @@ function Finanzierung() {
           </div>
 
           {tilgungsplan && (
-            <div className="finanzierung-box">
-              <SectionDivider label={tf.boxTilgungsplan} btnLabel={`${t.common.exportPdf}`} onBtn={handleExportPdf} />
-
+            <ExpandableCard
+              title={tf.boxTilgungsplan}
+              defaultOpen={false}
+              icon={<Table size={15} weight="duotone" />}
+              summary={
+                <span>
+                  {tilgungsplan.length} {t.common.years} &mdash; {settings.currency} {Math.round(parseFloat(calculationResult.monthlyPayment)).toLocaleString('de-DE')} / Monat
+                </span>
+              }
+            >
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+                <button className="btn btn-ghost" onClick={handleExportPdf} style={{ fontSize: 12, padding: '6px 14px' }}>
+                  <FilePdf size={14} weight="duotone" style={{ marginRight: 6 }} />
+                  {t.common.exportPdf}
+                </button>
+              </div>
               <div className="tilgungsplan-table-container">
                 <table className="tilgungsplan-table">
                   <thead>
@@ -670,7 +761,7 @@ function Finanzierung() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </ExpandableCard>
           )}
         </>
       )}
