@@ -1,13 +1,13 @@
-.finanzierung {
+.financing {
   width: 100%;
 }
 
-.finanzierung.page-shell {
+.financing.page-shell {
   display: flex;
   flex-direction: column;
 }
 
-.finanzierung-top-grid {
+.financing-top-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
@@ -15,7 +15,7 @@
   margin-bottom: 20px;
 }
 
-.finanzierung-mid-grid {
+.financing-mid-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
@@ -23,18 +23,18 @@
   margin-bottom: 20px;
 }
 
-.finanzierung-mid-grid .finanzierung-box {
+.financing-mid-grid .financing-box {
   margin-bottom: 0;
 }
 
 @media (max-width: 900px) {
-  .finanzierung-top-grid,
-  .finanzierung-mid-grid {
+  .financing-top-grid,
+  .financing-mid-grid {
     grid-template-columns: 1fr;
   }
 }
 
-.finanzierung-box {
+.financing-box {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
@@ -45,22 +45,22 @@
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.finanzierung-box:hover {
+.financing-box:hover {
   box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   transform: translateY(-2px);
 }
 
-.finanzierung-top-grid .finanzierung-box {
+.financing-top-grid .financing-box {
   margin-bottom: 0;
 }
 
-.finanzierung-right-col {
+.financing-right-col {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.finanzierung-right-col .finanzierung-box {
+.financing-right-col .financing-box {
   margin-bottom: 0;
 }
 
@@ -107,19 +107,19 @@
   background: #3a6a94;
 }
 
-.finanzierung-form {
+.financing-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
 }
 
-.finanzierung .form-group {
+.financing .form-group {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
 }
 
-.finanzierung .form-group label {
+.financing .form-group label {
   font-size: var(--text-xs);
   font-weight: 600;
   color: var(--text-subtle);
@@ -127,8 +127,8 @@
   letter-spacing: 0.05em;
 }
 
-.finanzierung .form-group input,
-.finanzierung .finanzierung-group input {
+.financing .form-group input,
+.financing .financing-group input {
   padding: 8px 10px;
   border: 1.5px solid var(--border);
   border-radius: 6px;
@@ -141,15 +141,15 @@
   box-sizing: border-box;
 }
 
-.finanzierung .form-group input:focus,
-.finanzierung .finanzierung-group input:focus {
+.financing .form-group input:focus,
+.financing .financing-group input:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(46, 91, 255, 0.1);
 }
 
-.finanzierung .form-group input:disabled,
-.finanzierung .finanzierung-group input:disabled {
+.financing .form-group input:disabled,
+.financing .financing-group input:disabled {
   background-color: var(--panel-alt);
   color: var(--text-h);
   cursor: not-allowed;
@@ -175,13 +175,13 @@
   box-shadow: 0 0 0 2px rgba(46, 91, 255, 0.1);
 }
 
-.tilgungsvariante-options {
+.repayment-method-options {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.tilgungsvariante-option {
+.repayment-method-option {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -205,7 +205,7 @@
   accent-color: var(--accent);
 }
 
-.tilgungsvariante-option .form-group {
+.repayment-method-option .form-group {
   margin-left: 26px;
   padding: var(--space-md);
   background-color: var(--accent-bg);
@@ -213,7 +213,7 @@
   border-radius: 4px;
 }
 
-.tilgungsvariante-button-container {
+.repayment-method-btn-container {
   display: flex;
   justify-content: center;
   margin-top: 24px;
@@ -243,23 +243,23 @@
   transform: translateY(0);
 }
 
-.tilgungsplan-table-container {
+.amortization-table-container {
   overflow-x: auto;
   margin-top: 16px;
 }
 
-.tilgungsplan-table {
+.amortization-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
 }
 
-.tilgungsplan-table thead {
+.amortization-table thead {
   background-color: var(--accent-bg);
   border-bottom: 2px solid var(--accent);
 }
 
-.tilgungsplan-table th {
+.amortization-table th {
   padding: var(--space-md);
   text-align: right;
   font-weight: 600;
@@ -269,28 +269,28 @@
   font-size: var(--text-xs);
 }
 
-.tilgungsplan-table th:first-child {
+.amortization-table th:first-child {
   text-align: left;
 }
 
-.tilgungsplan-table td {
+.amortization-table td {
   padding: var(--space-md);
   text-align: right;
   color: var(--text);
   border-bottom: 1px solid var(--border);
 }
 
-.tilgungsplan-table td:first-child {
+.amortization-table td:first-child {
   text-align: left;
   font-weight: 600;
   color: var(--text-h);
 }
 
-.tilgungsplan-table tbody tr:hover {
+.amortization-table tbody tr:hover {
   background-color: var(--hover-bg);
 }
 
-.tilgungsplan-table tbody tr:last-child {
+.amortization-table tbody tr:last-child {
   border-bottom: 2px solid var(--accent);
   background-color: var(--accent-bg);
   font-weight: 600;
@@ -304,29 +304,29 @@
 }
 
 @media (max-width: 1024px) {
-  .tilgungsplan-table {
+  .amortization-table {
     font-size: 12px;
   }
 
-  .tilgungsplan-table th,
-  .tilgungsplan-table td {
+  .amortization-table th,
+  .amortization-table td {
     padding: 8px;
   }
 }
 
-.finanzierung-row {
+.financing-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-.finanzierung-group {
+.financing-group {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.finanzierung-group label {
+.financing-group label {
   font-size: var(--text-xs);
   font-weight: 600;
   color: var(--text-subtle);
@@ -334,14 +334,14 @@
   letter-spacing: 0.05em;
 }
 
-.eigenkapital-slider-row {
+.equity-slider-row {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-top: 8px;
 }
 
-.eigenkapital-slider {
+.equity-slider {
   flex: 1;
   -webkit-appearance: none;
   appearance: none;
@@ -352,7 +352,7 @@
   cursor: pointer;
 }
 
-.eigenkapital-slider::-webkit-slider-thumb {
+.equity-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 16px;
@@ -364,11 +364,11 @@
   transition: transform 0.15s;
 }
 
-.eigenkapital-slider::-webkit-slider-thumb:hover {
+.equity-slider::-webkit-slider-thumb:hover {
   transform: scale(1.2);
 }
 
-.eigenkapital-slider::-moz-range-thumb {
+.equity-slider::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -377,7 +377,7 @@
   border: none;
 }
 
-.eigenkapital-slider-pct {
+.equity-slider-pct {
   font-size: 13px;
   font-weight: 700;
   color: var(--accent);
@@ -387,13 +387,13 @@
   white-space: nowrap;
 }
 
-.darlehen-slider-group {
+.loan-slider-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.darlehen-slider-label {
+.loan-slider-label {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-h);
@@ -401,7 +401,7 @@
   letter-spacing: 0;
 }
 
-.darlehen-slider {
+.loan-slider {
   width: 100%;
   height: 6px;
   border-radius: 3px;
@@ -419,7 +419,7 @@
   transition: background 0.15s ease;
 }
 
-.darlehen-slider::-webkit-slider-thumb {
+.loan-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
@@ -431,16 +431,16 @@
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
 }
 
-.darlehen-slider::-webkit-slider-thumb:hover {
+.loan-slider::-webkit-slider-thumb:hover {
   transform: scale(1.3);
   box-shadow: 0 4px 16px rgba(46, 91, 255, 0.4);
 }
 
-.darlehen-slider::-webkit-slider-thumb:active {
+.loan-slider::-webkit-slider-thumb:active {
   transform: scale(1.15);
 }
 
-.darlehen-slider::-moz-range-thumb {
+.loan-slider::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -451,11 +451,11 @@
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.darlehen-slider::-moz-range-thumb:hover {
+.loan-slider::-moz-range-thumb:hover {
   transform: scale(1.3);
 }
 
-.darlehen-slider::-moz-range-progress {
+.loan-slider::-moz-range-progress {
   background: var(--accent);
   height: 6px;
   border-radius: 3px;
@@ -509,7 +509,7 @@
   flex-wrap: wrap;
 }
 
-.darlehen-slider-value {
+.loan-slider-value {
   font-size: var(--text-sm);
   font-weight: 700;
   color: var(--accent-secondary);
@@ -526,7 +526,7 @@
   margin-top: 4px;
 }
 
-.ek-slider-finsum-row {
+.equity-loan-row {
   display: flex;
   gap: 16px;
   align-items: flex-end;
@@ -558,7 +558,7 @@
   margin-top: 2px;
 }
 
-.finanzierung-footer {
+.financing-footer {
   flex-shrink: 0;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -569,7 +569,7 @@
   padding: 9px var(--space-3xl);
 }
 
-.finanzierung-footer-item {
+.financing-footer-item {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -577,15 +577,15 @@
   border-right: 1px solid var(--border);
 }
 
-.finanzierung-footer-item:first-child {
+.financing-footer-item:first-child {
   padding-left: 0;
 }
 
-.finanzierung-footer-item:last-child {
+.financing-footer-item:last-child {
   border-right: none;
 }
 
-.finanzierung-footer-label {
+.financing-footer-label {
   font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
@@ -593,24 +593,24 @@
   color: var(--text-muted);
 }
 
-.finanzierung-footer-value {
+.financing-footer-value {
   font-size: 13px;
   font-weight: 700;
   font-family: var(--mono);
   color: var(--text-h);
 }
 
-.finanzierung-footer-highlight .finanzierung-footer-value {
+.financing-footer-highlight .financing-footer-value {
   font-size: 15px;
   color: var(--accent-secondary);
 }
 
 /* Semantic footer value color variants */
-.finanzierung-footer-item.accent .finanzierung-footer-value {
+.financing-footer-item.accent .financing-footer-value {
   color: var(--accent);
 }
 
-.finanzierung-footer-item.secondary .finanzierung-footer-value {
+.financing-footer-item.secondary .financing-footer-value {
   color: var(--accent-secondary);
 }
 
@@ -670,7 +670,7 @@
   margin: 4px 0;
 }
 
-/* Mieterhöhung chart */
+/* Rent increase chart */
 .mh-chart-box {
   background: var(--panel-alt);
   border-radius: 10px;
@@ -746,7 +746,7 @@
   border-radius: 8px;
 }
 
-.finanzierung-info-text {
+.financing-info-text {
   font-size: 13px;
   color: var(--text-muted);
   margin-top: 8px;
@@ -754,17 +754,17 @@
 }
 
 @media (max-width: 1024px) {
-  .finanzierung-row {
+  .financing-row {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  .finanzierung-box {
+  .financing-box {
     padding: 20px;
   }
 
-  .finanzierung-row {
+  .financing-row {
     grid-template-columns: 1fr;
   }
 }

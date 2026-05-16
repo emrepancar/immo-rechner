@@ -3,13 +3,13 @@ import SectionDivider from '../SectionDivider'
 import CustomSelect from '../CustomSelect'
 import NumberInput from '../NumberInput'
 import { PencilSimple, X, Plus, FloppyDisk } from '@phosphor-icons/react'
-import './Zinsangebote.css'
+import './MortgageOffers.css'
 import { useLanguage } from '../../context/LanguageContext'
 import { propertiesApi, ratesApi } from '../../api'
 import Notification from '../Notification'
 import type { Property, RateOffer } from '../../types'
 
-function Zinsangebote() {
+function MortgageOffers() {
   const { t } = useLanguage()
   const tz = t.zinsangebote
 
@@ -20,13 +20,13 @@ function Zinsangebote() {
   const [loading, setLoading] = useState(true)
   const [formData, setFormData] = useState({
     name: '',
-    zinssatz: '',
-    effektiverJahreszins: '',
-    eigenkapital: '',
-    zinsbindung: '',
-    darlehenssumme: '',
-    monatlicheRate: '',
-    gesamtbetrag: '',
+    nominalRate: '',
+    apr: '',
+    equity: '',
+    fixedRatePeriod: '',
+    loanAmount: '',
+    monthlyPayment: '',
+    totalRepayment: '',
   })
   const [saving, setSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
@@ -69,7 +69,7 @@ function Zinsangebote() {
   }
 
   const resetForm = () => {
-    setFormData({ name: '', zinssatz: '', effektiverJahreszins: '', eigenkapital: '', zinsbindung: '', darlehenssumme: '', monatlicheRate: '', gesamtbetrag: '' })
+    setFormData({ name: '', nominalRate: '', apr: '', equity: '', fixedRatePeriod: '', loanAmount: '', monthlyPayment: '', totalRepayment: '' })
     setEditingOffer(null)
   }
 
@@ -77,30 +77,30 @@ function Zinsangebote() {
     setEditingOffer(offer)
     setFormData({
       name: offer.name || '',
-      zinssatz: String(offer.zinssatz),
-      effektiverJahreszins: offer.effektiver_jahreszins != null ? String(offer.effektiver_jahreszins) : '',
-      eigenkapital: offer.eigenkapital_amount != null ? String(offer.eigenkapital_amount) : '',
-      zinsbindung: offer.zinsbindung ? String(offer.zinsbindung) : '',
-      darlehenssumme: offer.darlehenssumme != null ? String(offer.darlehenssumme) : '',
-      monatlicheRate: offer.monatliche_rate != null ? String(offer.monatliche_rate) : '',
-      gesamtbetrag: offer.gesamtbetrag != null ? String(offer.gesamtbetrag) : '',
+      nominalRate: String(offer.zinssatz),
+      apr: offer.effektiver_jahreszins != null ? String(offer.effektiver_jahreszins) : '',
+      equity: offer.eigenkapital_amount != null ? String(offer.eigenkapital_amount) : '',
+      fixedRatePeriod: offer.zinsbindung ? String(offer.zinsbindung) : '',
+      loanAmount: offer.darlehenssumme != null ? String(offer.darlehenssumme) : '',
+      monthlyPayment: offer.monatliche_rate != null ? String(offer.monatliche_rate) : '',
+      totalRepayment: offer.gesamtbetrag != null ? String(offer.gesamtbetrag) : '',
     })
   }
 
   const validateForm = () => {
-    const zinssatz = parseFloat(formData.zinssatz)
-    const eigenkapital = parseFloat(formData.eigenkapital)
-    const zinsbindung = parseFloat(formData.zinsbindung)
-    if (!formData.zinssatz || isNaN(zinssatz) || zinssatz <= 0 || zinssatz >= 15) {
+    const nominalRateVal = parseFloat(formData.nominalRate)
+    const equityVal = parseFloat(formData.equity)
+    const fixedRatePeriodVal = parseFloat(formData.fixedRatePeriod)
+    if (!formData.nominalRate || isNaN(nominalRateVal) || nominalRateVal <= 0 || nominalRateVal >= 15) {
       setNotification({ message: tz.alerts.invalidZinssatz, type: 'error' }); return false
     }
-    if (!formData.eigenkapital || isNaN(eigenkapital) || eigenkapital < 0) {
+    if (!formData.equity || isNaN(equityVal) || equityVal < 0) {
       setNotification({ message: tz.alerts.invalidEigenkapital, type: 'error' }); return false
     }
-    if (eigenkapital > (selectedProperty?.kaufpreis || 0)) {
+    if (equityVal > (selectedProperty?.kaufpreis || 0)) {
       setNotification({ message: tz.alerts.eigenkapitalTooHigh, type: 'error' }); return false
     }
-    if (!formData.zinsbindung || isNaN(zinsbindung) || zinsbindung <= 0 || zinsbindung > 30) {
+    if (!formData.fixedRatePeriod || isNaN(fixedRatePeriodVal) || fixedRatePeriodVal <= 0 || fixedRatePeriodVal > 30) {
       setNotification({ message: tz.alerts.invalidZinsbindung, type: 'error' }); return false
     }
     return true
@@ -112,14 +112,14 @@ function Zinsangebote() {
     const offerData = {
       property_id: selectedProperty!.id,
       name: formData.name || `Angebot ${new Date().getTime()}`,
-      zinssatz: parseFloat(formData.zinssatz),
-      effektiver_jahreszins: formData.effektiverJahreszins ? parseFloat(formData.effektiverJahreszins) : null,
-      eigenkapital_amount: parseFloat(formData.eigenkapital),
+      zinssatz: parseFloat(formData.nominalRate),
+      effektiver_jahreszins: formData.apr ? parseFloat(formData.apr) : null,
+      eigenkapital_amount: parseFloat(formData.equity),
       eigenkapital_percentage: null,
-      zinsbindung: parseInt(formData.zinsbindung),
-      darlehenssumme: formData.darlehenssumme ? parseFloat(formData.darlehenssumme) : null,
-      monatliche_rate: formData.monatlicheRate ? parseFloat(formData.monatlicheRate) : null,
-      gesamtbetrag: formData.gesamtbetrag ? parseFloat(formData.gesamtbetrag) : null,
+      zinsbindung: parseInt(formData.fixedRatePeriod),
+      darlehenssumme: formData.loanAmount ? parseFloat(formData.loanAmount) : null,
+      monatliche_rate: formData.monthlyPayment ? parseFloat(formData.monthlyPayment) : null,
+      gesamtbetrag: formData.totalRepayment ? parseFloat(formData.totalRepayment) : null,
     }
     try {
       if (editingOffer) {
@@ -152,11 +152,11 @@ function Zinsangebote() {
     }
   }
 
-  if (loading) return <div className="zinsangebote-loading">{tz.loading}</div>
+  if (loading) return <div className="mortgage-offers-loading">{tz.loading}</div>
 
   if (properties.length === 0) {
     return (
-      <div className="zinsangebote-empty">
+      <div className="mortgage-offers-empty">
         <div className="empty-icon-wrap">
           <svg className="empty-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M6 23L32 6L58 23H6Z" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
@@ -178,18 +178,18 @@ function Zinsangebote() {
     ? offers.reduce((best, o) => o.zinssatz < best.zinssatz ? o : best, offers[0])
     : null
 
-  const kaltmiete = selectedProperty?.kaltmiete ?? 0
-  const zinsSubtitle = selectedProperty
+  const baseRentLocal = selectedProperty?.kaltmiete ?? 0
+  const pageSubtitle = selectedProperty
     ? `${selectedProperty.name}${selectedProperty.kaufpreis ? ` · ${selectedProperty.kaufpreis.toLocaleString('de-DE')} €` : ''}`
     : 'Zinsentwicklung und Angebotsvergleich'
 
   return (
-    <div className="zinsangebote-container page-shell">
+    <div className="mortgage-offers-container page-shell">
       <div className="page-shell-header">
         <div className="page-shell-top-bar">
           <div>
             <div className="page-shell-title">Zinsangebote</div>
-            <div className="page-shell-sub">{zinsSubtitle}</div>
+            <div className="page-shell-sub">{pageSubtitle}</div>
           </div>
         </div>
         <div className="page-shell-divider" />
@@ -254,16 +254,16 @@ function Zinsangebote() {
             </div>
 
             {/* Cashflow section */}
-            {kaltmiete > 0 && (
+            {baseRentLocal > 0 && (
               <div className="cashflow-section">
                 <div className="cashflow-label">
-                  Cashflow bei Kaltmiete {kaltmiete.toLocaleString('de-DE')} € / Monat
+                  Cashflow bei Kaltmiete {baseRentLocal.toLocaleString('de-DE')} € / Monat
                 </div>
                 <div className="cashflow-grid">
                   {offers.map(offer => {
                     const isBest = offer.id === bestOffer?.id
                     const rate = offer.monatliche_rate ?? 0
-                    const cf = rate > 0 ? kaltmiete - rate : null
+                    const cf = rate > 0 ? baseRentLocal - rate : null
                     return (
                       <div key={offer.id} className={`cashflow-card ${isBest ? 'cashflow-best' : ''}`}>
                         <div className="cashflow-bank">{offer.name || `Angebot ${offer.id}`}</div>
@@ -287,10 +287,10 @@ function Zinsangebote() {
         )}
 
         {/* Main 2-column layout */}
-        <div className="zins-main-grid">
+        <div className="mortgage-main-grid">
 
           {/* LEFT: Form */}
-          <div className="zinsangebot-form-box">
+          <div className="mortgage-offer-form-box">
             <SectionDivider label={editingOffer ? tz.editTitle : tz.addTitle} />
 
             <div className="form-group">
@@ -306,40 +306,40 @@ function Zinsangebote() {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="zinssatz">{tz.zinssatz}</label>
-                <NumberInput id="zinssatz" value={formData.zinssatz} onChange={(e) => handleFormChange('zinssatz', e.target.value)} placeholder="3.5" step="0.01" min="0" max="15" />
+                <label htmlFor="nominalRate">{tz.zinssatz}</label>
+                <NumberInput id="nominalRate" value={formData.nominalRate} onChange={(e) => handleFormChange('nominalRate', e.target.value)} placeholder="3.5" step="0.01" min="0" max="15" />
               </div>
               <div className="form-group">
-                <label htmlFor="effektiver-jahreszins">{tz.effektiverJahreszins}</label>
-                <NumberInput id="effektiver-jahreszins" value={formData.effektiverJahreszins} onChange={(e) => handleFormChange('effektiverJahreszins', e.target.value)} placeholder="4.27" step="0.01" min="0" max="15" />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="darlehenssumme">{tz.darlehenssumme}</label>
-                <NumberInput id="darlehenssumme" value={formData.darlehenssumme} onChange={(e) => handleFormChange('darlehenssumme', e.target.value)} placeholder="250000" step="1000" min="0" />
-              </div>
-              <div className="form-group">
-                <label htmlFor="monatliche-rate">{tz.monatlicheRate}</label>
-                <NumberInput id="monatliche-rate" value={formData.monatlicheRate} onChange={(e) => handleFormChange('monatlicheRate', e.target.value)} placeholder="1200" step="10" min="0" />
+                <label htmlFor="apr">{tz.effektiverJahreszins}</label>
+                <NumberInput id="apr" value={formData.apr} onChange={(e) => handleFormChange('apr', e.target.value)} placeholder="4.27" step="0.01" min="0" max="15" />
               </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="gesamtbetrag">{tz.gesamtbetrag}</label>
-                <NumberInput id="gesamtbetrag" value={formData.gesamtbetrag} onChange={(e) => handleFormChange('gesamtbetrag', e.target.value)} placeholder="350000" step="1000" min="0" />
+                <label htmlFor="loanAmount">{tz.darlehenssumme}</label>
+                <NumberInput id="loanAmount" value={formData.loanAmount} onChange={(e) => handleFormChange('loanAmount', e.target.value)} placeholder="250000" step="1000" min="0" />
               </div>
               <div className="form-group">
-                <label htmlFor="zinsbindung">{tz.zinsbindung}</label>
-                <input id="zinsbindung" type="number" placeholder="10" value={formData.zinsbindung} onChange={(e) => handleFormChange('zinsbindung', e.target.value)} step="1" min="1" max="30" />
+                <label htmlFor="monthlyPayment">{tz.monatlicheRate}</label>
+                <NumberInput id="monthlyPayment" value={formData.monthlyPayment} onChange={(e) => handleFormChange('monthlyPayment', e.target.value)} placeholder="1200" step="10" min="0" />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="totalRepayment">{tz.gesamtbetrag}</label>
+                <NumberInput id="totalRepayment" value={formData.totalRepayment} onChange={(e) => handleFormChange('totalRepayment', e.target.value)} placeholder="350000" step="1000" min="0" />
+              </div>
+              <div className="form-group">
+                <label htmlFor="fixedRatePeriod">{tz.zinsbindung}</label>
+                <input id="fixedRatePeriod" type="number" placeholder="10" value={formData.fixedRatePeriod} onChange={(e) => handleFormChange('fixedRatePeriod', e.target.value)} step="1" min="1" max="30" />
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="eigenkapital">{tz.eigenkapital} (€)</label>
-              <NumberInput id="eigenkapital" value={formData.eigenkapital} onChange={(e) => handleFormChange('eigenkapital', e.target.value)} placeholder="50000" step="1000" min="0" />
+              <label htmlFor="equity">{tz.eigenkapital} (€)</label>
+              <NumberInput id="equity" value={formData.equity} onChange={(e) => handleFormChange('equity', e.target.value)} placeholder="50000" step="1000" min="0" />
             </div>
 
             <div className="form-actions">
@@ -452,4 +452,4 @@ function Zinsangebote() {
   )
 }
 
-export default Zinsangebote
+export default MortgageOffers
