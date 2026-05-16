@@ -1,0 +1,85 @@
+.expandable-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.expandable-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.expandable-card-header {
+  width: 100%;
+  padding: 16px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: background 0.15s ease;
+  text-align: left;
+}
+
+.expandable-card-header:hover {
+  background: var(--hover-bg);
+}
+
+.expandable-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.expandable-card-icon {
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+}
+
+.expandable-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.expandable-card-caret {
+  color: var(--text-subtle);
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.expandable-card-caret.open {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.expandable-card-summary {
+  padding: 0 20px 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+}
+
+.expandable-card-content {
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.expandable-card-body {
+  padding: 16px 20px 20px;
+  animation: expandFadeIn 0.25s ease-out 0.05s both;
+}
+
+@keyframes expandFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
