@@ -89,9 +89,15 @@
   border-radius: 12px;
   padding: 24px;
   background-color: var(--panel);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   position: relative;
   margin-bottom: 30px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.immobilie-details-box:hover {
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
 
 .immobilie-details-box {
@@ -290,8 +296,21 @@
   border-radius: 12px;
   padding: 24px;
   background-color: var(--panel);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   position: relative;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.property-box:hover,
+.nebenkosten-box:hover {
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Alternating subtle tint for consecutive boxes */
+.property-box:nth-of-type(even) {
+  background: linear-gradient(135deg, var(--panel) 0%, rgba(46, 91, 255, 0.02) 100%);
+  border-color: rgba(46, 91, 255, 0.12);
 }
 
 
@@ -397,6 +416,7 @@
   font-size: 17px;
   font-weight: 700;
   color: var(--accent-secondary);
+  text-shadow: 0 0 12px rgba(217, 119, 87, 0.25);
 }
 
 .neue-immobilie .form-group {
@@ -621,6 +641,8 @@
   font-weight: 600;
   font-family: var(--mono);
   opacity: 1;
+  box-shadow: inset 0 0 0 1px var(--accent), 0 0 12px rgba(46, 91, 255, 0.15);
+  text-shadow: 0 0 8px rgba(46, 91, 255, 0.2);
 }
 
 .miete-kpi-row {

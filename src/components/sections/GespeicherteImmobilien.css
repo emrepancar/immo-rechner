@@ -116,14 +116,24 @@
   background-color: var(--a-panel);
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
   position: relative;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.property-card:nth-child(even) {
+  background: linear-gradient(135deg, var(--a-panel) 0%, rgba(46, 91, 255, 0.025) 100%);
+  border-color: rgba(46, 91, 255, 0.12);
 }
 
 .property-card:hover {
   border-color: var(--a-accent);
-  box-shadow: 0 4px 12px rgba(46, 91, 255, 0.12);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.property-card:nth-child(even):hover {
+  background: var(--a-panel);
 }
 
 .property-card-header {

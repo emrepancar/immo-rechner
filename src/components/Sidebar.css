@@ -24,28 +24,89 @@
   width: 100%;
   border: none;
   background: none;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  transition: background 0.15s, border-left-color 0.15s, color 0.15s;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   border-left: 3px solid transparent;
   display: flex;
   align-items: center;
   justify-content: center;
+  transform-origin: center;
 }
 
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.9);
+  transform: scale(1.08);
+}
+
+.nav-item.active {
+  background: rgba(46, 91, 255, 0.2);
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+.nav-item.active .nav-icon {
+  color: #7aa3ff;
+}
+
+/* ── Active indicator bar (::before) ── */
+.nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: transparent;
+  border-radius: 0 2px 2px 0;
+  transition:
+    height 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.nav-item:hover::before {
+  height: 20px;
+  background: rgba(46, 91, 255, 0.4);
+}
+
+.nav-item.active::before {
+  height: 32px;
+  background: #2E5BFF;
+  animation: activePulse 2.5s ease-in-out infinite;
+}
+
+@keyframes activePulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(46, 91, 255, 0.5); }
+  50%       { box-shadow: 0 0 18px rgba(46, 91, 255, 0.8); }
+}
+
+/* ── Nav icon ── */
 .nav-icon {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   color: inherit;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: center;
 }
 
-/* Tooltip */
+.nav-item:hover .nav-icon {
+  transform: rotate(10deg) scale(1.15);
+}
+
+.nav-item.active .nav-icon {
+  transform: scale(1.2);
+}
+
+/* ── Tooltip (::after) ── */
 .nav-item::after {
   content: attr(data-tooltip);
   position: absolute;
-  left: calc(100% + 12px);
+  left: calc(100% + 14px);
   top: 50%;
   transform: translateY(-50%);
   background: #2c3444;
@@ -59,44 +120,12 @@
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.15s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  box-shadow: -6px 0 0 #2c3444, 0 4px 12px rgba(0,0,0,0.25);
   z-index: 9999;
 }
 
-/* Tooltip arrow */
-.nav-item::before {
-  content: '';
-  position: absolute;
-  left: calc(100% + 6px);
-  top: 50%;
-  transform: translateY(-50%);
-  border: 5px solid transparent;
-  border-right-color: #2c3444;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-  z-index: 9999;
-}
-
-.nav-item:hover::after,
-.nav-item:hover::before {
+.nav-item:hover::after {
   opacity: 1;
-}
-
-.nav-item:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-left-color: rgba(255, 255, 255, 0.25);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.nav-item.active {
-  background: rgba(46, 91, 255, 0.18);
-  border-left-color: #2E5BFF;
-  color: #ffffff;
-}
-
-.nav-item.active .nav-icon {
-  color: #5b8bff;
 }
 
 @media (max-width: 768px) {

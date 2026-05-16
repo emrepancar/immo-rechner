@@ -39,9 +39,15 @@
   border-radius: 12px;
   padding: 24px;
   background-color: var(--panel);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   position: relative;
   margin-bottom: 20px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.finanzierung-box:hover {
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
 }
 
 .finanzierung-top-grid .finanzierung-box {

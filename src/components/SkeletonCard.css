@@ -3,6 +3,11 @@
   100% { background-position:  800px 0; }
 }
 
+@keyframes skeletonFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* Shared shimmer mixin */
 .skeleton-line,
 .skeleton-title,
@@ -40,7 +45,15 @@
   box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
+  animation: skeletonFadeIn 0.4s ease-out both;
 }
+
+.skeleton-card:nth-child(1) { animation-delay: 0s; }
+.skeleton-card:nth-child(2) { animation-delay: 0.08s; }
+.skeleton-card:nth-child(3) { animation-delay: 0.16s; }
+.skeleton-card:nth-child(4) { animation-delay: 0.24s; }
+.skeleton-card:nth-child(5) { animation-delay: 0.32s; }
+.skeleton-card:nth-child(6) { animation-delay: 0.40s; }
 
 .skeleton-card-header {
   display: flex;
