@@ -14,12 +14,61 @@
 
 .content {
   flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-scroll {
+  flex: 1;
   overflow-y: auto;
   padding: 40px;
 }
 
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.page-shell-header {
+  padding: 24px 40px 0;
+  flex-shrink: 0;
+}
+
+.page-shell-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+}
+
+.page-shell-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.page-shell-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.page-shell-divider {
+  height: 1px;
+  background: var(--border);
+}
+
+.page-shell-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 40px 40px;
+}
+
 @media (max-width: 768px) {
-  .content {
+  .section-scroll {
     padding: 20px;
   }
 }

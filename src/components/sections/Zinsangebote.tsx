@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import SectionDivider from '../SectionDivider'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import NumberInput from '../NumberInput'
 import './Zinsangebote.css'
@@ -212,11 +213,26 @@ function Zinsangebote() {
     )
   }
 
+  const zinsSubtitle = selectedProperty
+    ? `${selectedProperty.name}${selectedProperty.kaufpreis ? ` · ${selectedProperty.kaufpreis.toLocaleString('de-DE')} €` : ''}`
+    : 'Zinsentwicklung und Angebotsvergleich'
+
   return (
-    <div className="zinsangebote-container">
+    <div className="zinsangebote-container page-shell">
+      <div className="page-shell-header">
+        <div className="page-shell-top-bar">
+          <div>
+            <div className="page-shell-title">Zinsangebote</div>
+            <div className="page-shell-sub">{zinsSubtitle}</div>
+          </div>
+        </div>
+        <div className="page-shell-divider" />
+      </div>
+      <div className="page-shell-body">
       <Notification message={notification.message} type={notification.type} onClose={clearNotification} />
       <div className="property-selector-box">
-        <label htmlFor="property-select">{tz.selectProperty}</label>
+        <SectionDivider label={tz.selectProperty} />
+        <label htmlFor="property-select" style={{ display: 'none' }}>{tz.selectProperty}</label>
         <select
           id="property-select"
           value={selectedProperty?.id || ''}
@@ -235,7 +251,7 @@ function Zinsangebote() {
       </div>
 
       <div className="zinsangebot-form-box">
-        <h3>{editingOffer ? tz.editTitle : tz.addTitle}</h3>
+        <SectionDivider label={editingOffer ? tz.editTitle : tz.addTitle} />
 
         <div className="form-group">
           <label htmlFor="offer-name">{tz.nameLabel}</label>
@@ -355,7 +371,7 @@ function Zinsangebote() {
       {offers.length > 0 && (
         <>
           <div className="zinsangebote-list-box">
-            <h3>{tz.offersTitle} ({offers.length})</h3>
+            <SectionDivider label={`${tz.offersTitle} (${offers.length})`} />
             <div className="offers-grid">
               {offers.map(offer => {
                 const eigenkapitalDisplay = offer.eigenkapital_amount != null
@@ -409,7 +425,7 @@ function Zinsangebote() {
 
           {chartData.length > 1 && (
             <div className="comparison-chart-box">
-              <h3>{tz.chartTitle}</h3>
+              <SectionDivider label={tz.chartTitle} />
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -441,6 +457,7 @@ function Zinsangebote() {
           <p className="hint">{tz.noOffersHint}</p>
         </div>
       )}
+      </div>{/* page-shell-body */}
     </div>
   )
 }

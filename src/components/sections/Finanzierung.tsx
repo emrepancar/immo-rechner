@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import SectionDivider from '../SectionDivider'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import NumberInput from '../NumberInput'
@@ -283,9 +284,19 @@ function Finanzierung() {
   }
 
   return (
-    <div className="finanzierung">
+    <div className="finanzierung page-shell">
+      <div className="page-shell-header">
+        <div className="page-shell-top-bar">
+          <div>
+            <div className="page-shell-title">Finanzierung</div>
+            <div className="page-shell-sub">Kreditberechnung und Tilgungsplan für gespeicherte Objekte</div>
+          </div>
+        </div>
+        <div className="page-shell-divider" />
+      </div>
+      <div className="page-shell-body">
       <div className="finanzierung-box">
-        <div className="box-label">{tf.boxObjekt}</div>
+        <SectionDivider label={tf.boxObjekt} />
         <div className="finanzierung-form">
           <div className="form-group">
             <label>{tf.gespeichertesObjekt}</label>
@@ -314,7 +325,7 @@ function Finanzierung() {
       </div>
 
       <div className="finanzierung-box">
-        <div className="box-label">{tf.boxEigenkapital}</div>
+        <SectionDivider label={tf.boxEigenkapital} />
         <div className="finanzierung-form">
           <div className="finanzierung-row">
             <div className="finanzierung-group">
@@ -330,7 +341,7 @@ function Finanzierung() {
       </div>
 
       <div className="finanzierung-box">
-        <div className="box-label">{tf.boxEigenmittel}</div>
+        <SectionDivider label={tf.boxEigenmittel} />
         <div className="finanzierung-form">
           <div className="form-group">
             <label>{tf.eigenmittel} ({settings.currency})</label>
@@ -340,7 +351,7 @@ function Finanzierung() {
       </div>
 
       <div className="finanzierung-box">
-        <div className="box-label">{tf.boxFinanzierungssumme}</div>
+        <SectionDivider label={tf.boxFinanzierungssumme} />
         <div className="finanzierung-form">
           <div className="form-group">
             <label>{tf.finanzierungssumme} ({settings.currency})</label>
@@ -350,7 +361,7 @@ function Finanzierung() {
       </div>
 
       <div className="finanzierung-box">
-        <div className="box-label">{tf.boxDarlehen}</div>
+        <SectionDivider label={tf.boxDarlehen} />
         <div className="finanzierung-form">
           <div className="finanzierung-row">
             <div className="finanzierung-group">
@@ -366,7 +377,7 @@ function Finanzierung() {
       </div>
 
       <div className="finanzierung-box">
-        <div className="box-label">{tf.boxMieterhohung}</div>
+        <SectionDivider label={tf.boxMieterhohung} />
         <div className="finanzierung-form">
           <div className="tilgungsvariante-options">
             <div className="tilgungsvariante-option">
@@ -414,7 +425,7 @@ function Finanzierung() {
       </div>
 
       <div className="finanzierung-box">
-        <div className="box-label">{tf.boxTilgungsvariante}</div>
+        <SectionDivider label={tf.boxTilgungsvariante} />
         <div className="finanzierung-form">
           <div className="tilgungsvariante-options">
             <div className="tilgungsvariante-option">
@@ -459,7 +470,7 @@ function Finanzierung() {
       {calculationResult && (
         <>
           <div className="finanzierung-box">
-            <div className="box-label">{tf.boxErgebnis}</div>
+            <SectionDivider label={tf.boxErgebnis} />
             <div className="finanzierung-form">
               <div className="finanzierung-row">
                 <div className="finanzierung-group">
@@ -486,12 +497,7 @@ function Finanzierung() {
 
           {tilgungsplan && (
             <div className="finanzierung-box">
-              <div className="box-label-row">
-                <div className="box-label">{tf.boxTilgungsplan}</div>
-                <button className="pdf-export-button" onClick={handleExportPdf} title={t.common.exportPdf}>
-                  📄 {t.common.exportPdf}
-                </button>
-              </div>
+              <SectionDivider label={tf.boxTilgungsplan} btnLabel={`📄 ${t.common.exportPdf}`} onBtn={handleExportPdf} />
 
               <div className="tilgungsplan-table-container">
                 <table className="tilgungsplan-table">
@@ -554,6 +560,7 @@ function Finanzierung() {
           )}
         </>
       )}
+      </div>{/* page-shell-body */}
     </div>
   )
 }

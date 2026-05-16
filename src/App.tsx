@@ -43,7 +43,9 @@ function AppContent() {
             {activeSection === 'finanzierung' && <Finanzierung />}
             {activeSection === 'gespeicherte-immobilien' && <GespeicherteImmobilien />}
             {activeSection === 'zinsangebote' && <Zinsangebote />}
-            {activeSection === 'settings' && <Settings />}
+            {activeSection === 'settings' && (
+              <div className="section-scroll"><Settings /></div>
+            )}
           </main>
         </div>
       </div>
