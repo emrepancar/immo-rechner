@@ -1,31 +1,45 @@
-@keyframes shimmer {
-  0% {
-    background-position: -600px 0;
-  }
-  100% {
-    background-position: 600px 0;
-  }
+@keyframes shimmerSubtle {
+  0%   { background-position: -800px 0; }
+  100% { background-position:  800px 0; }
 }
 
-.skeleton-card {
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  background-color: var(--input-bg);
-  display: flex;
-  flex-direction: column;
-}
-
-.skeleton-line {
+/* Shared shimmer mixin */
+.skeleton-line,
+.skeleton-title,
+.skeleton-btn,
+.skeleton-badge,
+.skeleton-label,
+.skeleton-value,
+.skeleton-date {
   border-radius: 6px;
   background: linear-gradient(
     90deg,
-    var(--border) 25%,
-    var(--bg) 50%,
-    var(--border) 75%
+    var(--input-bg) 0%,
+    var(--panel-alt) 50%,
+    var(--input-bg) 100%
   );
-  background-size: 600px 100%;
-  animation: shimmer 1.4s infinite linear;
+  background-size: 800px 100%;
+  animation: shimmerSubtle 2.2s infinite linear;
+}
+
+/* Staggered delays for visual flow */
+.skeleton-row:nth-child(1) .skeleton-label,
+.skeleton-row:nth-child(1) .skeleton-value { animation-delay: 0s; }
+.skeleton-row:nth-child(2) .skeleton-label,
+.skeleton-row:nth-child(2) .skeleton-value { animation-delay: 0.1s; }
+.skeleton-row:nth-child(3) .skeleton-label,
+.skeleton-row:nth-child(3) .skeleton-value { animation-delay: 0.2s; }
+.skeleton-row:nth-child(4) .skeleton-label,
+.skeleton-row:nth-child(4) .skeleton-value { animation-delay: 0.3s; }
+
+.skeleton-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: var(--space-2xl);
+  background-color: var(--panel);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
 }
 
 .skeleton-card-header {
@@ -50,15 +64,7 @@
 .skeleton-btn {
   width: 28px;
   height: 28px;
-  border-radius: 4px;
-  background: linear-gradient(
-    90deg,
-    var(--border) 25%,
-    var(--bg) 50%,
-    var(--border) 75%
-  );
-  background-size: 600px 100%;
-  animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
 }
 
 .skeleton-badge {
@@ -66,14 +72,6 @@
   width: 70px;
   border-radius: 12px;
   margin-bottom: 16px;
-  background: linear-gradient(
-    90deg,
-    var(--border) 25%,
-    var(--bg) 50%,
-    var(--border) 75%
-  );
-  background-size: 600px 100%;
-  animation: shimmer 1.4s infinite linear;
 }
 
 .skeleton-info {
@@ -114,4 +112,21 @@
 .skeleton-date {
   height: 11px;
   width: 50%;
+}
+
+/* Dark mode — lighter shimmer highlight */
+html[data-theme="dark"] .skeleton-line,
+html[data-theme="dark"] .skeleton-title,
+html[data-theme="dark"] .skeleton-btn,
+html[data-theme="dark"] .skeleton-badge,
+html[data-theme="dark"] .skeleton-label,
+html[data-theme="dark"] .skeleton-value,
+html[data-theme="dark"] .skeleton-date {
+  background: linear-gradient(
+    90deg,
+    var(--input-bg) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    var(--input-bg) 100%
+  );
+  background-size: 800px 100%;
 }
