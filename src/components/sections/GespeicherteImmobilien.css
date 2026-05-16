@@ -11,10 +11,7 @@
 }
 
 .gespeicherte-container {
-  max-width: 1200px;
-  background-color: var(--a-bg);
-  border-radius: 16px;
-  padding: 32px;
+  width: 100%;
 }
 
 .gespeicherte-header {
@@ -430,7 +427,7 @@
   border-radius: 6px;
   font-size: 14px;
   color: var(--text);
-  background-color: var(--input-bg);
+  background-color: var(--panel);
   transition: all 0.2s ease;
 }
 
@@ -460,7 +457,7 @@
 }
 
 .edit-dialog-close-button {
-  background-color: var(--input-bg);
+  background-color: var(--panel);
   color: var(--text-h);
   border: 1px solid var(--border);
 }
@@ -553,7 +550,7 @@
 }
 
 .kpi-modal-close:hover {
-  background-color: var(--input-bg);
+  background-color: var(--panel);
   color: var(--text-h);
 }
 
@@ -565,10 +562,10 @@
 }
 
 .kpi-card {
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 20px;
-  background-color: var(--input-bg);
+  background-color: var(--panel);
 }
 
 .kpi-title {
@@ -730,7 +727,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   background: var(--bg);
   display: flex;
   align-items: center;
@@ -768,7 +765,7 @@
 .comparison-table {
   overflow-x: auto;
   border-radius: 10px;
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
 }
 
 .comparison-table table {
@@ -785,7 +782,7 @@
 }
 
 .comparison-table th {
-  background: var(--input-bg);
+  background: var(--panel);
   font-weight: 700;
   color: var(--text-h);
   font-size: 13px;

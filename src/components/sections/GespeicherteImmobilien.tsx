@@ -264,7 +264,17 @@ function GespeicherteImmobilien() {
     : properties
 
   return (
-    <div className="gespeicherte-container">
+    <div className="gespeicherte-container page-shell">
+      <div className="page-shell-header">
+        <div className="page-shell-top-bar">
+          <div>
+            <div className="page-shell-title">Gespeicherte Immobilien</div>
+            <div className="page-shell-sub">{properties.length} Objekte gespeichert</div>
+          </div>
+        </div>
+        <div className="page-shell-divider" />
+      </div>
+      <div className="page-shell-body">
       <Notification message={notification.message} type={notification.type} onClose={clearNotification} />
       <div className="gespeicherte-header">
         <div className="tab-bar">
@@ -577,6 +587,7 @@ function GespeicherteImmobilien() {
           </div>
         </div>
       )}
+      </div>{/* page-shell-body */}
     </div>
   )
 }

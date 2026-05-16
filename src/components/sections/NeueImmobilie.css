@@ -1,5 +1,19 @@
 .neue-immobilie {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.neue-immobilie-header {
+  padding: 24px 40px 0;
+  flex-shrink: 0;
+}
+
+.neue-immobilie-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 40px 40px;
 }
 
 .objekt-row {
@@ -32,26 +46,50 @@
 }
 
 .objekt-section {
-  position: relative;
-  padding-top: 44px;
   margin-bottom: 30px;
 }
 
-.objekt-save-btn {
-  position: absolute;
-  top: 0;
-  right: 0;
+.objekt-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
 }
+
+.objekt-top-bar-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.objekt-top-bar-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.objekt-top-bar-sub {
+  font-size: 13px;
+  color: var(--text-h);
+}
+
+.objekt-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 20px;
+}
+
 
 .objekt-row {
   margin-bottom: 0;
 }
 
 .immobilie-details-box {
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
-  background-color: var(--input-bg);
+  background-color: var(--panel);
+  box-shadow: var(--shadow-card);
   position: relative;
   margin-bottom: 30px;
 }
@@ -89,39 +127,8 @@
   margin-top: 50px;
 }
 
-.immobilie-details-form .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.immobilie-details-form .form-group label {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-h);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.immobilie-details-form .form-group input {
-  padding: 12px 16px;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  font-size: 16px;
-  font-family: inherit;
-  background-color: var(--bg);
-  color: var(--text);
-  transition: border-color 0.3s ease;
-}
-
-.immobilie-details-form .form-group input:focus {
-  outline: none;
-  border-color: #06b6d4;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
-}
-
-.immobilie-details-form .form-group input::placeholder {
-  color: var(--text-muted);
+.immobilie-details-form {
+  margin-top: 12px;
 }
 
 .address-input-wrapper {
@@ -224,7 +231,7 @@
 }
 
 .save-dialog-form-group input::placeholder {
-  color: var(--text-muted);
+  color: var(--text-h);
 }
 
 .save-dialog-footer {
@@ -270,7 +277,7 @@
   cursor: not-allowed;
 }
 
-.property-container {
+.costs-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 24px;
@@ -279,30 +286,19 @@
 
 .property-box,
 .nebenkosten-box {
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
-  background-color: var(--input-bg);
+  background-color: var(--panel);
+  box-shadow: var(--shadow-card);
   position: relative;
 }
 
-.box-label {
-  position: absolute;
-  top: -12px;
-  left: 16px;
-  background-color: var(--bg);
-  padding: 0 8px;
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-h);
-}
 
 .property-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
 }
 
 .nebenkosten-form {
@@ -311,46 +307,139 @@
   gap: 16px;
 }
 
-.form-group {
+.nk-grid-form {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
-.form-group label {
-  font-size: 14px;
+.nk-row {
+  display: grid;
+  grid-template-columns: 1.6fr 0.1fr 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.nk-header-row {
+  align-items: end;
+}
+
+.nk-col-header {
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-h);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
 }
 
-.form-group input {
-  padding: 12px 16px;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  font-size: 16px;
+.nk-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nk-field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.nk-field input {
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
   font-family: inherit;
-  background-color: var(--bg);
+  background: var(--bg);
   color: var(--text);
-  transition: border-color 0.3s ease;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.form-group input:focus {
+.nk-field input:focus {
   outline: none;
-  border-color: #06b6d4;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+  border-color: var(--accent);
 }
 
-.form-group input::placeholder {
-  color: var(--text-muted);
-}
-
-.form-group input:disabled {
-  background-color: var(--border);
+.nk-field input:disabled {
+  background: var(--panel-alt);
   color: var(--text-h);
   cursor: not-allowed;
-  opacity: 0.7;
+}
+
+.nk-arrow {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-h);
+  padding-top: 18px;
+}
+
+.nk-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.nk-total-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.nk-total-value {
+  font-family: var(--mono);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.neue-immobilie .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.neue-immobilie .form-group label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.neue-immobilie .form-group input {
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  background-color: var(--bg);
+  color: var(--text-h);
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.neue-immobilie .form-group input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(46, 91, 255, 0.1);
+}
+
+.neue-immobilie .form-group input::placeholder {
+  color: var(--text-h);
+}
+
+.neue-immobilie .form-group input:disabled {
+  background-color: var(--panel-alt);
+  color: var(--text-h);
+  cursor: not-allowed;
 }
 
 .nebenkosten-row {
@@ -447,10 +536,11 @@
 }
 
 .total-costs-box {
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
-  background-color: var(--input-bg);
+  background-color: var(--panel);
+  box-shadow: var(--shadow-card);
   position: relative;
 }
 
@@ -465,7 +555,7 @@
   text-align: center;
   font-size: 16px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text-h);
   line-height: 1.2;
 }
 
@@ -493,23 +583,24 @@
 }
 
 .total-cost-item label {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   color: var(--text-h);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
 }
 
 .total-cost-item input {
-  padding: 12px 16px;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
   font-family: inherit;
-  background-color: var(--border);
+  background-color: var(--panel-alt);
   color: var(--text-h);
   cursor: not-allowed;
-  opacity: 0.7;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .total-cost-item.total-highlight input {
@@ -520,13 +611,140 @@
   opacity: 1;
 }
 
+.miete-kpi-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 30px;
+}
+
 .miete-box {
-  border: 2px solid var(--border);
+  margin-top: 0;
+}
+
+.kpi-col {
+  margin-top: 0;
+}
+
+@media (max-width: 900px) {
+  .miete-kpi-row { grid-template-columns: 1fr; }
+}
+
+.miete-box {
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
-  background-color: var(--input-bg);
+  background-color: var(--panel);
+  box-shadow: var(--shadow-card);
   position: relative;
-  margin-top: 30px;
+}
+
+.kpi-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.kpi-panel {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  background: var(--panel);
+  box-shadow: var(--shadow-card);
+}
+
+.kpi-panel-header {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-h);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kpi-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.kpi-row:last-child { border-bottom: none; }
+
+.kpi-label { color: var(--text-h); font-weight: 500; }
+
+.kpi-value {
+  font-weight: 600;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.kpi-value.positive { color: #22c55e; }
+.kpi-value.negative { color: #ef4444; }
+.kpi-value.neutral  { color: var(--text-h); }
+
+.rendite-ampel {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  background: var(--panel);
+  box-shadow: var(--shadow-card);
+}
+
+.ampel-header {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-h);
+  margin-bottom: 14px;
+}
+
+.ampel-body {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.ampel-lights {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ampel-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transition: opacity 0.3s;
+}
+
+.ampel-dot.dim { opacity: 0.15; }
+
+.ampel-info { flex: 1; }
+
+.ampel-label {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.ampel-sublabel {
+  font-size: 11px;
+  color: var(--text-h);
+  margin-top: 2px;
+}
+
+.ampel-value {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 6px;
+  font-family: var(--mono);
 }
 
 .miete-form {
@@ -540,63 +758,21 @@
   gap: 24px;
 }
 
-.miete-row:first-child {
+.miete-row-2col {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.miete-row-3col {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.miete-row:last-child {
-  grid-template-columns: 1fr;
-  max-width: calc(33.333% - 16px);
-}
-
-.miete-form .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.miete-form .form-group label {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-h);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.miete-form .form-group input {
-  padding: 12px 16px;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  font-size: 16px;
-  font-family: inherit;
-  background-color: var(--bg);
-  color: var(--text);
-  transition: border-color 0.3s ease;
-}
-
-.miete-form .form-group input:focus {
-  outline: none;
-  border-color: #06b6d4;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
-}
-
-.miete-form .form-group input:disabled {
-  background-color: var(--border);
-  color: var(--text-h);
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.miete-form .form-group input::placeholder {
-  color: var(--text-muted);
-}
 
 @media (max-width: 1024px) {
   .immobilie-details-form {
     grid-template-columns: 1fr;
   }
 
-  .property-container {
+  .costs-grid {
     grid-template-columns: 1fr;
     gap: 24px;
   }
@@ -605,13 +781,12 @@
     grid-template-columns: 1fr;
   }
 
-  .miete-row:first-child {
+  .miete-row-2col {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .miete-row:last-child {
-    max-width: 100%;
-    grid-template-columns: 1fr;
+  .miete-row-3col {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -632,12 +807,9 @@
     display: none;
   }
 
-  .miete-row:first-child {
+  .miete-row-2col,
+  .miete-row-3col {
     grid-template-columns: 1fr;
-  }
-
-  .miete-row:last-child {
-    max-width: 100%;
   }
 }
 

@@ -1,15 +1,15 @@
 .finanzierung {
-  max-width: 1200px;
-  padding: 0;
+  width: 100%;
 }
 
 .finanzierung-box {
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
-  background-color: var(--input-bg);
+  background-color: var(--panel);
+  box-shadow: var(--shadow-card);
   position: relative;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .box-label {
@@ -61,60 +61,66 @@
   gap: 20px;
 }
 
-.form-group {
+.finanzierung .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
-.form-group label {
-  font-size: 14px;
+.finanzierung .form-group label {
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-h);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
 }
 
-.form-group input {
-  padding: 12px 16px;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  font-size: 16px;
+.finanzierung .form-group input,
+.finanzierung .finanzierung-group input {
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
   font-family: inherit;
   background-color: var(--bg);
-  color: var(--text);
-  transition: border-color 0.3s ease;
+  color: var(--text-h);
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.form-group input:focus {
+.finanzierung .form-group input:focus,
+.finanzierung .finanzierung-group input:focus {
   outline: none;
-  border-color: #06b6d4;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(46, 91, 255, 0.1);
 }
 
-.form-group input:disabled {
-  background-color: var(--border);
+.finanzierung .form-group input:disabled,
+.finanzierung .finanzierung-group input:disabled {
+  background-color: var(--panel-alt);
   color: var(--text-h);
   cursor: not-allowed;
-  opacity: 0.7;
 }
 
 .form-group-select {
-  padding: 12px 16px;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  font-size: 16px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
   font-family: inherit;
   background-color: var(--bg);
-  color: var(--text);
-  transition: border-color 0.3s ease;
+  color: var(--text-h);
+  transition: border-color 0.2s;
   cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group-select:focus {
   outline: none;
-  border-color: #06b6d4;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(46, 91, 255, 0.1);
 }
 
 .tilgungsvariante-options {
@@ -265,32 +271,15 @@
 .finanzierung-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .finanzierung-group label {
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-h);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.finanzierung-group input {
-  padding: 12px 16px;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  font-size: 16px;
-  font-family: inherit;
-  background-color: var(--bg);
-  color: var(--text);
-  transition: border-color 0.3s ease;
-}
-
-.finanzierung-group input:focus {
-  outline: none;
-  border-color: #06b6d4;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+  letter-spacing: 0.05em;
 }
 
 .finanzierung-info-text {
