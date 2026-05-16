@@ -50,181 +50,182 @@ function Settings() {
         )}
       </div>
 
-      <div className="settings-grid">
-      {/* ── APPEARANCE ── */}
-      <section className="settings-section">
-        <div className="settings-section-label">
-          <Palette size={14} weight="duotone" />
-          {t.settings?.themeLabel || 'Erscheinungsbild'}
-        </div>
+      {/* ── ROW 1: 3-column — Design | Sprache | Währung ── */}
+      <div className="settings-grid-3">
 
-        <div className="settings-card">
-          <div className="settings-row">
-            <div className="settings-row-info">
-              <div className="settings-row-title">Design</div>
-              <div className="settings-row-sub">Wähle zwischen hellem und dunklem Modus</div>
-            </div>
-            <div className="theme-cards">
-              <button
-                className={`theme-card ${!settings.isDark ? 'theme-card-active' : ''}`}
-                onClick={() => updateSettings('isDark', false)}
-              >
-                <div className="theme-card-preview theme-preview-light">
-                  <div className="tp-topbar" />
-                  <div className="tp-body">
-                    <div className="tp-sidebar" />
-                    <div className="tp-content">
-                      <div className="tp-card" />
-                      <div className="tp-card tp-card-sm" />
-                    </div>
-                  </div>
-                </div>
-                <div className="theme-card-footer">
-                  <Sun size={13} weight="duotone" />
-                  <span>Hell</span>
-                  {!settings.isDark && <Check size={11} weight="bold" className="theme-check" />}
-                </div>
-              </button>
-
-              <button
-                className={`theme-card ${settings.isDark ? 'theme-card-active' : ''}`}
-                onClick={() => updateSettings('isDark', true)}
-              >
-                <div className="theme-card-preview theme-preview-dark">
-                  <div className="tp-topbar" />
-                  <div className="tp-body">
-                    <div className="tp-sidebar" />
-                    <div className="tp-content">
-                      <div className="tp-card" />
-                      <div className="tp-card tp-card-sm" />
-                    </div>
-                  </div>
-                </div>
-                <div className="theme-card-footer">
-                  <Moon size={13} weight="duotone" />
-                  <span>Dunkel</span>
-                  {settings.isDark && <Check size={11} weight="bold" className="theme-check" />}
-                </div>
-              </button>
-            </div>
+        <section className="settings-section">
+          <div className="settings-section-label">
+            <Palette size={14} weight="duotone" />
+            {t.settings?.themeLabel || 'Erscheinungsbild'}
           </div>
-        </div>
-      </section>
-
-      {/* ── LANGUAGE ── */}
-      <section className="settings-section">
-        <div className="settings-section-label">
-          <Globe size={14} weight="duotone" />
-          {t.settings?.language || 'Sprache'}
-        </div>
-
-        <div className="settings-card">
-          <div className="settings-row">
-            <div className="settings-row-info">
-              <div className="settings-row-title">Sprache / Language</div>
-              <div className="settings-row-sub">Ändert alle Beschriftungen in der App</div>
-            </div>
-            <div className="lang-cards">
-              {languages.map(lang => (
-                <button
-                  key={lang.code}
-                  className={`lang-card ${settings.language === lang.code ? 'lang-card-active' : ''}`}
-                  onClick={() => updateSettings('language', lang.code)}
-                >
-                  <span className="lang-flag">{lang.flag}</span>
-                  <span className="lang-label">{lang.label}</span>
-                  {settings.language === lang.code && <Check size={12} weight="bold" className="lang-check" />}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── REGIONAL ── */}
-      <section className="settings-section">
-        <div className="settings-section-label">
-          <Coins size={14} weight="duotone" />
-          {t.settings?.currency || 'Währung & Einheiten'}
-        </div>
-
-        <div className="settings-card">
-          {/* Currency */}
-          <div className="settings-row settings-row-bordered">
-            <div className="settings-row-info">
-              <div className="settings-row-title">{t.settings?.currency || 'Währung'}</div>
-              <div className="settings-row-sub">Für Kaufpreise und Finanzierungsangaben</div>
-            </div>
-            <div className="currency-grid">
-              {currencies.map(curr => (
-                <button
-                  key={curr.symbol}
-                  className={`currency-btn ${settings.currency === curr.symbol ? 'currency-btn-active' : ''}`}
-                  onClick={() => updateSettings('currency', curr.symbol)}
-                >
-                  <span className="currency-flag">{curr.flag}</span>
-                  <span className="currency-symbol">{curr.symbol}</span>
-                  <span className="currency-name">{curr.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Space unit */}
-          <div className="settings-row">
-            <div className="settings-row-info">
-              <div className="settings-row-title">
-                <Ruler size={14} weight="duotone" style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />
-                {t.settings?.unitsLabel || 'Flächeneinheit'}
+          <div className="settings-card settings-card-stretch">
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <div className="settings-row-title">Design</div>
+                <div className="settings-row-sub">Hell oder dunkel</div>
               </div>
-              <div className="settings-row-sub">Für Wohnfläche und Preise pro Einheit</div>
-            </div>
-            <div className="unit-pills">
-              {spaceUnits.map(u => (
+              <div className="theme-cards">
                 <button
-                  key={u.value}
-                  className={`unit-pill ${settings.spaceUnit === u.value ? 'unit-pill-active' : ''}`}
-                  onClick={() => updateSettings('spaceUnit', u.value)}
+                  className={`theme-card ${!settings.isDark ? 'theme-card-active' : ''}`}
+                  onClick={() => updateSettings('isDark', false)}
                 >
-                  <span className="unit-pill-label">{u.label}</span>
-                  <span className="unit-pill-sub">{u.sub}</span>
+                  <div className="theme-card-preview theme-preview-light">
+                    <div className="tp-topbar" />
+                    <div className="tp-body">
+                      <div className="tp-sidebar" />
+                      <div className="tp-content">
+                        <div className="tp-card" />
+                        <div className="tp-card tp-card-sm" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="theme-card-footer">
+                    <Sun size={13} weight="duotone" />
+                    <span>Hell</span>
+                    {!settings.isDark && <Check size={11} weight="bold" className="theme-check" />}
+                  </div>
                 </button>
-              ))}
+                <button
+                  className={`theme-card ${settings.isDark ? 'theme-card-active' : ''}`}
+                  onClick={() => updateSettings('isDark', true)}
+                >
+                  <div className="theme-card-preview theme-preview-dark">
+                    <div className="tp-topbar" />
+                    <div className="tp-body">
+                      <div className="tp-sidebar" />
+                      <div className="tp-content">
+                        <div className="tp-card" />
+                        <div className="tp-card tp-card-sm" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="theme-card-footer">
+                    <Moon size={13} weight="duotone" />
+                    <span>Dunkel</span>
+                    {settings.isDark && <Check size={11} weight="bold" className="theme-check" />}
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      </div>{/* end settings-grid */}
-
-      {/* ── NUMBER FORMAT ── */}
-      <section className="settings-section settings-section-full">
-        <div className="settings-section-label">
-          <Hash size={14} weight="duotone" />
-          {t.settings?.numberFormatLabel || 'Zahlenformat'}
-        </div>
-
-        <div className="settings-card">
-          <div className="settings-row">
-            <div className="settings-row-info">
-              <div className="settings-row-title">Dezimal- & Tausendertrennzeichen</div>
-              <div className="settings-row-sub">Wie Zahlen in der gesamten App dargestellt werden</div>
-            </div>
-            <div className="numfmt-options">
-              {NUMBER_FORMAT_OPTIONS.map(opt => (
-                <button
-                  key={opt.value}
-                  className={`numfmt-btn ${(settings.numberFormat || 'de') === opt.value ? 'numfmt-btn-active' : ''}`}
-                  onClick={() => updateSettings('numberFormat', opt.value)}
-                >
-                  <span className="numfmt-example">{formatDemo(1234567.89)}</span>
-                  <span className="numfmt-label">{opt.label}</span>
-                </button>
-              ))}
+        <section className="settings-section">
+          <div className="settings-section-label">
+            <Globe size={14} weight="duotone" />
+            {t.settings?.language || 'Sprache'}
+          </div>
+          <div className="settings-card settings-card-stretch">
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <div className="settings-row-title">Sprache</div>
+                <div className="settings-row-sub">Ändert alle Beschriftungen</div>
+              </div>
+              <div className="lang-cards">
+                {languages.map(lang => (
+                  <button
+                    key={lang.code}
+                    className={`lang-card ${settings.language === lang.code ? 'lang-card-active' : ''}`}
+                    onClick={() => updateSettings('language', lang.code)}
+                  >
+                    <span className="lang-flag">{lang.flag}</span>
+                    <span className="lang-label">{lang.label}</span>
+                    {settings.language === lang.code && <Check size={12} weight="bold" className="lang-check" />}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section className="settings-section">
+          <div className="settings-section-label">
+            <Coins size={14} weight="duotone" />
+            {t.settings?.currency || 'Währung'}
+          </div>
+          <div className="settings-card settings-card-stretch">
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <div className="settings-row-title">Währung</div>
+                <div className="settings-row-sub">Für Kaufpreise und Finanzierung</div>
+              </div>
+              <div className="currency-grid">
+                {currencies.map(curr => (
+                  <button
+                    key={curr.symbol}
+                    className={`currency-btn ${settings.currency === curr.symbol ? 'currency-btn-active' : ''}`}
+                    onClick={() => updateSettings('currency', curr.symbol)}
+                  >
+                    <span className="currency-flag">{curr.flag}</span>
+                    <span className="currency-symbol">{curr.symbol}</span>
+                    <span className="currency-name">{curr.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>{/* end settings-grid-3 */}
+
+      {/* ── ROW 2: 2-column — Flächeneinheit | Zahlenformat ── */}
+      <div className="settings-grid-2">
+
+        <section className="settings-section">
+          <div className="settings-section-label">
+            <Ruler size={14} weight="duotone" />
+            {t.settings?.unitsLabel || 'Flächeneinheit'}
+          </div>
+          <div className="settings-card settings-card-stretch">
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <div className="settings-row-title">Flächeneinheit</div>
+                <div className="settings-row-sub">Für Wohnfläche und Preis pro Einheit</div>
+              </div>
+              <div className="unit-pills">
+                {spaceUnits.map(u => (
+                  <button
+                    key={u.value}
+                    className={`unit-pill ${settings.spaceUnit === u.value ? 'unit-pill-active' : ''}`}
+                    onClick={() => updateSettings('spaceUnit', u.value)}
+                  >
+                    <span className="unit-pill-label">{u.label}</span>
+                    <span className="unit-pill-sub">{u.sub}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="settings-section">
+          <div className="settings-section-label">
+            <Hash size={14} weight="duotone" />
+            {t.settings?.numberFormatLabel || 'Zahlenformat'}
+          </div>
+          <div className="settings-card settings-card-stretch">
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <div className="settings-row-title">Zahlenformat</div>
+                <div className="settings-row-sub">Dezimal- & Tausendertrennzeichen</div>
+              </div>
+              <div className="numfmt-options">
+                {NUMBER_FORMAT_OPTIONS.map(opt => (
+                  <button
+                    key={opt.value}
+                    className={`numfmt-btn ${(settings.numberFormat || 'de') === opt.value ? 'numfmt-btn-active' : ''}`}
+                    onClick={() => updateSettings('numberFormat', opt.value)}
+                  >
+                    <span className="numfmt-example">{formatDemo(1234567.89)}</span>
+                    <span className="numfmt-label">{opt.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>{/* end settings-grid-2 */}
 
       {/* ── LIVE PREVIEW ── */}
       <section className="settings-section settings-section-full">
