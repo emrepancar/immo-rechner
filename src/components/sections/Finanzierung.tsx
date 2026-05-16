@@ -291,91 +291,129 @@ function Finanzierung() {
             <div className="page-shell-title">Finanzierung</div>
             <div className="page-shell-sub">Kreditberechnung und Tilgungsplan für gespeicherte Objekte</div>
           </div>
+          <button className="calculate-button" onClick={handleCalculate}>
+            📊 {t.common.calculate}
+          </button>
         </div>
         <div className="page-shell-divider" />
       </div>
       <div className="page-shell-body">
-      <div className="finanzierung-box">
-        <SectionDivider label={tf.boxObjekt} />
-        <div className="finanzierung-form">
-          <div className="form-group">
-            <label>{tf.gespeichertesObjekt}</label>
-            <select value={selectedProperty} onChange={handlePropertySelect} className="form-group-select">
-              <option value="">{tf.objektPlaceholder}</option>
-              {properties.map(property => (
-                <option key={property.id} value={property.id}>
-                  {property.name} ({property.address || t.common.noAddress})
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>{tf.kaufpreis} ({settings.currency})</label>
-            <NumberInput value={kaufpreis} disabled placeholder="0" />
-          </div>
-          <div className="form-group">
-            <label>{tf.nebenkosten} ({settings.currency})</label>
-            <NumberInput value={nebenkosten} disabled placeholder="0" />
-          </div>
-          <div className="form-group">
-            <label>{tf.gesamtkosten} ({settings.currency})</label>
-            <NumberInput value={gesamtkosten} disabled placeholder="0" />
-          </div>
-        </div>
-      </div>
+      <div className="finanzierung-top-grid">
 
-      <div className="finanzierung-box">
-        <SectionDivider label={tf.boxEigenkapital} />
-        <div className="finanzierung-form">
-          <div className="finanzierung-row">
-            <div className="finanzierung-group">
-              <label>{tf.eigenkapital} ({settings.currency})</label>
-              <NumberInput value={eigenkapital} onChange={(e) => handleEigenkapitalChange(e.target.value)} placeholder="0" />
+        {/* Box 1: Immobilie & Gesamtkosten */}
+        <div className="finanzierung-box">
+          <SectionDivider label={tf.boxObjekt} />
+          <div className="finanzierung-form">
+            <div className="form-group">
+              <label>{tf.gespeichertesObjekt}</label>
+              <select value={selectedProperty} onChange={handlePropertySelect} className="form-group-select">
+                <option value="">{tf.objektPlaceholder}</option>
+                {properties.map(property => (
+                  <option key={property.id} value={property.id}>
+                    {property.name} ({property.address || t.common.noAddress})
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="finanzierung-group">
-              <label>{tf.eigenkapitalProzent} (%)</label>
-              <NumberInput value={eigenkapitalProzent.toFixed(2)} onChange={(e) => handleProzentChange(e.target.value)} placeholder="0" step="0.01" />
+            <div className="form-group">
+              <label>{tf.kaufpreis} ({settings.currency})</label>
+              <NumberInput value={kaufpreis} disabled placeholder="0" />
+            </div>
+            <div className="form-group">
+              <label>{tf.nebenkosten} ({settings.currency})</label>
+              <NumberInput value={nebenkosten} disabled placeholder="0" />
+            </div>
+            <div className="form-group">
+              <label>{tf.gesamtkosten} ({settings.currency})</label>
+              <NumberInput value={gesamtkosten} disabled placeholder="0" />
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="finanzierung-box">
-        <SectionDivider label={tf.boxEigenmittel} />
-        <div className="finanzierung-form">
-          <div className="form-group">
-            <label>{tf.eigenmittel} ({settings.currency})</label>
-            <NumberInput value={(nebenkosten + eigenkapital).toFixed(2)} disabled placeholder="0" />
-          </div>
-        </div>
-      </div>
+        {/* Column 2: EK + Darlehen stacked */}
+        <div className="finanzierung-right-col">
 
-      <div className="finanzierung-box">
-        <SectionDivider label={tf.boxFinanzierungssumme} />
-        <div className="finanzierung-form">
-          <div className="form-group">
-            <label>{tf.finanzierungssumme} ({settings.currency})</label>
-            <NumberInput value={finanzierungssumme} disabled placeholder="0" />
-          </div>
-        </div>
-      </div>
-
-      <div className="finanzierung-box">
-        <SectionDivider label={tf.boxDarlehen} />
-        <div className="finanzierung-form">
-          <div className="finanzierung-row">
-            <div className="finanzierung-group">
-              <label>{tf.sollzinssatz}</label>
-              <NumberInput value={sollzinssatz} onChange={(e) => setSollzinssatz(e.target.value)} placeholder={tf.sollzinssatzPlaceholder} step="0.01" />
+          <div className="finanzierung-box">
+            <SectionDivider label={tf.boxEigenkapital} />
+            <div className="finanzierung-form">
+              <div className="finanzierung-row">
+                <div className="finanzierung-group">
+                  <label>{tf.eigenkapital} ({settings.currency})</label>
+                  <NumberInput value={eigenkapital} onChange={(e) => handleEigenkapitalChange(e.target.value)} placeholder="0" />
+                </div>
+                <div className="finanzierung-group">
+                  <label>{tf.eigenmittel} ({settings.currency})</label>
+                  <NumberInput value={(nebenkosten + eigenkapital).toFixed(2)} disabled placeholder="0" />
+                  <span className="field-hint">EK + Nebenkosten</span>
+                </div>
+              </div>
+              <div className="ek-slider-finsum-row">
+                <div className="darlehen-slider-group" style={{ flex: 1 }}>
+                  <input
+                    type="range"
+                    className="darlehen-slider"
+                    min={0}
+                    max={100}
+                    step={5}
+                    value={eigenkapitalProzent}
+                    onChange={(e) => {
+                      const pct = parseFloat(e.target.value)
+                      const ek = Math.round((pct / 100) * (kaufpreis || 0))
+                      handleEigenkapitalChange(String(ek))
+                    }}
+                    style={{ '--fill': `${eigenkapitalProzent}%` } as React.CSSProperties}
+                  />
+                  <div className="darlehen-slider-value">{eigenkapitalProzent.toFixed(0)} %</div>
+                </div>
+                <div className="finanzierung-group" style={{ flex: 1 }}>
+                  <label>{tf.finanzierungssumme} ({settings.currency})</label>
+                  <NumberInput value={finanzierungssumme} disabled placeholder="0" />
+                </div>
+              </div>
             </div>
-            <div className="finanzierung-group">
-              <label>{tf.laufzeit}</label>
-              <input type="number" value={laufzeit} onChange={(e) => setLaufzeit(e.target.value)} placeholder={tf.laufzeitPlaceholder} step="1" />
+          </div>
+
+          <div className="finanzierung-box">
+            <SectionDivider label={tf.boxDarlehen} />
+            <div className="finanzierung-form">
+              <div className="finanzierung-row">
+                <div className="darlehen-slider-group">
+                  <label className="darlehen-slider-label">{tf.sollzinssatz}</label>
+                  <input
+                    type="range"
+                    className="darlehen-slider"
+                    min={0.5}
+                    max={8}
+                    step={0.1}
+                    value={sollzinssatz || 3.5}
+                    onChange={(e) => setSollzinssatz(e.target.value)}
+                    style={{ '--fill': `${((parseFloat(sollzinssatz || '3.5') - 0.5) / (8 - 0.5)) * 100}%` } as React.CSSProperties}
+                  />
+                  <div className="darlehen-slider-value">{parseFloat(sollzinssatz || '3.5').toFixed(2)} %</div>
+                </div>
+                <div className="darlehen-slider-group">
+                  <label className="darlehen-slider-label">{tf.laufzeit}</label>
+                  <input
+                    type="range"
+                    className="darlehen-slider"
+                    min={5}
+                    max={40}
+                    step={1}
+                    value={laufzeit || 20}
+                    onChange={(e) => setLaufzeit(e.target.value)}
+                    style={{ '--fill': `${((parseInt(laufzeit || '20') - 5) / (40 - 5)) * 100}%` } as React.CSSProperties}
+                  />
+                  <div className="darlehen-slider-value">{laufzeit || 20} {t.common.years}</div>
+                </div>
+              </div>
             </div>
           </div>
+
         </div>
+
       </div>
 
+      <div className="finanzierung-mid-grid">
       <div className="finanzierung-box">
         <SectionDivider label={tf.boxMieterhohung} />
         <div className="finanzierung-form">
@@ -459,13 +497,9 @@ function Finanzierung() {
               )}
             </div>
           </div>
-          <div className="tilgungsvariante-button-container">
-            <button className="calculate-button" onClick={handleCalculate}>
-              📊 {t.common.calculate}
-            </button>
-          </div>
         </div>
       </div>
+      </div>{/* finanzierung-mid-grid */}
 
       {calculationResult && (
         <>
@@ -561,6 +595,35 @@ function Finanzierung() {
         </>
       )}
       </div>{/* page-shell-body */}
+
+      {/* Sticky summary footer */}
+      <div className="finanzierung-footer">
+        <div className="finanzierung-footer-item">
+          <div className="finanzierung-footer-label">Darlehenssumme</div>
+          <div className="finanzierung-footer-value">{settings.currency} {finanzierungssumme.toLocaleString('de-DE', { maximumFractionDigits: 0 })}</div>
+        </div>
+        <div className="finanzierung-footer-item">
+          <div className="finanzierung-footer-label">Eigenkapital</div>
+          <div className="finanzierung-footer-value">{eigenkapitalProzent.toFixed(0)} %</div>
+        </div>
+        <div className="finanzierung-footer-item">
+          <div className="finanzierung-footer-label">Zinssatz</div>
+          <div className="finanzierung-footer-value">{parseFloat(sollzinssatz || '3.5').toFixed(2)} %</div>
+        </div>
+        <div className="finanzierung-footer-item">
+          <div className="finanzierung-footer-label">Gesamtzinsen</div>
+          <div className="finanzierung-footer-value">
+            {calculationResult ? `${settings.currency} ${parseFloat(calculationResult.totalInterest).toLocaleString('de-DE', { maximumFractionDigits: 0 })}` : '—'}
+          </div>
+        </div>
+        <div className="finanzierung-footer-item finanzierung-footer-highlight">
+          <div className="finanzierung-footer-label">Monatliche Rate</div>
+          <div className="finanzierung-footer-value">
+            {calculationResult ? `${settings.currency} ${Math.round(parseFloat(calculationResult.monthlyPayment)).toLocaleString('de-DE')}` : '—'}
+          </div>
+        </div>
+      </div>
+
     </div>
   )
 }

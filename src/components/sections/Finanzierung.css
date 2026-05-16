@@ -2,6 +2,38 @@
   width: 100%;
 }
 
+.finanzierung.page-shell {
+  display: flex;
+  flex-direction: column;
+}
+
+.finanzierung-top-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 20px;
+}
+
+.finanzierung-mid-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 20px;
+}
+
+.finanzierung-mid-grid .finanzierung-box {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .finanzierung-top-grid,
+  .finanzierung-mid-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .finanzierung-box {
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -10,6 +42,20 @@
   box-shadow: var(--shadow-card);
   position: relative;
   margin-bottom: 20px;
+}
+
+.finanzierung-top-grid .finanzierung-box {
+  margin-bottom: 0;
+}
+
+.finanzierung-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.finanzierung-right-col .finanzierung-box {
+  margin-bottom: 0;
 }
 
 .box-label {
@@ -280,6 +326,217 @@
   color: var(--text-h);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.eigenkapital-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.eigenkapital-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  outline: none;
+  cursor: pointer;
+}
+
+.eigenkapital-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(46, 91, 255, 0.3);
+  transition: transform 0.15s;
+}
+
+.eigenkapital-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.eigenkapital-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+}
+
+.eigenkapital-slider-pct {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--mono);
+  min-width: 48px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.darlehen-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.darlehen-slider-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-transform: none !important;
+  letter-spacing: 0;
+}
+
+.darlehen-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    var(--accent) 0%,
+    var(--accent) var(--fill, 0%),
+    var(--border) var(--fill, 0%),
+    var(--border) 100%
+  );
+}
+
+.darlehen-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(46, 91, 255, 0.35);
+  transition: transform 0.15s;
+}
+
+.darlehen-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.darlehen-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+}
+
+.darlehen-slider::-moz-range-progress {
+  background: var(--accent);
+  height: 6px;
+  border-radius: 3px;
+}
+
+.darlehen-slider-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--mono);
+}
+
+.field-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.ek-summary-row {
+  margin-top: 4px;
+}
+
+.ek-slider-finsum-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.finsum-highlight {
+  background: var(--text-h);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+}
+
+.finsum-highlight-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.finsum-highlight-value {
+  font-family: var(--mono);
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 2px;
+}
+
+.finanzierung-footer {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  background: var(--panel);
+  border-top: 2px solid var(--accent);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+  padding: 9px 32px;
+}
+
+.finanzierung-footer-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 16px;
+  border-right: 1px solid var(--border);
+}
+
+.finanzierung-footer-item:first-child {
+  padding-left: 0;
+}
+
+.finanzierung-footer-item:last-child {
+  border-right: none;
+}
+
+.finanzierung-footer-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.finanzierung-footer-value {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--text-h);
+}
+
+.finanzierung-footer-highlight .finanzierung-footer-value {
+  font-size: 15px;
+  color: var(--accent);
 }
 
 .finanzierung-info-text {

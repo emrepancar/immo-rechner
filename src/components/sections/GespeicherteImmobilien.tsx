@@ -271,6 +271,9 @@ function GespeicherteImmobilien() {
             <div className="page-shell-title">Gespeicherte Immobilien</div>
             <div className="page-shell-sub">{properties.length} Objekte gespeichert</div>
           </div>
+          <button className={`compare-toggle-btn ${compareMode ? 'active' : ''}`} onClick={toggleCompareMode}>
+            {compareMode ? tg.compareExit : tg.compareMode}
+          </button>
         </div>
         <div className="page-shell-divider" />
       </div>
@@ -292,9 +295,6 @@ function GespeicherteImmobilien() {
             Favoriten <span className="tab-count">{properties.filter(p => p.is_favorite).length}</span>
           </button>
         </div>
-        <button className={`compare-toggle-btn ${compareMode ? 'active' : ''}`} onClick={toggleCompareMode}>
-          {compareMode ? tg.compareExit : tg.compareMode}
-        </button>
       </div>
 
       {activeTab === 'favoriten' && visibleProperties.length === 0 && (
