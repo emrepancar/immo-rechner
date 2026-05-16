@@ -41,7 +41,7 @@ function AppContent() {
         <div className="app-body">
           <Sidebar onNavigate={handleNavigation} />
           <main className="content">
-            <Routes location={location} key={location.pathname}>
+            <Routes key={location.pathname}>
               <Route path="/" element={<NeueImmobilie />} />
               <Route path="/finanzierung" element={<Finanzierung />} />
               <Route path="/gespeicherte-objekte" element={<GespeicherteImmobilien />} />
